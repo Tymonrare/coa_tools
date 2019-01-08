@@ -71,28 +71,28 @@ function save_coords(center_sprites,export_path, export_name){
     json_file.writeln( write_dict_entry (tabs=1, "name", export_name));
     json_file.writeln( write_line (tabs=1, '"nodes": ['));
     
-    for(var i = 0; i < coords.length; i++){
-        json_file.writeln('        {');
-        json_file.writeln( write_dict_entry( tabs = 3, key = "name", value = coords[i][0]));
+    for(var i = coords.length - 1; i >= 0; i--){
+		json_file.writeln(write_line(tabs=2, '{'));
+		
+        json_file.writeln( write_dict_entry( tabs = 3, key = "name", value = coords[i].name));
         json_file.writeln( write_dict_entry( tabs = 3, key = "type", value = "SPRITE"));
-        json_file.writeln( write_dict_entry( tabs = 3, key = "node_path", value = coords[i][0]));
-        json_file.writeln( write_dict_entry( tabs = 3, key = "resource_path", value = "sprites/"+coords[i][0]));
+        json_file.writeln( write_dict_entry( tabs = 3, key = "node_path", value = coords[i].name));
+        json_file.writeln( write_dict_entry( tabs = 3, key = "resource_path", value = coords[i].file_path));
         json_file.writeln( write_dict_entry( tabs = 3, key = "pivot_offset", value = [0,0]));
         json_file.writeln( write_dict_entry( tabs = 3, key = "offset", value = offset));
-        json_file.writeln( write_dict_entry( tabs = 3, key = "position", value = [ coords[i][1][0],coords[i][1][2] ]));
+        json_file.writeln( write_dict_entry( tabs = 3, key = "position", value = [ coords[i].pos[0],coords[i].pos[2] ]));
         json_file.writeln( write_dict_entry( tabs = 3, key = "rotation", value = 0.0 ));
         json_file.writeln( write_dict_entry( tabs = 3, key = "scale", value = [1.0,1.0] ));
         json_file.writeln( write_dict_entry( tabs = 3, key = "opacity", value = 1.0 ));
-        json_file.writeln( write_dict_entry( tabs = 3, key = "z", value = coords[i][1][1] ));
-        json_file.writeln( write_dict_entry( tabs = 3, key = "tiles_x", value = coords[i][2][0] ));
-        json_file.writeln( write_dict_entry( tabs = 3, key = "tiles_y", value = coords[i][2][1] ));
+        json_file.writeln( write_dict_entry( tabs = 3, key = "z", value = coords[i].pos[1] ));
+		json_file.writeln( write_dict_entry( tabs = 3, key = "bounds", value = coords[i].bounds ));
+        json_file.writeln( write_dict_entry( tabs = 3, key = "tiles_x", value = coords[i].tile_size[0] )); //deprecated?
+        json_file.writeln( write_dict_entry( tabs = 3, key = "tiles_y", value = coords[i].tile_size[1] )); //deprecated?
         json_file.writeln( write_dict_entry( tabs = 3, key = "frame_index", value = 0 ));
         json_file.writeln( write_dict_entry( tabs = 3, key = "children", value = [] , comma=false));
-        if(i < coords.length-1){
-            json_file.writeln(write_line(tabs=2,'},'));
-        }else{
-            json_file.writeln(write_line(tabs=2,'}'));
-        }    
+		
+		json_file.writeln(write_line(tabs=2, i == 0 ? '}' : '},'));
+
     }
     json_file.writeln(write_line(tabs=1,']'));
     json_file.writeln(write_line(tabs=0,'}'));
@@ -173,6 +173,9 @@ function duplicate_into_new_doc(){
 }    
 
 function export_sprites(export_path , export_name , crop_to_dialog_bounds , center_sprites, crop_layers, export_json){
+	
+	//=== { Prepare } ===\\
+	
     var init_units = app.preferences.rulerUnits;
     app.preferences.rulerUnits = Units.PIXELS;
     // check if folder exists. if not, create one
@@ -195,7 +198,8 @@ function export_sprites(export_path , export_name , crop_to_dialog_bounds , cent
     testlayer.remove();
     ///
     
-    // flatten layers
+	//=== { Merge layers } ===\\
+
     for(var i = 0; i < dupli_doc.layers.length; i++){ 
         var layer = dupli_doc.layers[i];
         dupli_doc.activeLayer = layer;
@@ -210,6 +214,8 @@ function export_sprites(export_path , export_name , crop_to_dialog_bounds , cent
         }
     }
     
+	//=== { Image process } ===\\
+	
     var selected_layer = dupli_doc.layers;
     for(var i = 0; i < selected_layer.length; i++){ 
         // deselect layers
@@ -252,33 +258,11 @@ function export_sprites(export_path , export_name , crop_to_dialog_bounds , cent
         
         if (crop_layers == true){
             tmp_doc.crop(crop_bounds);
-        }    
-        
-        // check if layer is a group with sprite setting
-        if (layer_name.indexOf("--sprites") != -1){
-            var keyword_pos = layer_name.indexOf("--sprites") ;
-            var sprites = tmp_doc.layers[0].layers;
-            var sprite_count = sprites.length;
-            if (column_str_index = layer_name.indexOf("c=") != -1){
-                var column_str_index = layer_name.indexOf("c=")+2;
-                var columns = Math.ceil(layer_name.substring(column_str_index,layer_name.length));
-            }else{
-                var columns = Math.ceil((Math.sqrt(sprite_count)));
-            }
-            tile_size = [columns,Math.ceil(sprite_count/columns)];
-            var k = 0;
-            for(var j = 0;j<sprites.length;j++){
-                if(j>0 && j%columns == 0){
-                    k = k+1;
-                }
-                sprites[j].translate(tmp_doc.width * (j%columns), tmp_doc.height * k);
-            }
-            
-            
-            extend_document_size(tmp_doc.width * columns, tmp_doc.height * (k+1));
         }
-        
-        // create layer name -> cut off commands
+		
+		// make file path -> cut off commands
+		var file_name = layer_name;
+	
         var keyword_pos = 100000;
         if (layer_name.indexOf("--sprites") != -1){
             if (layer_name.indexOf("--sprites") < keyword_pos){
@@ -296,16 +280,66 @@ function export_sprites(export_path , export_name , crop_to_dialog_bounds , cent
             }
         }
         if (layer_name[keyword_pos - 1] == "_"){
-            layer_name = layer_name.substring(0,keyword_pos - 1);
+            file_name = layer_name.substring(0,keyword_pos - 1);
         }else{
-            layer_name = layer_name.substring(0,keyword_pos);
+            file_name = layer_name.substring(0,keyword_pos);
         }
+		
+		var file_path = "sprites/"+file_name+".png";
+
+		//--- { Save batch or simple image } ---\\
+		
+		//we can store coords by two methods...:
+		        
+        // check if layer is a group with sprite setting
+        if (layer_name.indexOf("--sprites") != -1){
+            var keyword_pos = layer_name.indexOf("--sprites") ;
+            var sprites = tmp_doc.layers[0].layers;
+			
+			//calc tile size {
+            var sprite_count = sprites.length;
+            if (column_str_index = layer_name.indexOf("c=") != -1){
+                var column_str_index = layer_name.indexOf("c=")+2;
+                var columns = Math.ceil(layer_name.substring(column_str_index,layer_name.length));
+            }else{
+                var columns = Math.ceil((Math.sqrt(sprite_count)));
+            }
+            tile_size = [columns,Math.ceil(sprite_count/columns)];
+			// }
+			
+            var k = 0;
+            for(var j = 0;j<sprites.length;j++){
+                if(j>0 && j%columns == 0){
+                    k = k+1;
+                }
+				var x = tmp_doc.width * (j%columns);
+				var y = tmp_doc.height * k;
+                sprites[j].translate(x, y);
+				
+				//(1) method - few sprites on texture
+				coords.push({
+					name: file_name+"["+sprites[j].name+"]",
+					file_path: file_path,
+					pos: layer_pos,
+					tile_size: tile_size,
+					bounds: [x.as("px"), y.as("px"), tmp_doc.width.as("px"), tmp_doc.height.as("px")]
+				})
+            }
+            
+            extend_document_size(tmp_doc.width * columns, tmp_doc.height * (k+1));
+        }
+		//(2) method - only one sprite on texture
+		else 
+			coords.push({
+				name: file_name,
+				file_path: file_path,
+				pos: layer_pos,
+				tile_size: tile_size,
+				bounds: [0,0,tmp_doc.width.as("px"), tmp_doc.height.as("px")]
+			})
         
         // do save stuff
-        tmp_doc.exportDocument(File(export_path+"/sprites/"+layer_name+".png"),ExportType.SAVEFORWEB,options );
-        
-        // store coords
-        coords.push([layer_name+".png",layer_pos,tile_size]);
+        tmp_doc.exportDocument(File(export_path+"/"+file_path),ExportType.SAVEFORWEB,options );
         
         // close tmp doc again
         tmp_doc.close(SaveOptions.DONOTSAVECHANGES);
