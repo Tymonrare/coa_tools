@@ -83,8 +83,6 @@ Zip the coa_folder.
 Go to File -> User Preferences -> Add-ons and click the “Install from file...” button.
 This will install and enable the Addon for Blender. Don’t forget to save the user preferences, otherwise the addon will not be activated after restart.
 
-<a href="http://misc.artbyndee.de/coa_tools_installation.gif"><img src="http://misc.artbyndee.de/coa_tools_installation.gif" width="250" /></a>
-
 ## Godot Importer:
 Notice, this importer will only run with current godot 2.1 dev builds.
 Create an /addons folder in your game projects folder and copy the coa_importer folder into that addons folder. Once the files are loaded go to Project Settings -> Plugins -> Cutout Animation Importer and activate the Plugin.
