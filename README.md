@@ -66,7 +66,7 @@ Don't try to install the downloaded zip file directly in blender. This won't wor
 
 The .jsx file has to be copied into the photoshop scripts folder which is located in:
 
-C:\Program Files\Adobe\Adobe Photoshop CC 2015\Presets\Scripts
+C:\Program Files\Adobe\Adobe Photoshop CC (2015)\Presets\Scripts
 
 Don’t forget to restart Photoshop and then go to File -> Scripts -> BlenderExporter.jsx
 
@@ -97,10 +97,10 @@ wip
 
 - `--sprites` - export folder as texture batch
 - `m=` - margin in pixels
-- `c=` - colums in batch (deprecated?)
+- `c=` - columns in batch (deprecated?)
 
 # Credits
 This is fork of Andreas Esau COA Tools
-If you like this addon and want to thank me with a small donation feel free to do this here:
+If you like this addon and want to thank Andreas Esau with a small donation feel free to do this here:
 
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8TB6CNT9G8LEN)
