@@ -97,9 +97,21 @@ wip
 
 ### Layers naming keywords
 
-- `--sprites` - export folder as texture batch
-- `m=` - margin in pixels
-- `c=` - columns in batch (deprecated?)
+You can set layer name/id by:
+
+- First word of layer name will be id
+- specify node name with keyword `id=yourname`
+
+Also avaible commands:
+
+- *folder* `--group` do not flatten content and axport as bone
+- *folder* `--frames` export as animation batch
+- unavaible /*folder* `--batch` export as animation batch/
+- *layer/folder* `margin=` - margin in pixels
+- *folder* `columns=` - columns in batch/frames (deprecated?)
+- Any custom properties will be exported:
+  - `propname=value` as value
+  - `--flag` as bool
 
 ### UI Creation workflow
 
