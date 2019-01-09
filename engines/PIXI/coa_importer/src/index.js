@@ -1,9 +1,19 @@
-function component() {
-    let element = document.createElement('div');
+/** @format */
 
-    element.innerHTML = "test";
+import * as PIXI from 'pixi.js';
+import loader from '@lib/loader.js';
+import makeUi from '@lib/ui.js';
 
-    return element;
-  }
+const width = 1280;
+const height = 720;
 
-  document.body.appendChild(component());
+var app = new PIXI.Application(width, height, { backgroundColor: 0x1099bb });
+document.body.appendChild(app.view);
+
+loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
+	let wind = makeUi(conf);
+	wind.position.set(width / 2, height / 2);
+	app.stage.addChild(wind);
+
+	wind.nodes.test.setProgress(0.8);
+});

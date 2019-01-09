@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/index.js',
@@ -13,6 +14,7 @@ module.exports = {
       alias: {
           '@app': path.resolve(__dirname, './src/'),
           '@lib': path.resolve(__dirname, './lib/'),
+          '@res': path.resolve(__dirname, './res/'),
       }
   },
   module: {
@@ -25,7 +27,10 @@ module.exports = {
      new CleanWebpackPlugin(['dist']),
      new HtmlWebpackPlugin({
        title: 'teplate'
-     })
+     }),
+     new CopyWebpackPlugin([
+         { from: './res/', to: 'res' },
+     ]),
    ],
    devtool: 'inline-source-map',
 

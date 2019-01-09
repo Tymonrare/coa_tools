@@ -12,39 +12,39 @@ options.PNG8 = false;
 options.transparency = true;
 options.optimized = true;
 
-function deselect_all_layers() {   
-    var desc01 = new ActionDescriptor();   
-        var ref01 = new ActionReference();   
-        ref01.putEnumerated( charIDToTypeID('Lyr '), charIDToTypeID('Ordn'), charIDToTypeID('Trgt') );   
-    desc01.putReference( charIDToTypeID('null'), ref01 );   
+function deselect_all_layers() {
+    var desc01 = new ActionDescriptor();
+        var ref01 = new ActionReference();
+        ref01.putEnumerated( charIDToTypeID('Lyr '), charIDToTypeID('Ordn'), charIDToTypeID('Trgt') );
+    desc01.putReference( charIDToTypeID('null'), ref01 );
     executeAction( stringIDToTypeID('selectNoLayers'), desc01, DialogModes.NO );
 }
 
 function write_dict_entry(tabs,key,value,comma){
     if(typeof(comma)==='undefined') var comma = true;
-    
+
     var line = '';
     for(var i = 0; i < tabs*4;i++){
         line += ' ';
     }
     line += '"'+key+'": ';
-    
+
     if (typeof(value) ==  "string"){
         line += '"';
     }else if(typeof(value) == "object"){
         line +='[';
     }
-    
+
     line += value;
-    
+
     if (typeof(value) ==  "string"){
         line += '"';
     }else if(typeof(value) == "object"){
         line +=']';
-    }    
+    }
     if (comma){
         line += ',';
-    }    
+    }
     return line;
 }
 
@@ -55,25 +55,25 @@ function write_line(tabs,text){
     }
     line += text;
     return line;
-}    
+}
 
 function save_coords(center_sprites,export_path, export_name){
     if (win.center_sprites.value){
         var offset = [doc.width.as("px")*-.5+','+doc.height.as("px")*.5];
     }else{
         var offset = [0,0];
-    }    
-    
+    }
+
     var json_file = new File(export_path+"/"+export_name+".json");
     json_file.open('w');
-    
+
     json_file.writeln( write_line(tabs=0,'{'));
     json_file.writeln( write_dict_entry (tabs=1, "name", export_name));
     json_file.writeln( write_line (tabs=1, '"nodes": ['));
-    
+
     for(var i = coords.length - 1; i >= 0; i--){
 		json_file.writeln(write_line(tabs=2, '{'));
-		
+
         json_file.writeln( write_dict_entry( tabs = 3, key = "name", value = coords[i].name));
         json_file.writeln( write_dict_entry( tabs = 3, key = "type", value = "SPRITE"));
         json_file.writeln( write_dict_entry( tabs = 3, key = "node_path", value = coords[i].name));
@@ -90,7 +90,7 @@ function save_coords(center_sprites,export_path, export_name){
         json_file.writeln( write_dict_entry( tabs = 3, key = "tiles_y", value = coords[i].tile_size[1] )); //deprecated?
         json_file.writeln( write_dict_entry( tabs = 3, key = "frame_index", value = 0 ));
         json_file.writeln( write_dict_entry( tabs = 3, key = "children", value = [] , comma=false));
-		
+
 		json_file.writeln(write_line(tabs=2, i == 0 ? '}' : '},'));
 
     }
@@ -126,7 +126,7 @@ function flatten_layer(document,name){
     var idMrgtwo = charIDToTypeID( "Mrg2" );
     executeAction( idMrgtwo, undefined, DialogModes.NO );
     document.activeLayer.name = name;
-}   
+}
 
 function extend_document_size(size_x, size_y){
 // =======================================================
@@ -147,7 +147,7 @@ function extend_document_size(size_x, size_y){
         var idTop = charIDToTypeID( "Top " );
         desc8.putEnumerated( idVrtc, idVrtL, idTop );
     executeAction( idCnvS, desc8, DialogModes.NO );
-}    
+}
 
 function duplicate_into_new_doc(){
     // =======================================================
@@ -170,20 +170,20 @@ function duplicate_into_new_doc(){
         var idVrsn = charIDToTypeID( "Vrsn" );
         desc231.putInteger( idVrsn, 5 );
     executeAction( idMk, desc231, DialogModes.NO );
-}    
+}
 
 function export_sprites(export_path , export_name , crop_to_dialog_bounds , center_sprites, crop_layers, export_json){
-	
+
 	//=== { Prepare } ===\\
-	
+
     var init_units = app.preferences.rulerUnits;
     app.preferences.rulerUnits = Units.PIXELS;
     // check if folder exists. if not, create one
     var export_folder = new Folder(export_path+"/sprites");
     if(!export_folder.exists) export_folder.create();
-    
+
     var tmp_layers = doc.layers;
-    
+
     try{
         duplicate_into_new_doc();
         var dupli_doc = app.activeDocument;
@@ -191,16 +191,16 @@ function export_sprites(export_path , export_name , crop_to_dialog_bounds , cent
         alert(e);
         win.close();
         return;
-    }    
-    
+    }
+
     /// deselect all layers and select first with this hack of adding a new layer and then deleting it again
     var testlayer = dupli_doc.artLayers.add();
     testlayer.remove();
     ///
-    
+
 	//=== { Merge layers } ===\\
 
-    for(var i = 0; i < dupli_doc.layers.length; i++){ 
+    for(var i = 0; i < dupli_doc.layers.length; i++){
         var layer = dupli_doc.layers[i];
         dupli_doc.activeLayer = layer;
         if (layer.name.indexOf("--sprites") == -1){
@@ -210,22 +210,22 @@ function export_sprites(export_path , export_name , crop_to_dialog_bounds , cent
                 var sub_layer = layer.layers[j];
                 dupli_doc.activeLayer = sub_layer;
                 flatten_layer(dupli_doc,sub_layer.name);
-            }    
+            }
         }
     }
-    
+
 	//=== { Image process } ===\\
-	
+
     var selected_layer = dupli_doc.layers;
-    for(var i = 0; i < selected_layer.length; i++){ 
+    for(var i = 0; i < selected_layer.length; i++){
         // deselect layers
         var layer = selected_layer[i];
-        
+
         dupli_doc.activeLayer = layer;
         var bounds = [layer.bounds[0].as("px"),layer.bounds[1].as("px"),layer.bounds[2].as("px"),layer.bounds[3].as("px")];
         var bounds_width = bounds[2] - bounds[0];
         var bounds_height = bounds[3] - bounds[1];
-        
+
         var layer_name = String(layer.name).split(' ').join('_');
         // get layer margin settings
         var margin = 0;
@@ -237,32 +237,32 @@ function export_sprites(export_path , export_name , crop_to_dialog_bounds , cent
         var tmp_doc = app.activeDocument;
         var tile_size = [1,1];
         var tmp_doc = app.documents.add( dupli_doc.width , dupli_doc.height , dupli_doc.resolution , layer_name , NewDocumentMode.RGB , DocumentFill.TRANSPARENT );
-        
+
         // duplicate layer into new doc and crop to layerbounds with margin
         app.activeDocument = dupli_doc;
         layer.duplicate(tmp_doc , ElementPlacement.INSIDE);
         app.activeDocument = tmp_doc;
         var crop_bounds = bounds;
-        
+
         if(crop_to_dialog_bounds == true){
             if(crop_bounds[0] < 0){ crop_bounds[0] = 0 };
             if(crop_bounds[1] < 0){ crop_bounds[1] = 0 };
             if(crop_bounds[2] > doc.width.as("px")){ crop_bounds[2] = doc.width.as("px")};
             if(crop_bounds[3] > doc.height.as("px")){ crop_bounds[3] = doc.height.as("px")};
         }
-    
+
         crop_bounds[0] -= margin;
         crop_bounds[1] -= margin;
         crop_bounds[2] += margin;
         crop_bounds[3] += margin;
-        
+
         if (crop_layers == true){
             tmp_doc.crop(crop_bounds);
         }
-		
+
 		// make file path -> cut off commands
 		var file_name = layer_name;
-	
+
         var keyword_pos = 100000;
         if (layer_name.indexOf("--sprites") != -1){
             if (layer_name.indexOf("--sprites") < keyword_pos){
@@ -284,18 +284,18 @@ function export_sprites(export_path , export_name , crop_to_dialog_bounds , cent
         }else{
             file_name = layer_name.substring(0,keyword_pos);
         }
-		
+
 		var file_path = "sprites/"+file_name+".png";
 
 		//--- { Save batch or simple image } ---\\
-		
+
 		//we can store coords by two methods...:
-		        
+
         // check if layer is a group with sprite setting
         if (layer_name.indexOf("--sprites") != -1){
             var keyword_pos = layer_name.indexOf("--sprites") ;
             var sprites = tmp_doc.layers[0].layers;
-			
+
 			//calc tile size {
             var sprite_count = sprites.length;
             if (column_str_index = layer_name.indexOf("c=") != -1){
@@ -306,7 +306,7 @@ function export_sprites(export_path , export_name , crop_to_dialog_bounds , cent
             }
             tile_size = [columns,Math.ceil(sprite_count/columns)];
 			// }
-			
+
             var k = 0;
             for(var j = 0;j<sprites.length;j++){
                 if(j>0 && j%columns == 0){
@@ -315,21 +315,21 @@ function export_sprites(export_path , export_name , crop_to_dialog_bounds , cent
 				var x = tmp_doc.width * (j%columns);
 				var y = tmp_doc.height * k;
                 sprites[j].translate(x, y);
-				
+
 				//(1) method - few sprites on texture
 				coords.push({
-					name: file_name+"["+sprites[j].name+"]",
+					name: file_name+"_"+sprites[j].name,
 					file_path: file_path,
 					pos: layer_pos,
 					tile_size: tile_size,
 					bounds: [x.as("px"), y.as("px"), tmp_doc.width.as("px"), tmp_doc.height.as("px")]
 				})
             }
-            
+
             extend_document_size(tmp_doc.width * columns, tmp_doc.height * (k+1));
         }
 		//(2) method - only one sprite on texture
-		else 
+		else
 			coords.push({
 				name: file_name,
 				file_path: file_path,
@@ -337,20 +337,20 @@ function export_sprites(export_path , export_name , crop_to_dialog_bounds , cent
 				tile_size: tile_size,
 				bounds: [0,0,tmp_doc.width.as("px"), tmp_doc.height.as("px")]
 			})
-        
+
         // do save stuff
         tmp_doc.exportDocument(File(export_path+"/"+file_path),ExportType.SAVEFORWEB,options );
-        
+
         // close tmp doc again
         tmp_doc.close(SaveOptions.DONOTSAVECHANGES);
     }
     dupli_doc.close(SaveOptions.DONOTSAVECHANGES);
-    
+
     if (export_json == true){
         save_coords(center_sprites,export_path, export_name);
-    }    
+    }
     app.preferences.rulerUnits = init_units;
-} 
+}
 
 function export_button(){
 
@@ -360,7 +360,7 @@ function export_button(){
     //export_sprites(win.export_path.text, win.export_name.text, win.limit_layer.value, win.center_sprites.value);
     app.activeDocument.suspendHistory("Export selected Sprites","export_sprites(win.export_path.text, win.export_name.text, win.limit_layer.value, win.center_sprites.value,win.crop_layers.value,win.export_json.value)");
     win.close();
-}    
+}
 
 function path_button(){
     var folder_path = Folder.selectDialog ("Select Place to save");
@@ -368,7 +368,7 @@ function path_button(){
         win.export_path.text = folder_path;
         app.activeDocument.info.caption = folder_path;
     }
-}    
+}
 
 var win = new Window("dialog", 'Json Exporter'+exporter_version, [0,0,445,157], );
 with(win){
