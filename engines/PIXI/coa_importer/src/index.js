@@ -16,4 +16,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 	app.stage.addChild(wind);
 
 	wind.nodes.test.setProgress(0.8);
+	wind.nodes.close.on('pointerdown', ()=>{
+		console.log('close window');
+	});
 });

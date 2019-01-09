@@ -56,7 +56,9 @@ Features:
 
 ## PIXI
 
-todo
+- UI Importer with support:
+ - buttons
+ - progress bars
 
 # Download and Installation
 Download or Clone the github repository to your local drive. If you download the ZIP File from Github, please make sure to unzip.
@@ -98,6 +100,11 @@ wip
 - `--sprites` - export folder as texture batch
 - `m=` - margin in pixels
 - `c=` - columns in batch (deprecated?)
+
+### UI Creation workflow
+
+You can create ui directly in your editor. TODO: readme for layer naming
+Example file in /test/sample/test-ui.psd
 
 # Credits
 This is fork of Andreas Esau COA Tools
