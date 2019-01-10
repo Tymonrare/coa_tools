@@ -56,6 +56,14 @@ Features:
 
 ## PIXI
 
+### Install
+
+- npm
+
+```
+ $ npm install coat-pixi
+```
+
 - UI Importer with support:
  - buttons
  - progress bars
