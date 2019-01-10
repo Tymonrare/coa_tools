@@ -47,6 +47,17 @@ export default function(basePath, config) {
 						new PIXI.Rectangle(bnd[0], bnd[1], bnd[2], bnd[3])
 					);
 				}
+				if (node.frames) {
+					for (var i in node.frames) {
+						let fr = node.frames[i];
+						let bnd = fr.bounds;
+						let txt = new PIXI.Texture(
+							texture.baseTexture,
+							new PIXI.Rectangle(bnd[0], bnd[1], bnd[2], bnd[3])
+						);
+						fr.texture = txt;
+					}
+				}
 
 				texture.defaultAnchor.set(node.pivot_offset[0], node.pivot_offset[1]);
 
