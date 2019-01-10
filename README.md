@@ -69,6 +69,7 @@ Features:
 - UI Importer with support:
  - buttons
  - progress bars
+ - tabs
 
 # Download and Installation
 Download or Clone the github repository to your local drive. If you download the ZIP File from Github, please make sure to unzip.
@@ -127,6 +128,19 @@ Also avaible commands:
 
 You can create ui directly in your editor. TODO: readme for layer naming
 Example file in /test/sample/test-ui.psd
+
+#### Avaible Features
+
+Engines:
+
+- PIXI
+
+Features:
+
+- Buttons
+- Progress bars
+- Tabs
+- Windows
 
 # Credits
 This is fork of Andreas Esau COA Tools
