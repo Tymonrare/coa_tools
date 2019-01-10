@@ -1,6 +1,7 @@
 /** @format */
 
 import * as PIXI from 'pixi.js';
+import { forEachNodeInTree } from './utils.js';
 
 /**
  * 	* @brief
@@ -20,7 +21,8 @@ export default function(basePath, config) {
 		const loader = PIXI.loader;
 
 		const fileList = [];
-		config.nodes.forEach((node) => {
+
+		forEachNodeInTree(config.nodes, (node) => {
 			let path = node.resource_path;
 
 			//do not reload
@@ -32,19 +34,23 @@ export default function(basePath, config) {
 		});
 
 		loader.load((loader, resources) => {
-			config.nodes.forEach((node) => {
+			forEachNodeInTree(config.nodes, (node) => {
 				let path = node.resource_path;
+				if (node.type == 'group') return;
+
 				let texture = resources[path].texture;
 
-				let bnd = node.bounds;
-				let txt = new PIXI.Texture(
-					texture.baseTexture,
-					new PIXI.Rectangle(bnd[0], bnd[1], bnd[2], bnd[3])
-				);
+				if (node.bounds) {
+					let bnd = node.bounds;
+					texture = new PIXI.Texture(
+						texture.baseTexture,
+						new PIXI.Rectangle(bnd[0], bnd[1], bnd[2], bnd[3])
+					);
+				}
 
-				txt.defaultAnchor.set(node.pivot_offset[0], node.pivot_offset[1]);
+				texture.defaultAnchor.set(node.pivot_offset[0], node.pivot_offset[1]);
 
-				node.texture = txt;
+				node.texture = texture;
 			});
 
 			resolve(config);

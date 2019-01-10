@@ -54,7 +54,7 @@ function processByType(node, root) {
 }
 
 function processBySubtype(node, root) {
-	switch (node.properties.type) {
+	switch (meta.type) {
 		case 'btn':
 			processType_btn(node, root);
 			break;
@@ -62,7 +62,7 @@ function processBySubtype(node, root) {
 			processType_progress(node, root);
 			break;
 		default:
-			makeSpriteFromNode(node, root);
+			makeSpriteFromNode(node, root.children[0]);
 	}
 }
 
@@ -179,12 +179,12 @@ function processType_progress(node, root) {
 
 function findParentForNode(node, root) {
 	let path = node.node_path.split('.');
+	console.log(path, root);
 	let parent = root;
 	for (let i in path) {
 		let child = parent.nodes[path[i]];
-		if (!child) {
+		if(!child){
 			child = new PIXI.Container();
-			child.nodes = {};
 			addChildNode(node, child, parent);
 		}
 		parent = child;
@@ -202,13 +202,12 @@ function makeSpriteFromNode(node, parent) {
 function addChildNode(node, child, parent) {
 	child.rotation = node.rotation; //radians
 	child.alpha = node.opacity;
-
-	if (node.scale) child.scale.set(node.scale[0], node.scale[1]);
-	if (node.position) child.position.set(node.position[0], node.position[1]);
-	if (node.pivot_offset && child.anchor) child.anchor.set(node.pivot_offset[0], node.pivot_offset[1]);
+	child.scale.set(node.scale[0], node.scale[1]);
+	child.position.set(node.position[0], node.position[1]);
+	child.anchor.set(node.pivot_offset[0], node.pivot_offset[1]);
 
 	parent.nodes = parent.nodes || {};
-	parent.nodes[node.name] = child;
+	parent.nodes[mode.name] = child;
 
 	parent.addChild(child);
 }
