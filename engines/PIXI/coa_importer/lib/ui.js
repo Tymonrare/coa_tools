@@ -65,8 +65,7 @@ export default class extends PIXI.Container {
 			let gr = node.properties.node_group;
 			if (!this.groups[gr]) this.groups[gr] = {};
 
-			for(let i in this.groups[gr])
-				this.groups[gr][i].visible = false;
+			for (let i in this.groups[gr]) this.groups[gr][i].visible = false;
 
 			this.groups[gr][node.name] = obj;
 
@@ -120,11 +119,9 @@ export default class extends PIXI.Container {
 			let c = this.findContainerForPath(node.properties.target_tab, this.root);
 			btn.on('pointerdown', () => {
 				let gr = this.groups[c.group];
-				for(var i in gr){
-					if(c != gr[i])
-						gr[i].visible = false;
-					else 
-						gr[i].visible = true;
+				for (var i in gr) {
+					if (c != gr[i]) gr[i].visible = false;
+					else gr[i].visible = true;
 				}
 			});
 		}
@@ -174,9 +171,11 @@ export default class extends PIXI.Container {
 			let fr = node.frames.find((f) => {
 				return f.id == ordered[i];
 			});
-			let sprite = new PIXI.Sprite(fr.texture);
-			this.addChildNode(node, sprite, bar);
-			bar.nodes[fr.id] = sprite;
+			if (fr) {
+				let sprite = new PIXI.Sprite(fr.texture);
+				this.addChildNode(node, sprite, bar);
+				bar.nodes[fr.id] = sprite;
+			}
 		}
 
 		bar.setProgress = function(progress) {
@@ -197,8 +196,7 @@ export default class extends PIXI.Container {
 		return bar;
 	}
 	findContainerForPath(path, root) {
-		if(typeof path == 'string')
-			path = [path];
+		if (typeof path == 'string') path = [path];
 
 		let parent = root;
 		for (let i in path) {
