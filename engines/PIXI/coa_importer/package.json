@@ -1,18 +1,23 @@
 {
-  "name": "pixi_coa_importer",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "coat-pixi",
+  "version": "0.1.2",
+  "description": "coa_tools importer for pixi",
+  "main": "dist/main.js",
   "directories": {
-    "lib": "lib"
+    "lib": "lib",
+    "test": "test",
+    "dist": "dist"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "start": "webpack-dev-server --open --mode=development"
+    "test": "webpack-dev-server --open --mode=development",
+    "start": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tymonrare/coa_tools.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "tymonr",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.2.2",
@@ -29,5 +34,9 @@
   },
   "dependencies": {
     "pixi.js": "^4.8.5"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/Tymonrare/coa_tools/issues"
+  },
+  "homepage": "https://github.com/Tymonrare/coa_tools#readme"
 }

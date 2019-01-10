@@ -1,0 +1,11 @@
+.babelrc
+.gitignore
+lib/
+node_modules/
+package.json
+.prettierrc
+README.md
+res/
+.tern-project
+test/
+webpack.config.js
