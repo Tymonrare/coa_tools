@@ -58,11 +58,13 @@ Features:
 
 ### Install
 
-- npm
+#### npm
 
 ```
  $ npm install coat-pixi
 ```
+
+### Features
 
 - UI Importer with support:
  - buttons
