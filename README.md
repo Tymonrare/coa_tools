@@ -126,7 +126,7 @@ Also avaible commands:
 
 ### UI Creation workflow
 
-[ru](docs/coa_tools_ui_examples.md)
+[ru](docs/exaple-ui-ru.md)
 
 You can create ui directly in your editor. TODO: readme for layer naming
 Example file in /test/sample/test-ui.psd
