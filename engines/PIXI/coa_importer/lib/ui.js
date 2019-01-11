@@ -1,5 +1,5 @@
 /** @format */
-import * as PIXI from 'pixi.js';
+import {Container, Sprite} from 'pixi.js';
 import { forEachNodeInTree, sortAllNodesInTree } from './utils.js';
 
 /**
@@ -7,9 +7,9 @@ import { forEachNodeInTree, sortAllNodesInTree } from './utils.js';
  *
  * @Param config
  *
- * @Returns PIXI.container
+ * @Returns  container
  */
-export default class extends PIXI.Container {
+export default class extends  Container {
 	constructor(config) {
 		super();
 
@@ -17,7 +17,7 @@ export default class extends PIXI.Container {
 		this.groups = {};
 
 		//main container with scene offset
-		this.root = new PIXI.Container();
+		this.root = new  Container();
 		this.root.nodes = this.nodes;
 		this.addChild(this.root);
 		this.root.position.set(config.scene.offset[0], -config.scene.offset[1]);
@@ -162,7 +162,7 @@ export default class extends PIXI.Container {
 	addProgressNode(node, root) {
 		//FIXME: положение контейнера будет по нулям, что не совсем корректно. Желательно выставлять его
 		//В положение body, а положения дочерних элементов корректировать релативно
-		let bar = new PIXI.Container();
+		let bar = new  Container();
 		root.nodes[node.name] = bar;
 		root.addChild(bar);
 
@@ -172,7 +172,7 @@ export default class extends PIXI.Container {
 				return f.id == ordered[i];
 			});
 			if (fr) {
-				let sprite = new PIXI.Sprite(fr.texture);
+				let sprite = new  Sprite(fr.texture);
 				this.addChildNode(node, sprite, bar);
 				bar.nodes[fr.id] = sprite;
 			}
@@ -183,12 +183,12 @@ export default class extends PIXI.Container {
 
 			/*
 			//from pixi example;
-			const graphics = new PIXI.Graphics();
+			const graphics = new  Graphics();
 			graphics.beginFill(0xff3300);
 			graphics.drawRect(0, 0, 100, 100);
 			graphics.endFill();
 
-			const sprite = new PIXI.Sprite(texture);
+			const sprite = new  Sprite(texture);
 			sprite.mask = graphics;
 			*/
 		};
@@ -205,7 +205,7 @@ export default class extends PIXI.Container {
 
 			let child = parent.nodes[name];
 			if (!child) {
-				child = new PIXI.Container();
+				child = new  Container();
 				child.nodes = {};
 
 				parent.nodes = parent.nodes || {};
@@ -227,7 +227,7 @@ export default class extends PIXI.Container {
 	}
 
 	makeSpriteFromNode(node, parent) {
-		let s = new PIXI.Sprite(node.texture);
+		let s = new  Sprite(node.texture);
 		this.addChildNode(node, s, parent);
 		return s;
 	}

@@ -9,8 +9,18 @@ module.exports = (env, argv) => {
 	let props = {
 		entry: './lib/index.js',
 		output: {
-			filename: '[name].js',
+			filename: 'index.js',
+    	library: 'coaToolsPixi',
+    	libraryTarget:'umd',
 			path: path.resolve(__dirname, 'dist')
+		},
+		externals: {
+			"pixi.js":{
+				commonjs: 'pixi.js',
+        commonjs2: 'pixi.js',
+        amd: 'pixi.js',
+				root: 'PIXI'
+			}
 		},
 		resolve: {
 			extensions: ['.js'],

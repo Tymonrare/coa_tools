@@ -1,6 +1,6 @@
 /** @format */
 
-import * as PIXI from 'pixi.js';
+import {Rectangle, Texture, loader as pixiLoader} from 'pixi.js';
 import { forEachNodeInTree } from './utils.js';
 
 /**
@@ -14,20 +14,17 @@ import { forEachNodeInTree } from './utils.js';
  */
 
 export default function(basePath, config) {
-	return new Promise((resolve) => {
+	return new Promise((resolve, reject) => {
 		//v5:
 		//const loader = new PIXI.Loader();
 		//v4
-		const loader = PIXI.loader;
-
-		const fileList = [];
+		const loader = pixiLoader;
 
 		forEachNodeInTree(config.nodes, (node) => {
 			let path = node.resource_path;
 
 			//do not reload
-			if (fileList.includes(path)) return;
-			fileList.push(path);
+			if (loader.resources[path]) return;
 
 			//add needs name, but we doesn't
 			loader.add(path, basePath + path);
@@ -42,18 +39,18 @@ export default function(basePath, config) {
 
 				if (node.bounds) {
 					let bnd = node.bounds;
-					texture = new PIXI.Texture(
+					texture = new Texture(
 						texture.baseTexture,
-						new PIXI.Rectangle(bnd[0], bnd[1], bnd[2], bnd[3])
+						new Rectangle(bnd[0], bnd[1], bnd[2], bnd[3])
 					);
 				}
 				if (node.frames) {
 					for (var i in node.frames) {
 						let fr = node.frames[i];
 						let bnd = fr.bounds;
-						let txt = new PIXI.Texture(
+						let txt = new Texture(
 							texture.baseTexture,
-							new PIXI.Rectangle(bnd[0], bnd[1], bnd[2], bnd[3])
+							new Rectangle(bnd[0], bnd[1], bnd[2], bnd[3])
 						);
 						fr.texture = txt;
 					}
@@ -65,6 +62,11 @@ export default function(basePath, config) {
 			});
 
 			resolve(config);
+		});
+
+		loader.onError.add((err) => {
+			console.error("Got loader error", err);
+			reject();
 		});
 	});
 }
