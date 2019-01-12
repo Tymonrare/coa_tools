@@ -14,6 +14,7 @@ document.body.appendChild(app.view);
 
 loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 	let wind = new ui(conf);
+	console.log(wind)
 	wind.position.set(width / 2, height / 2);
 
 	let ws = conf.scene.size[0] / width;

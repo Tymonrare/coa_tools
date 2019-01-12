@@ -38,6 +38,9 @@ export default class extends Container {
 	}
 
 	addNode(node, root) {
+		if(!root)
+			root = this.root;
+
 		let parent = this.findParentForNode(node, root);
 
 		let obj;
@@ -54,12 +57,14 @@ export default class extends Container {
 					default:
 						obj = this.makeSpriteFromNode(node, parent);
 				}
+				break;
 			case 'group':
 				obj = parent;
 				break;
 		}
 
 		obj.node = node;
+		obj.name = node.name;
 
 		if (node.properties.node_group) {
 			let gr = node.properties.node_group;
@@ -68,9 +73,11 @@ export default class extends Container {
 			for (let i in this.groups[gr]) this.groups[gr][i].visible = false;
 
 			this.groups[gr][node.name] = obj;
-
+			
 			obj.group = gr;
 		}
+
+		return obj;
 	}
 
 	addChildNode(node, child, parent) {
