@@ -143,8 +143,10 @@ export default class extends Container {
 		}
 
 		function onButtonUp() {
+			if(this.isdown)
+				this.scale.set(this.scale.x + .2, this.scale.y + .2);
+
 			this.isdown = false;
-			this.scale.set(this.scale.x + .2, this.scale.y + .2);
 			if (this.isOver) {
 				setState.apply(this, ['hover']);
 			} else {
