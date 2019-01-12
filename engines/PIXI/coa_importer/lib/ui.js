@@ -45,9 +45,12 @@ export default class extends Container {
 
 		let rootObj;
 		forEachNodeInTree([node], (node) => {
-			//first created node will be root
 			let obj = this.addNode(node, this.root, node.node_path.replace(name, newName));
-			if (!rootObj) rootObj = obj;
+			//first created node will be root
+			if (!rootObj) {
+				rootObj = obj;
+				rootObj.name = newName;
+			}
 		});
 		return rootObj;
 	}
