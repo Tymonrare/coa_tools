@@ -61,8 +61,10 @@ export default class extends Container {
 		* @Param child PIXI.DisplayObject instance
 	*/
 	removeChild(child){
+		if(child.parent){
+			delete child.parent.nodes[child.name];
+		}
 		child.destroy({children:true});
-		this.nodes[child.name] = null;
 	}
 
 	addNode(node, root, path) {
