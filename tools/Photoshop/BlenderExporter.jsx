@@ -19,7 +19,7 @@ var layers = document.layers;
 
 function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, export_json) {
 	exportTemplate.resource_path = export_name + '/';
-
+	
 	//=== { Prepare } ===\\
 
 	var init_units = app.preferences.rulerUnits;
@@ -67,13 +67,15 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 
 	function process(doc, parentNode, savePath) {
 		var nodesList = parentNode.nodes;
-
+		
 		forEachLayer(doc, function (layer, index) {
+			if(layer.name[0] == '#') return;
+			
 			var props = propsByName(layer.name);
-
+			
 			if(props.group && layer.typename == "LayerSet"){
 				var file_path = savePath + props.id + "/"; //directory
-
+				
 				var node = makeNode({
 					name: props.id,
 					file_path: file_path,
@@ -82,14 +84,14 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 				});
 				node.nodes = [];
 				nodesList.push(node);
-
+				
 				process(layer, node, file_path);
-
+				
 				return;
 			}
-
+			
 			//=== { Settings } ===\\
-
+			
 			var bounds = [layer.bounds[0].as("px"), layer.bounds[1].as("px"), layer.bounds[2].as("px"), layer.bounds[3].as("px")];
 			var bounds_width = bounds[2] - bounds[0];
 			var bounds_height = bounds[3] - bounds[1];
@@ -97,9 +99,10 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 			var margin = props.margin||0;
 
 			//=== { Make document } ===\\
-
-			var layer_pos = Array(bounds[0] - margin, -index, bounds[1] - margin);
+			
 			var tmp_doc = app.documents.add(dupli_doc.width, dupli_doc.height, dupli_doc.resolution, props.id, NewDocumentMode.RGB, DocumentFill.TRANSPARENT);
+			var layer_pos = Array(bounds[0] - margin, -index, bounds[1] - margin);
+		
 
 			// duplicate layer into new doc and crop to layerbounds with margin
 			app.activeDocument = dupli_doc;
@@ -130,13 +133,18 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 			if (crop_layers == true) {
 				tmp_doc.crop(crop_bounds);
 			}
+			
+			//move to align anchor
+			var anchor = [0.5, 0.5]
+			layer_pos[0] += tmp_doc.width.as("px")*anchor[0];
+			layer_pos[2] += tmp_doc.height.as("px")*anchor[1];
 
 			// make file path -> cut off commands
 			var file_name = props.id;
 			var file_path = savePath + file_name + ".png";
 
 			//--- { Save batch or simple image } ---\\
-
+			
 			// check if layer is a group with sprite setting
 			if (props.frames) {
 				var sprites = tmp_doc.layers[0].layers;
@@ -144,17 +152,17 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 				//calc tile size {
 				var sprite_count = sprites.length;
 				var columns = props.columns;
-
+				
 				if(!columns) {
 					var maxW = sprite_count*tmp_doc.width.as('px');
 					var maxH = sprite_count*tmp_doc.height.as('px');
-
+					
 					var d = maxW/maxH;
-
+					
 					columns = Math.max(1, Math.min(Math.ceil(2/d), sprite_count));
 				}
 				// }
-
+				
 				var frames = [];
 				var k = 0;
 				for (var j = 0; j < sprites.length; j++) {
@@ -168,10 +176,10 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 					//(1) method - few sprites on texture
 					frames.push({
 						id:sprites[j].name,
-						texture_rect: [x.as("px"), y.as("px"), tmp_doc.width.as("px"), tmp_doc.height.as("px")]
+						bounds: [x.as("px"), y.as("px"), tmp_doc.width.as("px"), tmp_doc.height.as("px")]
 					});
 				}
-
+				
 				nodesList.push(makeNode({
 					name: file_name,
 					file_path: file_path,
@@ -179,6 +187,8 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 					frames: frames,
 					type: 'frames',
 					properties: props,
+					pivot_offset: anchor,
+					size: [tmp_doc.width.as("px"), tmp_doc.height.as("px")]
 				}));
 
 				extend_document_size(tmp_doc.width * columns, tmp_doc.height * (k + 1));
@@ -191,14 +201,16 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 					position: layer_pos,
 					type: 'sprite',
 					properties: props,
-					texture_rect: [0, 0, tmp_doc.width.as("px"), tmp_doc.height.as("px")]
+					bounds: [0, 0, tmp_doc.width.as("px"), tmp_doc.height.as("px")],
+					pivot_offset: anchor,
+					size: [tmp_doc.width.as("px"), tmp_doc.height.as("px")]
 				}));
-
+				
 				// do save stuff
 				var export_folder = new Folder(export_path + "/" + savePath);
 				if (export_folder.exists)
 					export_folder.remove();
-
+				
 				export_folder.create();
 
 				tmp_doc.exportDocument(File(export_path + "/" + file_path), ExportType.SAVEFORWEB, options);
@@ -219,26 +231,36 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 }
 
 function makeNode(props) {
+	if(!props.position)
+		props.position = [0,0,0];
+	if(!props.pivot_offset)
+		props.pivot_offset = [0,0];
+	
+	var p = props.file_path;
+		p = p.slice(p.indexOf('/') + 1);
+		p = p.substring(0, p.lastIndexOf('/'));
+		p = p.replace(/\//g, '.');
+		props.node_path = p;
+	
 	var node = {
 		name: props.name,
 		type: props.type,
 		properties: props.properties,
-		node_path: props.name,
+		node_path: props.node_path,
 		resource_path: props.file_path,
-		pivot_offset: [0, 0],
-		rotation: 0,
-		scale: [1, 1],
-		opacity: 1,
-		texture_rect: props.texture_rect,
+		transform: {
+			pivot_offset: props.pivot_offset,
+			rotation: 0,
+			scale: [1, 1],
+			opacity: 1,
+			size: props.size,
+			z: props.position[1],
+			position: [props.position[0], props.position[2]],
+		},
+		bounds: props.bounds,
+		frames: props.frames
 	};
-
-	if(props.frames)
-		node.frames = props.frames;
-	if(props.position){
-		node.position = [props.position[0], props.position[2]];
-		node.z = props.position[1];
-	}
-
+	
 	return node;
 }
 
@@ -270,7 +292,7 @@ function propsByName(name) {
 			props[prop.slice(2)] = true;
 		}
 	}
-
+	
 	return props;
 
 	function toVal(val) {

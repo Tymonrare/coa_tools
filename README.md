@@ -108,6 +108,8 @@ wip
 
 ### Layers naming keywords
 
+All layer with names stating by `#` will be ignored
+
 You can set layer name/id by:
 
 - First word of layer name will be id
