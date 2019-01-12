@@ -16,27 +16,181 @@
 			},
 			"node_path": "skill_tab",
 			"resource_path": "test/skill_tab/",
-			"pivot_offset": [0, 0],
-			"rotation": 0,
-			"scale": [1, 1],
-			"opacity": 1,
-			"position": [0, 0],
-			"z": 0,
+			"transform": {
+				"pivot_offset": [0, 0],
+				"rotation": 0,
+				"scale": [1, 1],
+				"opacity": 1,
+				"z": 0,
+				"position": [0, 0]
+			},
 			"nodes": [{
-					"name": "test",
+					"name": "start_btn",
 					"type": "sprite",
 					"properties": {
-						"id": "test"
+						"id": "start_btn",
+						"type": "btn"
 					},
 					"node_path": "skill_tab",
-					"resource_path": "test/skill_tab/test.png",
-					"pivot_offset": [0, 0],
-					"rotation": 0,
-					"scale": [1, 1],
-					"opacity": 1,
-					"bounds": [0, 0, 39, 16],
-					"position": [606, 279],
-					"z": 0
+					"resource_path": "test/skill_tab/start_btn.png",
+					"transform": {
+						"pivot_offset": [0.5, 0.5],
+						"rotation": 0,
+						"scale": [1, 1],
+						"opacity": 1,
+						"size": [165, 59],
+						"z": 0,
+						"position": [1115.5, 88.5]
+					},
+					"bounds": [0, 0, 165, 59]
+				}, {
+					"name": "empty_skill_slot",
+					"type": "group",
+					"properties": {
+						"id": "empty_skill_slot",
+						"group": true
+					},
+					"node_path": "skill_tab.empty_skill_slot",
+					"resource_path": "test/skill_tab/empty_skill_slot/",
+					"transform": {
+						"pivot_offset": [0, 0],
+						"rotation": 0,
+						"scale": [1, 1],
+						"opacity": 1,
+						"z": 0,
+						"position": [0, 0]
+					},
+					"nodes": [{
+							"name": "remove_btn",
+							"type": "sprite",
+							"properties": {
+								"id": "remove_btn",
+								"type": "btn"
+							},
+							"node_path": "skill_tab.empty_skill_slot",
+							"resource_path": "test/skill_tab/empty_skill_slot/remove_btn.png",
+							"transform": {
+								"pivot_offset": [0.5, 0.5],
+								"rotation": 0,
+								"scale": [1, 1],
+								"opacity": 1,
+								"size": [219, 39],
+								"z": 0,
+								"position": [116.5, 242.5]
+							},
+							"bounds": [0, 0, 219, 39]
+						}, {
+							"name": "slot",
+							"type": "sprite",
+							"properties": {
+								"id": "slot"
+							},
+							"node_path": "skill_tab.empty_skill_slot",
+							"resource_path": "test/skill_tab/empty_skill_slot/slot.png",
+							"transform": {
+								"pivot_offset": [0.5, 0.5],
+								"rotation": 0,
+								"scale": [1, 1],
+								"opacity": 1,
+								"size": [173, 124],
+								"z": -1,
+								"position": [116.5, 180]
+							},
+							"bounds": [0, 0, 173, 124]
+						}
+					]
+				}, {
+					"name": "avaible_skill_slot",
+					"type": "group",
+					"properties": {
+						"id": "avaible_skill_slot",
+						"group": true
+					},
+					"node_path": "skill_tab.avaible_skill_slot",
+					"resource_path": "test/skill_tab/avaible_skill_slot/",
+					"transform": {
+						"pivot_offset": [0, 0],
+						"rotation": 0,
+						"scale": [1, 1],
+						"opacity": 1,
+						"z": 0,
+						"position": [0, 0]
+					},
+					"nodes": [{
+							"name": "counter",
+							"type": "sprite",
+							"properties": {
+								"id": "counter"
+							},
+							"node_path": "skill_tab.avaible_skill_slot",
+							"resource_path": "test/skill_tab/avaible_skill_slot/counter.png",
+							"transform": {
+								"pivot_offset": [0.5, 0.5],
+								"rotation": 0,
+								"scale": [1, 1],
+								"opacity": 1,
+								"size": [77, 77],
+								"z": 0,
+								"position": [200.5, 325.5]
+							},
+							"bounds": [0, 0, 77, 77]
+						}, {
+							"name": "get_btn",
+							"type": "sprite",
+							"properties": {
+								"id": "get_btn",
+								"type": "btn"
+							},
+							"node_path": "skill_tab.avaible_skill_slot",
+							"resource_path": "test/skill_tab/avaible_skill_slot/get_btn.png",
+							"transform": {
+								"pivot_offset": [0.5, 0.5],
+								"rotation": 0,
+								"scale": [1, 1],
+								"opacity": 1,
+								"size": [192, 46],
+								"z": -1,
+								"position": [119, 431]
+							},
+							"bounds": [0, 0, 192, 46]
+						}, {
+							"name": "slot",
+							"type": "sprite",
+							"properties": {
+								"id": "slot"
+							},
+							"node_path": "skill_tab.avaible_skill_slot",
+							"resource_path": "test/skill_tab/avaible_skill_slot/slot.png",
+							"transform": {
+								"pivot_offset": [0.5, 0.5],
+								"rotation": 0,
+								"scale": [1, 1],
+								"opacity": 1,
+								"size": [173, 124],
+								"z": -2,
+								"position": [116.5, 380]
+							},
+							"bounds": [0, 0, 173, 124]
+						}, {
+							"name": "back",
+							"type": "sprite",
+							"properties": {
+								"id": "back"
+							},
+							"node_path": "skill_tab.avaible_skill_slot",
+							"resource_path": "test/skill_tab/avaible_skill_slot/back.png",
+							"transform": {
+								"pivot_offset": [0.5, 0.5],
+								"rotation": 0,
+								"scale": [1, 1],
+								"opacity": 1,
+								"size": [1256, 425],
+								"z": -3,
+								"position": [637, 493.5]
+							},
+							"bounds": [0, 0, 1256, 425]
+						}
+					]
 				}
 			]
 		}, {
@@ -50,12 +204,14 @@
 			},
 			"node_path": "prep_tab",
 			"resource_path": "test/prep_tab/",
-			"pivot_offset": [0, 0],
-			"rotation": 0,
-			"scale": [1, 1],
-			"opacity": 1,
-			"position": [0, 0],
-			"z": 0,
+			"transform": {
+				"pivot_offset": [0, 0],
+				"rotation": 0,
+				"scale": [1, 1],
+				"opacity": 1,
+				"z": 0,
+				"position": [0, 0]
+			},
 			"nodes": [{
 					"name": "avaible_skills",
 					"type": "group",
@@ -65,12 +221,14 @@
 					},
 					"node_path": "prep_tab.avaible_skills",
 					"resource_path": "test/prep_tab/avaible_skills/",
-					"pivot_offset": [0, 0],
-					"rotation": 0,
-					"scale": [1, 1],
-					"opacity": 1,
-					"position": [0, 0],
-					"z": 0,
+					"transform": {
+						"pivot_offset": [0, 0],
+						"rotation": 0,
+						"scale": [1, 1],
+						"opacity": 1,
+						"z": 0,
+						"position": [0, 0]
+					},
 					"nodes": [{
 							"name": "unit",
 							"type": "sprite",
@@ -79,13 +237,16 @@
 							},
 							"node_path": "prep_tab.avaible_skills",
 							"resource_path": "test/prep_tab/avaible_skills/unit.png",
-							"pivot_offset": [0, 0],
-							"rotation": 0,
-							"scale": [1, 1],
-							"opacity": 1,
-							"bounds": [0, 0, 81, 81],
-							"position": [65, 567],
-							"z": 0
+							"transform": {
+								"pivot_offset": [0.5, 0.5],
+								"rotation": 0,
+								"scale": [1, 1],
+								"opacity": 1,
+								"size": [81, 81],
+								"z": 0,
+								"position": [105.5, 607.5]
+							},
+							"bounds": [0, 0, 81, 81]
 						}, {
 							"name": "frame",
 							"type": "sprite",
@@ -94,13 +255,16 @@
 							},
 							"node_path": "prep_tab.avaible_skills",
 							"resource_path": "test/prep_tab/avaible_skills/frame.png",
-							"pivot_offset": [0, 0],
-							"rotation": 0,
-							"scale": [1, 1],
-							"opacity": 1,
-							"bounds": [0, 0, 1197, 130],
-							"position": [40, 543],
-							"z": -1
+							"transform": {
+								"pivot_offset": [0.5, 0.5],
+								"rotation": 0,
+								"scale": [1, 1],
+								"opacity": 1,
+								"size": [1197, 130],
+								"z": -1,
+								"position": [638.5, 608]
+							},
+							"bounds": [0, 0, 1197, 130]
 						}
 					]
 				}, {
@@ -112,12 +276,14 @@
 					},
 					"node_path": "prep_tab.locked_skill_pin",
 					"resource_path": "test/prep_tab/locked_skill_pin/",
-					"pivot_offset": [0, 0],
-					"rotation": 0,
-					"scale": [1, 1],
-					"opacity": 1,
-					"position": [0, 0],
-					"z": 0,
+					"transform": {
+						"pivot_offset": [0, 0],
+						"rotation": 0,
+						"scale": [1, 1],
+						"opacity": 1,
+						"z": 0,
+						"position": [0, 0]
+					},
 					"nodes": [{
 							"name": "skill_frame",
 							"type": "sprite",
@@ -126,13 +292,16 @@
 							},
 							"node_path": "prep_tab.locked_skill_pin",
 							"resource_path": "test/prep_tab/locked_skill_pin/skill_frame.png",
-							"pivot_offset": [0, 0],
-							"rotation": 0,
-							"scale": [1, 1],
-							"opacity": 1,
-							"bounds": [0, 0, 210, 96],
-							"position": [21, 231],
-							"z": 0
+							"transform": {
+								"pivot_offset": [0.5, 0.5],
+								"rotation": 0,
+								"scale": [1, 1],
+								"opacity": 1,
+								"size": [210, 96],
+								"z": 0,
+								"position": [126, 279]
+							},
+							"bounds": [0, 0, 210, 96]
 						}, {
 							"name": "level_pointer_pin",
 							"type": "sprite",
@@ -141,13 +310,16 @@
 							},
 							"node_path": "prep_tab.locked_skill_pin",
 							"resource_path": "test/prep_tab/locked_skill_pin/level_pointer_pin.png",
-							"pivot_offset": [0, 0],
-							"rotation": 0,
-							"scale": [1, 1],
-							"opacity": 1,
-							"bounds": [0, 0, 92, 113],
-							"position": [80, 85],
-							"z": -1
+							"transform": {
+								"pivot_offset": [0.5, 0.5],
+								"rotation": 0,
+								"scale": [1, 1],
+								"opacity": 1,
+								"size": [92, 113],
+								"z": -1,
+								"position": [126, 141.5]
+							},
+							"bounds": [0, 0, 92, 113]
 						}
 					]
 				}, {
@@ -158,13 +330,16 @@
 					},
 					"node_path": "prep_tab",
 					"resource_path": "test/prep_tab/science_counter.png",
-					"pivot_offset": [0, 0],
-					"rotation": 0,
-					"scale": [1, 1],
-					"opacity": 1,
-					"bounds": [0, 0, 301, 77],
-					"position": [927, 388],
-					"z": -2
+					"transform": {
+						"pivot_offset": [0.5, 0.5],
+						"rotation": 0,
+						"scale": [1, 1],
+						"opacity": 1,
+						"size": [301, 77],
+						"z": -2,
+						"position": [1077.5, 426.5]
+					},
+					"bounds": [0, 0, 301, 77]
 				}, {
 					"name": "charge_progress",
 					"type": "frames",
@@ -175,12 +350,15 @@
 					},
 					"node_path": "prep_tab",
 					"resource_path": "test/prep_tab/charge_progress.png",
-					"pivot_offset": [0, 0],
-					"rotation": 0,
-					"scale": [1, 1],
-					"opacity": 1,
-					"position": [33, 152],
-					"z": -3,
+					"transform": {
+						"pivot_offset": [0.5, 0.5],
+						"rotation": 0,
+						"scale": [1, 1],
+						"opacity": 1,
+						"size": [1211, 63],
+						"z": -3,
+						"position": [638.5, 183.5]
+					},
 					"frames": [{
 							"id": "body",
 							"bounds": [0, 0, 1211, 63]
@@ -199,12 +377,15 @@
 					},
 					"node_path": "prep_tab",
 					"resource_path": "test/prep_tab/charge_btn.png",
-					"pivot_offset": [0, 0],
-					"rotation": 0,
-					"scale": [1, 1],
-					"opacity": 1,
-					"position": [50, 411],
-					"z": -4,
+					"transform": {
+						"pivot_offset": [0.5, 0.5],
+						"rotation": 0,
+						"scale": [1, 1],
+						"opacity": 1,
+						"size": [182, 41],
+						"z": -4,
+						"position": [141, 431.5]
+					},
 					"frames": [{
 							"id": "idle",
 							"bounds": [0, 0, 182, 41]
@@ -226,12 +407,15 @@
 			},
 			"node_path": "",
 			"resource_path": "test/prep_tab_btn.png",
-			"pivot_offset": [0, 0],
-			"rotation": 0,
-			"scale": [1, 1],
-			"opacity": 1,
-			"position": [208, 20],
-			"z": -2,
+			"transform": {
+				"pivot_offset": [0.5, 0.5],
+				"rotation": 0,
+				"scale": [1, 1],
+				"opacity": 1,
+				"size": [182, 41],
+				"z": -2,
+				"position": [299, 40.5]
+			},
 			"frames": [{
 					"id": "idle",
 					"bounds": [0, 0, 182, 41]
@@ -251,12 +435,15 @@
 			},
 			"node_path": "",
 			"resource_path": "test/skill_tab_btn.png",
-			"pivot_offset": [0, 0],
-			"rotation": 0,
-			"scale": [1, 1],
-			"opacity": 1,
-			"position": [26, 22],
-			"z": -3,
+			"transform": {
+				"pivot_offset": [0.5, 0.5],
+				"rotation": 0,
+				"scale": [1, 1],
+				"opacity": 1,
+				"size": [166, 37],
+				"z": -3,
+				"position": [109, 40.5]
+			},
 			"frames": [{
 					"id": "idle",
 					"bounds": [0, 0, 166, 37]
@@ -271,13 +458,16 @@
 			},
 			"node_path": "",
 			"resource_path": "test/close_btn.png",
-			"pivot_offset": [0, 0],
-			"rotation": 0,
-			"scale": [1, 1],
-			"opacity": 1,
-			"bounds": [0, 0, 53, 43],
-			"position": [1212, 3],
-			"z": -4
+			"transform": {
+				"pivot_offset": [0.5, 0.5],
+				"rotation": 0,
+				"scale": [1, 1],
+				"opacity": 1,
+				"size": [53, 43],
+				"z": -4,
+				"position": [1238.5, 24.5]
+			},
+			"bounds": [0, 0, 53, 43]
 		}, {
 			"name": "back",
 			"type": "sprite",
@@ -286,13 +476,16 @@
 			},
 			"node_path": "",
 			"resource_path": "test/back.png",
-			"pivot_offset": [0, 0],
-			"rotation": 0,
-			"scale": [1, 1],
-			"opacity": 1,
-			"bounds": [0, 0, 1280, 720],
-			"position": [0, 0],
-			"z": -5
+			"transform": {
+				"pivot_offset": [0.5, 0.5],
+				"rotation": 0,
+				"scale": [1, 1],
+				"opacity": 1,
+				"size": [1280, 720],
+				"z": -5,
+				"position": [640, 360]
+			},
+			"bounds": [0, 0, 1280, 720]
 		}
 	]
 }
