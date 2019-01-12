@@ -6,6 +6,14 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, argv) => {
+	let externals = {
+				"pixi.js":{
+					commonjs: 'pixi.js',
+	        commonjs2: 'pixi.js',
+	        amd: 'pixi.js',
+					root: 'PIXI'
+				}
+			};
 	let props = {
 		entry: './lib/index.js',
 		output: {
@@ -13,14 +21,6 @@ module.exports = (env, argv) => {
     	library: 'coaToolsPixi',
     	libraryTarget:'umd',
 			path: path.resolve(__dirname, 'dist')
-		},
-		externals: {
-			"pixi.js":{
-				commonjs: 'pixi.js',
-        commonjs2: 'pixi.js',
-        amd: 'pixi.js',
-				root: 'PIXI'
-			}
 		},
 		resolve: {
 			extensions: ['.js'],
@@ -55,6 +55,9 @@ module.exports = (env, argv) => {
 			title: 'teplate'
 		}))
 		props.plugins.push(new CopyWebpackPlugin([{ from: './res/', to: 'res' }]))
+	}
+	else {
+		props.externals = externals;
 	}
 
 	return props;

@@ -1,5 +1,5 @@
 /** @format */
-import {Container, Sprite} from 'pixi.js';
+import { Container, Sprite } from 'pixi.js';
 import { forEachNodeInTree, sortAllNodesInTree } from './utils.js';
 
 /**
@@ -9,7 +9,7 @@ import { forEachNodeInTree, sortAllNodesInTree } from './utils.js';
  *
  * @Returns  container
  */
-export default class extends  Container {
+export default class extends Container {
 	constructor(config) {
 		super();
 
@@ -17,14 +17,14 @@ export default class extends  Container {
 		this.groups = {};
 
 		//main container with scene offset
-		this.root = new  Container();
+		this.root = new Container();
 		this.root.nodes = this.nodes;
 		this.addChild(this.root);
 		this.root.position.set(config.scene.offset[0], -config.scene.offset[1]);
 
 		//sort by z index
 		sortAllNodesInTree(config.nodes, (a, b) => {
-			return a.z - b.z;
+			return a.transform.z - b.transform.z;
 		});
 
 		//add childs
@@ -74,13 +74,13 @@ export default class extends  Container {
 	}
 
 	addChildNode(node, child, parent) {
-		child.rotation = node.rotation; //radians
-		child.alpha = node.opacity;
+		child.rotation = node.transform.rotation; //radians
+		child.alpha = node.transform.opacity;
 
-		child.scale.set(node.scale[0], node.scale[1]);
-		child.position.set(node.position[0], node.position[1]);
-		if (node.pivot_offset && child.anchor)
-			child.anchor.set(node.pivot_offset[0], node.pivot_offset[1]);
+		child.scale.set(node.transform.scale[0], node.transform.scale[1]);
+		child.position.set(node.transform.position[0], node.transform.position[1]);
+		if (node.transform.pivot_offset && child.anchor)
+			child.anchor.set(node.transform.pivot_offset[0], node.transform.pivot_offset[1]);
 
 		parent.nodes = parent.nodes || {};
 		parent.nodes[node.name] = child;
@@ -101,13 +101,6 @@ export default class extends  Container {
 				if (states.hasOwnProperty(fr.id)) states[fr.id] = fr.texture;
 			});
 
-			if (states.hover || states.click) {
-				btn.on('pointerup', onButtonUp).on('pointerupoutside', onButtonUp);
-
-				if (states.hover) btn.on('pointerover', onButtonOver).on('pointerout', onButtonOut);
-				if (states.click) btn.on('pointerdown', onButtonDown);
-			}
-
 			btn.stateTextures = states;
 			onButtonOut.apply(btn);
 		}
@@ -126,55 +119,82 @@ export default class extends  Container {
 			});
 		}
 
+		btn.on('pointerup', onButtonUp)
+			.on('pointerupoutside', onButtonUp)
+			.on('pointerover', onButtonOver)
+			.on('pointerout', onButtonOut)
+			.on('pointerdown', onButtonDown);
+
 		return btn;
+
+		function setState(txt) {
+			if (this.stateTextures && this.stateTextures[txt]) {
+				this.texture = this.stateTextures[txt];
+				return true;
+			}
+
+			return false;
+		}
 
 		function onButtonDown() {
 			this.isdown = true;
-			this.texture = this.stateTextures.click;
+			this.scale.set(this.scale.x - .2, this.scale.y - .2);
+			setState.apply(this, ['click']);
 		}
 
 		function onButtonUp() {
 			this.isdown = false;
+			this.scale.set(this.scale.x + .2, this.scale.y + .2);
 			if (this.isOver) {
-				this.texture = this.stateTextures.hover;
+				setState.apply(this, ['hover']);
 			} else {
-				this.texture = this.stateTextures.idle;
+				setState.apply(this, ['idle']);
 			}
 		}
 
 		function onButtonOver() {
 			this.isOver = true;
+			this.scale.set(this.scale.x + .1, this.scale.y + .1);
 			if (this.isdown) {
 				return;
 			}
-			this.texture = this.stateTextures.hover;
+			setState.apply(this, ['hover']);
 		}
 
 		function onButtonOut() {
 			this.isOver = false;
+			this.scale.set(this.scale.x - .1, this.scale.y - .1);
 			if (this.isdown) {
 				return;
 			}
-			this.texture = this.stateTextures.idle;
+			setState.apply(this, ['idle']);
 		}
 	}
 
 	addProgressNode(node, root) {
 		//FIXME: положение контейнера будет по нулям, что не совсем корректно. Желательно выставлять его
 		//В положение body, а положения дочерних элементов корректировать релативно
-		let bar = new  Container();
+		let bar = new Container();
 		root.nodes[node.name] = bar;
 		root.addChild(bar);
 
 		let ordered = ['bar', 'body'];
 		for (var i in ordered) {
+			let type = ordered[i];
 			let fr = node.frames.find((f) => {
-				return f.id == ordered[i];
+				return f.id == type;
 			});
 			if (fr) {
-				let sprite = new  Sprite(fr.texture);
+				let sprite = new Sprite(fr.texture);
 				this.addChildNode(node, sprite, bar);
 				bar.nodes[fr.id] = sprite;
+
+				//align bar tu left cuse it fill scale from left to right
+				if (type == 'bar') {
+					sprite.anchor.set(0, 0.5);
+					let t = node.transform;
+					sprite.position.x = t.position[0] - t.size[0] * t.pivot_offset[0];
+				}
 			}
 		}
 
@@ -205,7 +225,7 @@ export default class extends  Container {
 
 			let child = parent.nodes[name];
 			if (!child) {
-				child = new  Container();
+				child = new Container();
 				child.nodes = {};
 
 				parent.nodes = parent.nodes || {};
@@ -227,7 +247,7 @@ export default class extends  Container {
 	}
 
 	makeSpriteFromNode(node, parent) {
-		let s = new  Sprite(node.texture);
+		let s = new Sprite(node.texture);
 		this.addChildNode(node, s, parent);
 		return s;
 	}

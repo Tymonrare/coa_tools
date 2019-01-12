@@ -56,7 +56,7 @@ export default function(basePath, config) {
 					}
 				}
 
-				texture.defaultAnchor.set(node.pivot_offset[0], node.pivot_offset[1]);
+				texture.defaultAnchor.set(node.transform.pivot_offset[0], node.transform.pivot_offset[1]);
 
 				node.texture = texture;
 			});
