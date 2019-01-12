@@ -29,55 +29,84 @@ export default class extends Container {
 
 		//add childs
 		forEachNodeInTree(config.nodes, (node) => {
-			try {
-				this.addNode(node, this.root);
-			} catch (err) {
-				console.error("Can't add node: ", err, node);
-			}
+			this.addNode(node, this.root);
 		});
 	}
 
-	addNode(node, root) {
-		if(!root)
-			root = this.root;
+	/**
+		* @brief copies and adds new node instance
+	*
+		* @Param node node element from config
+	*/
+	addNodeClone(node) {
+		let name = node.name;
+		node._clones = (node._clones || 0) + 1;
+		let newName = name + '_clone_' + node._clones;
 
-		let parent = this.findParentForNode(node, root);
+		let rootObj;
+		forEachNodeInTree([node], (node) => {
+			//first created node will be root
+			let obj = this.addNode(node, this.root, node.node_path.replace(name, newName));
+			if (!rootObj) rootObj = obj;
+		});
+		return rootObj;
+	}
 
-		let obj;
-		switch (node.type) {
-			case 'frames':
-			case 'sprite':
-				switch (node.properties.type) {
-					case 'btn':
-						obj = this.addBtnNode(node, parent);
-						break;
-					case 'progress':
-						obj = this.addProgressNode(node, parent);
-						break;
-					default:
-						obj = this.makeSpriteFromNode(node, parent);
-				}
-				break;
-			case 'group':
-				obj = parent;
-				break;
+	/**
+		* @brief removes child from scene
+	*
+		* @Param child PIXI.DisplayObject instance
+	*/
+	removeChild(child){
+		child.destroy({children:true});
+		this.nodes[child.name] = null;
+	}
+
+	addNode(node, root, path) {
+		try {
+			if (!root) root = this.root;
+
+			path = (path || node.node_path).split('.');
+			let parent = this.findContainerForPath(path, root);
+
+			let obj;
+			switch (node.type) {
+				case 'frames':
+				case 'sprite':
+					switch (node.properties.type) {
+						case 'btn':
+							obj = this.addBtnNode(node, parent);
+							break;
+						case 'progress':
+							obj = this.addProgressNode(node, parent);
+							break;
+						default:
+							obj = this.makeSpriteFromNode(node, parent);
+					}
+					break;
+				case 'group':
+					obj = parent;
+					break;
+			}
+
+			obj.node = node;
+			obj.name = node.name;
+
+			if (node.properties.node_group) {
+				let gr = node.properties.node_group;
+				if (!this.groups[gr]) this.groups[gr] = {};
+
+				for (let i in this.groups[gr]) this.groups[gr][i].visible = false;
+
+				this.groups[gr][node.name] = obj;
+
+				obj.group = gr;
+			}
+
+			return obj;
+		} catch (err) {
+			console.error("Can't add node: ", err, node);
 		}
-
-		obj.node = node;
-		obj.name = node.name;
-
-		if (node.properties.node_group) {
-			let gr = node.properties.node_group;
-			if (!this.groups[gr]) this.groups[gr] = {};
-
-			for (let i in this.groups[gr]) this.groups[gr][i].visible = false;
-
-			this.groups[gr][node.name] = obj;
-			
-			obj.group = gr;
-		}
-
-		return obj;
 	}
 
 	addChildNode(node, child, parent) {
@@ -145,13 +174,12 @@ export default class extends Container {
 
 		function onButtonDown() {
 			this.isdown = true;
-			this.scale.set(this.scale.x - .2, this.scale.y - .2);
+			this.scale.set(this.scale.x - 0.2, this.scale.y - 0.2);
 			setState.apply(this, ['click']);
 		}
 
 		function onButtonUp() {
-			if(this.isdown)
-				this.scale.set(this.scale.x + .2, this.scale.y + .2);
+			if (this.isdown) this.scale.set(this.scale.x + 0.2, this.scale.y + 0.2);
 
 			this.isdown = false;
 			if (this.isOver) {
@@ -163,7 +191,7 @@ export default class extends Container {
 
 		function onButtonOver() {
 			this.isOver = true;
-			this.scale.set(this.scale.x + .1, this.scale.y + .1);
+			this.scale.set(this.scale.x + 0.1, this.scale.y + 0.1);
 			if (this.isdown) {
 				return;
 			}
@@ -172,7 +200,7 @@ export default class extends Container {
 
 		function onButtonOut() {
 			this.isOver = false;
-			this.scale.set(this.scale.x - .1, this.scale.y - .1);
+			this.scale.set(this.scale.x - 0.1, this.scale.y - 0.1);
 			if (this.isdown) {
 				return;
 			}
@@ -248,11 +276,6 @@ export default class extends Container {
 		}
 
 		return parent;
-	}
-
-	findParentForNode(node, root) {
-		let path = node.node_path.split('.');
-		return this.findContainerForPath(path, root);
 	}
 
 	makeSpriteFromNode(node, parent) {

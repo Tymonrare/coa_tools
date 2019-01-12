@@ -1,10 +1,14 @@
 
-function forEachNodeInTree(root, callback) {
+function deepForEach(root, callback, reqProperty){
 	root.forEach((node) => {
 		callback(node);
 
-		if (node.nodes) forEachNodeInTree(node.nodes, callback);
+		if (node[reqProperty]) deepForEach(node[reqProperty], callback, reqProperty);
 	});
+}
+
+function forEachNodeInTree(root, callback) {
+	deepForEach(root, callback, 'nodes');
 }
 
 function sortAllNodesInTree(root, sorter){
@@ -14,4 +18,4 @@ function sortAllNodesInTree(root, sorter){
 	});
 }
 
-export { forEachNodeInTree, sortAllNodesInTree };
+export { forEachNodeInTree, sortAllNodesInTree, deepForEach };

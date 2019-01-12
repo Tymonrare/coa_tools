@@ -14,7 +14,6 @@ document.body.appendChild(app.view);
 
 loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 	let wind = new ui(conf);
-	console.log(wind)
 	wind.position.set(width / 2, height / 2);
 
 	let ws = conf.scene.size[0] / width;
@@ -23,8 +22,22 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 
 	app.stage.addChild(wind);
 
+	//test progress
 	wind.nodes.prep_tab.nodes.charge_progress.setProgress(0.8);
+	//test btn
 	wind.nodes.close_btn.on('pointerdown', () => {
 		console.log('close window');
 	});
+
+	{
+		let child = wind.nodes.skill_tab.nodes.empty_skill_slot;
+		wind.removeChild(child);
+		let node = child.node;
+		for(let i = 1; i < 3; i++){
+			let obj = wind.addNodeClone(node);
+			obj.position.x += 300*i;
+		}
+	}
+
+	console.log(wind)
 });

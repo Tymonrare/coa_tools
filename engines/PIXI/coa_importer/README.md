@@ -21,3 +21,35 @@ coa.loader(
 });
 
 ```
+
+# Warn
+
+- Delete child only with coa.ui.removeChild
+
+```javascript
+
+	let ui = new coa.ui(conf); //create window
+
+	let child = ui.nodes.nested.nodes.stuff;
+	let pixiWayChild = ui.root.children[1].children[2];
+
+	//delete it with ui.removeChild anyway
+	ui.removeChild(child);
+	ui.removeChild(pixiWayChild);
+
+	//or clear parent.nodes[name]
+	ui.nodes.nested.nodes.stuff = null;
+
+```
+
+- To clone nodes use coa.ui.addNodeClone
+
+
+```javascript
+
+	let ui = new coa.ui(conf); //create window
+
+	let node = ui.nodes.nested.nodes.stuff.node;
+	ui.addNodeClone(node)
+
+```
