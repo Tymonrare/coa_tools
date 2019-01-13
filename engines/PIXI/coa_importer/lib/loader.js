@@ -23,6 +23,10 @@ export default function(basePath, config) {
 		forEachNodeInTree(config.nodes, (node) => {
 			let path = node.resource_path;
 
+			//if it isn't image
+			if(path.indexOf('.png') < path.length - 4)
+				return;
+
 			//do not reload
 			if (loader.resources[path]) return;
 
