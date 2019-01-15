@@ -6,7 +6,19 @@ class NodeContainer extends Container {
 	constructor(node) {
 		super();
 
-		this.nodes = {};
+		this.nodes = new Proxy({}, {
+			get:(obj, prop)=>{
+				return obj[prop]
+			},
+			set:(obj, prop, val)=>{
+					obj[prop] = val;
+
+					if (!this[prop])
+						this[prop] = val;
+
+					return true;
+			}
+		});
 
 		if (node) {
 			this.node = node;
@@ -23,11 +35,8 @@ class NodeContainer extends Container {
 	addChild(child) {
 		super.addChild(child);
 
-		if (child.name) {
-			if (!this[child.name]) this[child.name] = child;
-
+		if (child.name)
 			this.nodes[child.name] = child;
-		}
 	}
 }
 
@@ -47,6 +56,8 @@ export default class extends Container {
 
 		//main container with scene offset
 		this.root = new NodeContainer();
+
+		//Потенциальная ошибка - здесь прокси заменяется обычным объектом, что не оч хорошо
 		this.root.nodes = this.nodes;
 		this.addChild(this.root);
 		this.root.position.set(config.scene.offset[0], -config.scene.offset[1]);

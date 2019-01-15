@@ -31,6 +31,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 
 	{
 		let child = wind.nodes.skill_tab.empty_skill_slot;
+		console.log(wind.nodes.skill_tab)
 		wind.removeChild(child);
 		let node = child.node;
 		for(let i = 1; i < 3; i++){
