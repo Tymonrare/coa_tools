@@ -328,6 +328,8 @@ function save(export_path, export_name) {
 			if(t.position[1] < minY)
 				minY = t.position[1];
 			
+			if(!t.size) return;
+			
 			if(t.position[0] + t.size[0] > maxX)
 				maxX = t.position[0] + t.size[0];
 			if(t.position[1] + t.size[1] > maxY)
