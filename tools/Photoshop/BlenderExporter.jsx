@@ -316,6 +316,27 @@ function propsByName(name) {
 }
 
 function save(export_path, export_name) {
+	//first calc bound of all groups
+	deepForEach(exportTemplate.nodes, function(node){
+		if(node.type != 'group') return; //only interested in groups
+		
+		var maxX = 0, maxY = 0, minX = exportTemplate.scene.size[0], minY = exportTemplate.scene.size[1];
+		deepForEach(node.nodes, function(subnode){
+			var t = subnode.transform;
+			if(t.position[0] < minX)
+				minX = t.position[0];
+			if(t.position[1] < minY)
+				minY = t.position[1];
+			
+			if(t.position[0] + t.size[0] > maxX)
+				maxX = t.position[0] + t.size[0];
+			if(t.position[1] + t.size[1] > maxY)
+				maxY = t.position[1] + t.size[1];
+		});
+		node.transform.size = [maxX - minX, maxY - minY];
+	}, 'nodes');
+	
+	//than shift offset to 0.5 everywhere
 	exportTemplate.scene.size = [document.width.as("px"), document.height.as("px")]
 	if (win.center_sprites.value)
 		exportTemplate.scene.offset = [exportTemplate.scene.size[0] *  -.5, exportTemplate.scene.size[1] * .5];
@@ -377,6 +398,15 @@ win.crop_layers.value = true;
 win.export_json.value = true;
 
 //=== {utils} ===\\
+
+function deepForEach(root, callback, reqProperty){
+	for(var i in root){
+		node = root[i];
+		callback(node);
+
+		if (node[reqProperty]) deepForEach(node[reqProperty], callback, reqProperty);
+	}
+}
 
 function deselect_all_layers() {
 	var desc01 = new ActionDescriptor();
