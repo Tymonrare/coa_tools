@@ -30,7 +30,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 	});
 
 	{
-		let child = wind.nodes.skill_tab.nodes.empty_skill_slot;
+		let child = wind.nodes.skill_tab.empty_skill_slot;
 		wind.removeChild(child);
 		let node = child.node;
 		for(let i = 1; i < 3; i++){

@@ -2,6 +2,35 @@
 import { Container, Sprite } from 'pixi.js';
 import { forEachNodeInTree, sortAllNodesInTree } from './utils.js';
 
+class NodeContainer extends Container {
+	constructor(node) {
+		super();
+
+		this.nodes = {};
+
+		if (node) {
+			this.node = node;
+			this.name = node.name;
+		}
+	}
+	removeChild(child) {
+		if(typeof child == 'string')
+			child = this.nodes[child];
+
+		delete this.nodes[child.name];
+		super.removeChild(child);
+	}
+	addChild(child) {
+		super.addChild(child);
+
+		if (child.name) {
+			if (!this[child.name]) this[child.name] = child;
+
+			this.nodes[child.name] = child;
+		}
+	}
+}
+
 /**
  * @brief
  *
@@ -17,7 +46,7 @@ export default class extends Container {
 		this.groups = {};
 
 		//main container with scene offset
-		this.root = new Container();
+		this.root = new NodeContainer();
 		this.root.nodes = this.nodes;
 		this.addChild(this.root);
 		this.root.position.set(config.scene.offset[0], -config.scene.offset[1]);
@@ -34,10 +63,10 @@ export default class extends Container {
 	}
 
 	/**
-		* @brief copies and adds new node instance
-	*
-		* @Param node node element from config
-	*/
+	 * @brief copies and adds new node instance
+	 *
+	 * @Param node node element from config
+	 */
 	addNodeClone(node) {
 		let name = node.name;
 		node._clones = (node._clones || 0) + 1;
@@ -56,15 +85,12 @@ export default class extends Container {
 	}
 
 	/**
-		* @brief removes child from scene
-	*
-		* @Param child PIXI.DisplayObject instance
-	*/
-	removeChild(child){
-		if(child.parent){
-			delete child.parent.nodes[child.name];
-		}
-		child.destroy({children:true});
+	 * @brief removes child from scene
+	 *
+	 * @Param child PIXI.DisplayObject instance
+	 */
+	removeChild(child) {
+		child.parent.removeChild(child);
 	}
 
 	addNode(node, root, path) {
@@ -123,8 +149,7 @@ export default class extends Container {
 		if (node.transform.pivot_offset && child.anchor)
 			child.anchor.set(node.transform.pivot_offset[0], node.transform.pivot_offset[1]);
 
-		parent.nodes = parent.nodes || {};
-		parent.nodes[node.name] = child;
+		child.name = node.name;
 
 		parent.addChild(child);
 	}
@@ -216,8 +241,7 @@ export default class extends Container {
 	addProgressNode(node, root) {
 		//FIXME: положение контейнера будет по нулям, что не совсем корректно. Желательно выставлять его
 		//В положение body, а положения дочерних элементов корректировать релативно
-		let bar = new Container();
-		root.nodes[node.name] = bar;
+		let bar = new NodeContainer(node);
 		root.addChild(bar);
 
 		let ordered = ['bar', 'body'];
@@ -267,12 +291,7 @@ export default class extends Container {
 
 			let child = parent.nodes[name];
 			if (!child) {
-				child = new Container();
-				child.nodes = {};
-
-				parent.nodes = parent.nodes || {};
-				parent.nodes[name] = child;
-
+				child = new NodeContainer();
 				child.name = name;
 
 				parent.addChild(child);
