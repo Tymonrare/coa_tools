@@ -262,19 +262,15 @@ export default class extends Container {
 		let bar = new NodeContainer(node);
 		root.addChild(bar);
 
-		let ordered = ['bar', 'body'];
-		for (var i in ordered) {
-			let type = ordered[i];
-			let fr = node.frames.find((f) => {
-				return f.id == type;
-			});
+		for (var i in node.frames) {
+			let fr = node.frames;
 			if (fr) {
 				let sprite = new Sprite(fr.texture);
 				this.addChildNode(node, sprite, bar);
 				bar.nodes[fr.id] = sprite;
 
 				//align bar tu left cuse it fill scale from left to right
-				if (type == 'bar') {
+				if (fr.id == 'bar') {
 					sprite.anchor.set(0, 0.5);
 					let t = node.transform;
 					sprite.position.x = t.position[0] - t.size[0] * t.pivot_offset[0];
