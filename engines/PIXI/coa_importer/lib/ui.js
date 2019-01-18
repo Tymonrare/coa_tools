@@ -262,8 +262,8 @@ export default class extends Container {
 		let bar = new NodeContainer(node);
 		root.addChild(bar);
 
-		for (var i in node.frames) {
-			let fr = node.frames;
+		for (let i in node.frames) {
+			let fr = node.frames[i];
 			if (fr) {
 				let sprite = new Sprite(fr.texture);
 				this.addChildNode(node, sprite, bar);
