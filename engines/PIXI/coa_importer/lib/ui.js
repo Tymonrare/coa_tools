@@ -137,6 +137,10 @@ export default class extends Container {
 			obj.node = node;
 			obj.name = node.name;
 
+			if(node.properties.hide)
+				obj.visible = false;
+
+			//Add node to group if it has so
 			if (node.properties.node_group) {
 				let gr = node.properties.node_group;
 				if (!this.groups[gr]) this.groups[gr] = {};
