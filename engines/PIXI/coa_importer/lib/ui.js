@@ -6,19 +6,21 @@ class NodeContainer extends Container {
 	constructor(node) {
 		super();
 
-		this.nodes = new Proxy({}, {
-			get:(obj, prop)=>{
-				return obj[prop]
-			},
-			set:(obj, prop, val)=>{
+		this.nodes = new Proxy(
+			{},
+			{
+				get: (obj, prop) => {
+					return obj[prop];
+				},
+				set: (obj, prop, val) => {
 					obj[prop] = val;
 
-					if (!this[prop])
-						this[prop] = val;
+					if (!this[prop]) this[prop] = val;
 
 					return true;
+				}
 			}
-		});
+		);
 
 		if (node) {
 			this.node = node;
@@ -26,8 +28,7 @@ class NodeContainer extends Container {
 		}
 	}
 	removeChild(child) {
-		if(typeof child == 'string')
-			child = this.nodes[child];
+		if (typeof child == 'string') child = this.nodes[child];
 
 		delete this.nodes[child.name];
 		super.removeChild(child);
@@ -35,8 +36,7 @@ class NodeContainer extends Container {
 	addChild(child) {
 		super.addChild(child);
 
-		if (child.name)
-			this.nodes[child.name] = child;
+		if (child.name) this.nodes[child.name] = child;
 	}
 }
 
@@ -101,10 +101,10 @@ export default class extends Container {
 	 * @Param child PIXI.DisplayObject instance
 	 */
 	removeChild(child) {
-		if(child.parent){
+		if (child.parent) {
 			child.parent.removeChild(child);
 		}
-		child.destroy({children:true});
+		child.destroy({ children: true });
 	}
 
 	addNode(node, root, path) {
@@ -137,8 +137,7 @@ export default class extends Container {
 			obj.node = node;
 			obj.name = node.name;
 
-			if(node.properties.hide)
-				obj.visible = false;
+			if (node.properties.hide) obj.visible = false;
 
 			//Add node to group if it has so
 			if (node.properties.node_group) {
@@ -262,39 +261,49 @@ export default class extends Container {
 		let bar = new NodeContainer(node);
 		root.addChild(bar);
 
-		let ordered = ['bar', 'body'];
-		for (var i in ordered) {
-			let type = ordered[i];
-			let fr = node.frames.find((f) => {
-				return f.id == type;
-			});
-			if (fr) {
-				let sprite = new Sprite(fr.texture);
-				this.addChildNode(node, sprite, bar);
-				bar.nodes[fr.id] = sprite;
+		var maskS = new PIXI.Sprite(PIXI.Texture.WHITE);
 
-				//align bar tu left cuse it fill scale from left to right
-				if (type == 'bar') {
-					sprite.anchor.set(0, 0.5);
-					let t = node.transform;
-					sprite.position.x = t.position[0] - t.size[0] * t.pivot_offset[0];
+		bar.addChild(maskS);
+
+		if (node.properties.frames) {
+			let ordered = ['bar', 'body'];
+			for (var i in ordered) {
+				let type = ordered[i];
+				let fr = node.frames.find((f) => {
+					return f.id == type;
+				});
+				if (fr) {
+					let sprite = new Sprite(fr.texture);
+					this.addChildNode(node, sprite, bar);
+					bar.nodes[fr.id] = sprite;
+
+					if (type == 'bar') {
+						sprite.mask = maskS;
+					}
 				}
 			}
 		}
 
+		let t = node.transform;
+		maskS.width = t.size[0];
+		maskS.height = t.size[1];
+
+		let ax = 0,
+			ay = 0.5;
+		if (node.properties.progress_anchor) {
+			let anch = node.properties.progress_anchor.split(',');
+			ax = anch[0];
+			ay = anch[1];
+		}
+		maskS.anchor.set(ax, ay);
+		maskS.position.x = t.position[0] - t.size[0] * t.pivot_offset[0];
+		maskS.position.y = t.position[1] - t.size[1] * t.pivot_offset[1];
+		//move to new progress anchor
+		maskS.position.x += t.size[0] * ax;
+		maskS.position.y += t.size[1] * ay;
+
 		bar.setProgress = function(progress) {
-			bar.nodes.bar.scale.x = progress;
-
-			/*
-			//from pixi example;
-			const graphics = new  Graphics();
-			graphics.beginFill(0xff3300);
-			graphics.drawRect(0, 0, 100, 100);
-			graphics.endFill();
-
-			const sprite = new  Sprite(texture);
-			sprite.mask = graphics;
-			*/
+			maskS.width = t.size[0] * progress;
 		};
 
 		return bar;
