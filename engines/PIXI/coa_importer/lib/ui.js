@@ -288,12 +288,14 @@ export default class extends Container {
 		maskS.width = t.size[0];
 		maskS.height = t.size[1];
 
+		node.properties.progress_anchor = '1,0.5';
+
 		let ax = 0,
 			ay = 0.5;
 		if (node.properties.progress_anchor) {
 			let anch = node.properties.progress_anchor.split(',');
-			ax = anch[0];
-			ay = anch[1];
+			ax = parseFloat(anch[0]);
+			ay = parseFloat(anch[1]);
 		}
 		maskS.anchor.set(ax, ay);
 		maskS.position.x = t.position[0] - t.size[0] * t.pivot_offset[0];
