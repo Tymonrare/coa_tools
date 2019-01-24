@@ -330,8 +330,25 @@ export default class extends Container {
 	}
 
 	makeSpriteFromNode(node, parent) {
-		let s = new Sprite(node.texture);
+		let texture = node.frames ? node.frames[0].texture : node.texture;
+		let s = new Sprite(texture);
 		this.addChildNode(node, s, parent);
+
+
+		s.setFrame = function(name){
+			if(!node.frames){
+				throw Error(`Node ${node.node_path} hasn't frames!`)
+			}
+			let fr = node.frames.find((f) => {
+				return f.id == name;
+			});
+			if(!fr){
+				throw Error(`Node ${node.node_path} hasn't frame ${name}!`)
+			}
+
+			s.texture = fr.texture;
+		}
+
 		return s;
 	}
 }
