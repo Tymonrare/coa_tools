@@ -185,7 +185,7 @@ export default class extends Container {
 			});
 
 			btn.stateTextures = states;
-			onButtonOut.apply(btn);
+			setState.apply(btn, ['idle']);
 		}
 
 		btn.buttonMode = true;
