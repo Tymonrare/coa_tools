@@ -288,8 +288,6 @@ export default class extends Container {
 		maskS.width = t.size[0];
 		maskS.height = t.size[1];
 
-		node.properties.progress_anchor = '1,0.5';
-
 		let ax = 0,
 			ay = 0.5;
 		if (node.properties.progress_anchor) {
