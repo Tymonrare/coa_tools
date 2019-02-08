@@ -22,7 +22,7 @@ coa.loader(
 	ui.gnodes.label_text; //Access to nodes with flag --global
 	
 	ui.gbinds.label_text = "Your label"; //Set value of global nodes bind
-	ui.gnodes.label_text.bind = "Another label"; //You can access to that prop manually
+	ui.gnodes.label_text.updateBinding("Another label"); //You can access to that prop manually
 });
 
 ```
