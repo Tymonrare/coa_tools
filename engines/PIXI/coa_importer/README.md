@@ -13,43 +13,16 @@ coa.loader(
 	let ui = new coa.ui(conf); //create window
 	wind.position.set(width / 2, height / 2);
 	
-	ui.nodes.layer_name; //Access to exportet layers
-	ui.nodes.group_name.nodes.layer_name; //Access to nested groups
+	ui.layer_name; //Access to exportet layers
+	ui.group_name.layer_name; //Access to nested groups
 	
-	ui.nodes.button.on('pointerdown', ()=>{console.log('click')}); //buttons works with all pixi events
-	ui.nodes.progress.setProgress(0.5); //Set progress bar to half
+	ui.button.on('pointerdown', ()=>{console.log('click')}); //buttons works with all pixi events
+	ui.progress.bind = 0.5; //Set progress bar to half
+	
+	ui.gnodes.label_text; //Access to nodes with flag --global
+	
+	ui.gbinds.label_text = "Your label"; //Set value of global nodes bind
+	ui.gnodes.label_text.bind = "Another label"; //You can access to that prop manually
 });
-
-```
-
-# Warn
-
-- Delete child only with coa.ui.removeChild
-
-```javascript
-
-	let ui = new coa.ui(conf); //create window
-
-	let child = ui.nodes.nested.nodes.stuff;
-	let pixiWayChild = ui.root.children[1].children[2];
-
-	//delete it with ui.removeChild anyway
-	ui.removeChild(child);
-	ui.removeChild(pixiWayChild);
-
-	//or clear parent.nodes[name]
-	ui.nodes.nested.nodes.stuff = null;
-
-```
-
-- To clone nodes use coa.ui.addNodeClone
-
-
-```javascript
-
-	let ui = new coa.ui(conf); //create window
-
-	let node = ui.nodes.nested.nodes.stuff.node;
-	ui.addNodeClone(node)
 
 ```
