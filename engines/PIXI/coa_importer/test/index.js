@@ -25,6 +25,8 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 	{
 		let binds = wind.gbinds;
 		binds.charge_progress = 0.7;
+		binds.test_bind1 = 'text text';
+		binds.test_bind2 = PIXI.Texture.from('res/flat_128.png');
 	}
 
 	//test btn
@@ -37,7 +39,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 		//child.parent.removeChild(child);
 		let node = child.node;
 		for (let i = 1; i < 3; i++) {
-			let obj = wind.addNodeClone(node);
+			let obj = child.parent.addNodeClone(node);
 			obj.position.y += 100 * i;
 		}
 	}

@@ -1,9 +1,70 @@
 /** @format */
 
-import { Sprite } from 'pixi.js';
+import { Sprite, Text } from 'pixi.js';
 import SpriteNode from './sprite_node.js';
 import BasicContainer from './basic_container.js';
 import { applyNodeProps } from './utils.js';
+
+class TextNode extends BasicContainer {
+	constructor(node, root) {
+		super(node, root);
+
+		var defProps = new PIXI.TextStyle({
+			fontFamily: 'Arial',
+			fontSize: 27,
+			fontStyle: 'bold',
+			fontWeight: 'normal',
+			fill: ['#ffffff'], // gradient
+			stroke: '#000000',
+			strokeThickness: 3,
+			align: 'center'
+		});
+
+		//for (let key in props) defProps[key] = props[key];
+		let style = new PIXI.TextStyle(defProps);
+
+		let txt = new Text(node.name, style);
+		txt.anchor.set(0.5);
+		this.addChild(txt);
+		this.text = txt;
+	}
+	updateBinding(text) {
+		this.text.text = text;
+	}
+}
+
+class DynamicSpriteNode extends BasicContainer {
+	constructor(node, root) {
+		super(node, root);
+
+		this.sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
+		this.sprite.anchor.set(node.transform.pivot_offset[0], node.transform.pivot_offset[1]);
+		this.addChild(this.sprite);
+	}
+	updateBinding(texture) {
+		this.sprite.texture = texture;
+
+		let s = this.node.transform.size;
+		console.log(this.node);
+		if (this.node.properties.style.indexOf('fit') >= 0) {
+			this.sprite.width = s[0];
+			this.sprite.height = s[1];
+		} else if (this.node.properties.style.indexOf('save_ratio') >= 0) {
+			let w = texture.orig.width;
+			let h = texture.orig.height;
+
+			let dw = w / s[0];
+			let dh = h / s[1];
+
+			let scale;
+			if (dh < dw) scale = dh;
+			else scale = dw;
+
+			this.sprite.width = w * scale;
+			this.sprite.height = h * scale;
+		}
+	}
+}
 
 class ButtonNode extends SpriteNode {
 	constructor(node, root) {
@@ -153,7 +214,7 @@ class ProgressNode extends BasicContainer {
 		maskS.position.x += t.size[0] * ax;
 		maskS.position.y += t.size[1] * ay;
 	}
-	updateBinding(progress){
+	updateBinding(progress) {
 		this.setProgress(progress);
 	}
 
@@ -165,4 +226,4 @@ class ProgressNode extends BasicContainer {
 	}
 }
 
-export { ButtonNode, ProgressNode };
+export { ButtonNode, ProgressNode, TextNode, DynamicSpriteNode };

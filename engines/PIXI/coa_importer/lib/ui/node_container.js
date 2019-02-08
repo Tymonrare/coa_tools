@@ -4,7 +4,7 @@ import BasicContainer from './basic_container.js';
 import SpriteNode from './sprite_node.js';
 import { applyNodeProps } from './utils.js';
 import { forEachNodeInTree } from '@lib/utils.js';
-import { ButtonNode, ProgressNode } from './custom_interactive.js';
+import { ButtonNode, ProgressNode, TextNode, DynamicSpriteNode } from './custom_interactive.js';
 
 class NodeContainer extends BasicContainer {
 	constructor(node, root) {
@@ -24,6 +24,12 @@ class NodeContainer extends BasicContainer {
 							break;
 						case 'progress':
 							obj = new ProgressNode(node, this.scene);
+							break;
+						case 'text_area':
+							obj = new TextNode(node, this.scene);
+							break;
+						case 'sprite_area':
+							obj = new DynamicSpriteNode(node, this.scene);
 							break;
 						default:
 							obj = new SpriteNode(node, this.scene);
