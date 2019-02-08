@@ -14,13 +14,10 @@ function applyNodeProps(node, object) {
 	//Add node to group if it has so
 	if (node.properties.node_group) {
 		let gr = node.properties.node_group;
-		object.groups = object.groups || {};
-		if (!object.groups[gr]) object.groups[gr] = {};
+		object.scene.groups = object.scene.groups || {};
+		if (!object.scene.groups[gr]) object.scene.groups[gr] = {};
 
-		//tabs hide
-		for (let i in object.groups[gr]) object.groups[gr][i].visible = false;
-
-		object.groups[gr][node.name] = object;
+		object.scene.groups[gr][node.name] = object;
 
 		object.group = gr;
 	}

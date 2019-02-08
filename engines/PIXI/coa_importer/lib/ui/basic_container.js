@@ -1,12 +1,14 @@
 /** @format */
 import { Container } from 'pixi.js';
-import SpriteNode from './sprite_node.js';
-import { applyNodeProps }  from './utils.js';
-import { ButtonNode, ProgressNode } from './custom_interactive.js';
 
-class BasicContainer extends Container{
-	constructor(node) {
+export default class extends Container {
+	constructor(node, scene) {
 		super();
+
+		//1. It first element in scene
+		//2. It another element and root will constant
+		scene = scene || this;
+		this.scene = scene;
 
 		this.nodes = new Proxy(
 			{},
@@ -24,48 +26,31 @@ class BasicContainer extends Container{
 			}
 		);
 
-		if (node) {
-			this.node = node;
-			this.name = node.name;
-		}
-
-		node.nodes.forEach((n) => this.addNode(n));
+		this.node = node;
+		this.name = node.name;
 	}
-	addNode(node) {
-		try {
-			let obj;
-			switch (node.type) {
-				case 'frames':
-				case 'sprite':
-					switch (node.properties.type) {
-						case 'btn':
-							obj = new ButtonNode(node);
-							break;
-						case 'progress':
-							obj = new ProgressNode(node);
-							break;
-						default:
-							obj = new SpriteNode(node);
-					}
-					break;
-				case 'group':
-					obj = new BasicContainer(node);
-					break;
+	addNodeClone(node) {
+		let name = node.name;
+		node._clones = (node._clones || 0) + 1;
+		let newName = name + '_clone_' + node._clones;
+
+		let rootObj;
+		forEachNodeInTree([node], (node) => {
+			let obj = this.addNode(node);
+			//first created node will be root
+			if (!rootObj) {
+				rootObj = obj;
+				rootObj.name = newName;
 			}
-
-			this.addChild(obj);
-			applyNodeProps(node, obj);
-
-			return obj;
-		} catch (err) {
-			console.error("Can't add node: ", err, node);
-		}
+		});
+		return rootObj;
 	}
 	removeChild(child) {
 		if (typeof child == 'string') child = this.nodes[child];
 
 		delete this.nodes[child.name];
 		super.removeChild(child);
+		child.destroy({ children: true });
 	}
 	addChild(child) {
 		super.addChild(child);
@@ -73,5 +58,3 @@ class BasicContainer extends Container{
 		if (child.name) this.nodes[child.name] = child;
 	}
 }
-
-export default BasicContainer;

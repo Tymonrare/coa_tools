@@ -1,45 +1,7 @@
 /** @format */
 import { Container, Sprite } from 'pixi.js';
 import { forEachNodeInTree, sortAllNodesInTree } from '@lib/utils.js';
-import BasicContainer from './basic_container.js';
-
-class NodeContainer extends Container {
-	constructor(node) {
-		super();
-
-		this.nodes = new Proxy(
-			{},
-			{
-				get: (obj, prop) => {
-					return obj[prop];
-				},
-				set: (obj, prop, val) => {
-					obj[prop] = val;
-
-					if (!this[prop]) this[prop] = val;
-
-					return true;
-				}
-			}
-		);
-
-		if (node) {
-			this.node = node;
-			this.name = node.name;
-		}
-	}
-	removeChild(child) {
-		if (typeof child == 'string') child = this.nodes[child];
-
-		delete this.nodes[child.name];
-		super.removeChild(child);
-	}
-	addChild(child) {
-		super.addChild(child);
-
-		if (child.name) this.nodes[child.name] = child;
-	}
-}
+import NodeContainer from './node_container.js';
 
 /**
  * @brief
@@ -48,310 +10,54 @@ class NodeContainer extends Container {
  *
  * @Returns  container
  */
-export default class extends Container {
+export default class extends NodeContainer {
 	constructor(config) {
-		super();
-
-		this.groups = {};
-
-		//main container with scene offset
-		this.root = new BasicContainer(config);
-
-		//Потенциальная ошибка - здесь прокси заменяется обычным объектом, что не оч хорошо
-		//this.root.nodes = this.nodes;
-
-		this.nodes = this.root.nodes;
-		this.addChild(this.root);
-		this.root.position.set(config.scene.offset[0], -config.scene.offset[1]);
-
-		//sort by z index
+		//sort nodes by z index
 		sortAllNodesInTree(config.nodes, (a, b) => {
 			return a.transform.z - b.transform.z;
 		});
 
-		//add childs
-		/*
+		super(config);
+
+		this.config = config;
+		this.gnodes = {};
+
+		//post-process
 		forEachNodeInTree(config.nodes, (node) => {
-			this.addNode(node, this.root);
+			let child = this.findInstanceForNode(node);
+			if (!child) throw new Error(`Instance for ${node.node_path} wasn't created!`);
+
+			if (child.node.properties.global) {
+				this.gnodes[child.node.name] = child;
+			}
+
+			if (child.postTreeInit) child.postTreeInit(this);
 		});
-		*/
 	}
 
-	/**
-	 * @brief copies and adds new node instance
-	 *
-	 * @Param node node element from config
-	 */
-	addNodeClone(node) {
-		let name = node.name;
-		node._clones = (node._clones || 0) + 1;
-		let newName = name + '_clone_' + node._clones;
-
-		let rootObj;
-		forEachNodeInTree([node], (node) => {
-			let obj = this.addNode(node, this.root, node.node_path.replace(name, newName));
-			//first created node will be root
-			if (!rootObj) {
-				rootObj = obj;
-				rootObj.name = newName;
-			}
-		});
-		return rootObj;
+	setPosition(x, y) {
+		this.position.set(x + this.config.scene.offset[0], y - this.config.scene.offset[1]);
 	}
 
-	/**
-	 * @brief removes child from scene
-	 *
-	 * @Param child PIXI.DisplayObject instance
-	 */
-	removeChild(child) {
-		if (child.parent) {
-			child.parent.removeChild(child);
-		}
-		child.destroy({ children: true });
-	}
+	findInstanceByPath(path) {
+		path = path.split('.');
 
-	addNode(node, root, path) {
-		try {
-			if (!root) root = this.root;
-
-			path = (path || node.node_path).split('.');
-			let parent = this.findContainerForPath(path, root);
-
-			let obj;
-			switch (node.type) {
-				case 'frames':
-				case 'sprite':
-					switch (node.properties.type) {
-						case 'btn':
-							obj = this.addBtnNode(node, parent);
-							break;
-						case 'progress':
-							obj = this.addProgressNode(node, parent);
-							break;
-						default:
-							obj = this.makeSpriteFromNode(node, parent);
-					}
-					break;
-				case 'group':
-					obj = parent;
-					break;
-			}
-
-			obj.node = node;
-			obj.name = node.name;
-
-			if (node.properties.hide) obj.visible = false;
-
-			//Add node to group if it has so
-			if (node.properties.node_group) {
-				let gr = node.properties.node_group;
-				if (!this.groups[gr]) this.groups[gr] = {};
-
-				for (let i in this.groups[gr]) this.groups[gr][i].visible = false;
-
-				this.groups[gr][node.name] = obj;
-
-				obj.group = gr;
-			}
-
-			return obj;
-		} catch (err) {
-			console.error("Can't add node: ", err, node);
-		}
-	}
-
-	addChildNode(node, child, parent) {
-		child.rotation = node.transform.rotation; //radians
-		child.alpha = node.transform.opacity;
-
-		child.scale.set(node.transform.scale[0], node.transform.scale[1]);
-		child.position.set(node.transform.position[0], node.transform.position[1]);
-		if (node.transform.pivot_offset && child.anchor)
-			child.anchor.set(node.transform.pivot_offset[0], node.transform.pivot_offset[1]);
-
-		child.name = node.name;
-
-		parent.addChild(child);
-	}
-	addBtnNode(node, root) {
-		let btn = this.makeSpriteFromNode(node, root);
-
-		let states = {
-			idle: node.texture,
-			hover: null,
-			click: null
-		};
-
-		if (node.frames) {
-			node.frames.forEach((fr) => {
-				if (states.hasOwnProperty(fr.id)) states[fr.id] = fr.texture;
-			});
-
-			btn.stateTextures = states;
-			setState.apply(btn, ['idle']);
-		}
-
-		btn.buttonMode = true;
-		btn.interactive = true;
-
-		if (node.properties.target_tab) {
-			let c = this.findContainerForPath(node.properties.target_tab, this.root);
-			btn.on('pointerdown', () => {
-				let gr = this.groups[c.group];
-				for (var i in gr) {
-					if (c != gr[i]) gr[i].visible = false;
-					else gr[i].visible = true;
-				}
-			});
-		}
-
-		btn.on('pointerup', onButtonUp)
-			.on('pointerupoutside', onButtonUp)
-			.on('pointerover', onButtonOver)
-			.on('pointerout', onButtonOut)
-			.on('pointerdown', onButtonDown);
-
-		return btn;
-
-		function setState(txt) {
-			if (this.stateTextures && this.stateTextures[txt]) {
-				this.texture = this.stateTextures[txt];
-				return true;
-			}
-
-			return false;
-		}
-
-		function onButtonDown() {
-			this.isdown = true;
-			this.scale.set(this.scale.x - 0.2, this.scale.y - 0.2);
-			setState.apply(this, ['click']);
-		}
-
-		function onButtonUp() {
-			if (this.isdown) this.scale.set(this.scale.x + 0.2, this.scale.y + 0.2);
-
-			this.isdown = false;
-			if (this.isOver) {
-				setState.apply(this, ['hover']);
-			} else {
-				setState.apply(this, ['idle']);
-			}
-		}
-
-		function onButtonOver() {
-			this.isOver = true;
-			this.scale.set(this.scale.x + 0.1, this.scale.y + 0.1);
-			if (this.isdown) {
-				return;
-			}
-			setState.apply(this, ['hover']);
-		}
-
-		function onButtonOut() {
-			this.isOver = false;
-			this.scale.set(this.scale.x - 0.1, this.scale.y - 0.1);
-			if (this.isdown) {
-				return;
-			}
-			setState.apply(this, ['idle']);
-		}
-	}
-
-	addProgressNode(node, root) {
-		//FIXME: положение контейнера будет по нулям, что не совсем корректно. Желательно выставлять его
-		//В положение body, а положения дочерних элементов корректировать релативно
-		let bar = new NodeContainer(node);
-		root.addChild(bar);
-
-		var maskS = new PIXI.Sprite(PIXI.Texture.WHITE);
-
-		bar.addChild(maskS);
-
-		if (node.properties.frames) {
-			let ordered = ['bar', 'body'];
-			for (var i in ordered) {
-				let type = ordered[i];
-				let fr = node.frames.find((f) => {
-					return f.id == type;
-				});
-				if (fr) {
-					let sprite = new Sprite(fr.texture);
-					this.addChildNode(node, sprite, bar);
-					bar.nodes[fr.id] = sprite;
-
-					if (type == 'bar') {
-						sprite.mask = maskS;
-					}
-				}
-			}
-		}
-
-		let t = node.transform;
-		maskS.width = t.size[0];
-		maskS.height = t.size[1];
-
-		let ax = 0,
-			ay = 0.5;
-		if (node.properties.progress_anchor) {
-			let anch = node.properties.progress_anchor.split(',');
-			ax = parseFloat(anch[0]);
-			ay = parseFloat(anch[1]);
-		}
-		maskS.anchor.set(ax, ay);
-		maskS.position.x = t.position[0] - t.size[0] * t.pivot_offset[0];
-		maskS.position.y = t.position[1] - t.size[1] * t.pivot_offset[1];
-		//move to new progress anchor
-		maskS.position.x += t.size[0] * ax;
-		maskS.position.y += t.size[1] * ay;
-
-		bar.setProgress = function(progress) {
-			maskS.width = t.size[0] * progress;
-		};
-
-		return bar;
-	}
-	findContainerForPath(path, root) {
-		if (typeof path == 'string') path = [path];
-
-		let parent = root;
+		let obj = this;
 		for (let i in path) {
 			let name = path[i];
 			if (name.length == 0) break;
+			if (!obj) throw new Error(`Can't find node for path ${path}`);
+			let child = obj.nodes[name];
 
-			let child = parent.nodes[name];
-			if (!child) {
-				child = new NodeContainer();
-				child.name = name;
-
-				parent.addChild(child);
-			}
-			parent = child;
+			obj = child;
 		}
-
-		return parent;
+		return obj;
 	}
+	findInstanceForNode(node) {
+		let obj = this.findInstanceByPath(node.node_path);
 
-	makeSpriteFromNode(node, parent) {
-		let texture = node.frames ? node.frames[0].texture : node.texture;
-		let s = new Sprite(texture);
-		this.addChildNode(node, s, parent);
+		if (node.name != node.node_path.split('.').pop()) obj = obj.nodes[node.name];
 
-		s.setFrame = function(name) {
-			if (!node.frames) {
-				throw Error(`Node ${node.node_path} hasn't frames!`);
-			}
-			let fr = node.frames.find((f) => {
-				return f.id == name;
-			});
-			if (!fr) {
-				throw Error(`Node ${node.node_path} hasn't frame ${name}!`);
-			}
-
-			s.texture = fr.texture;
-		};
-
-		return s;
+		return obj;
 	}
 }
