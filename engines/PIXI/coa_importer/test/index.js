@@ -24,7 +24,9 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 
 	{
 		let binds = wind.gbinds;
-		binds.charge_progress = 0.7;
+		setInterval(function() {
+			binds.charge_progress = Math.abs(Math.sin(new Date().getTime()/5000));
+		}, 30);
 		binds.test_bind1 = 'text text';
 		binds.test_bind2 = PIXI.Texture.from('res/flat_128.png');
 	}
