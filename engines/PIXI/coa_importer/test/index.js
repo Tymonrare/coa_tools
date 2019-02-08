@@ -30,13 +30,13 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 	});
 
 	{
-		let child = wind.nodes.skill_tab.empty_skill_slot;
-		console.log(wind.nodes.skill_tab)
-		wind.removeChild(child);
+		let child = wind.gnodes.test_bind1;
+		//child.parent.removeChild(child);
 		let node = child.node;
+		console.log(node);
 		for(let i = 1; i < 3; i++){
 			let obj = wind.addNodeClone(node);
-			obj.position.x += 300*i;
+			obj.position.y += 100*i;
 		}
 	}
 

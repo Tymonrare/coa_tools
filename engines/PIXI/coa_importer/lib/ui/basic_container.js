@@ -29,28 +29,17 @@ export default class extends Container {
 		this.node = node;
 		this.name = node.name;
 	}
-	addNodeClone(node) {
-		let name = node.name;
-		node._clones = (node._clones || 0) + 1;
-		let newName = name + '_clone_' + node._clones;
-
-		let rootObj;
-		forEachNodeInTree([node], (node) => {
-			let obj = this.addNode(node);
-			//first created node will be root
-			if (!rootObj) {
-				rootObj = obj;
-				rootObj.name = newName;
-			}
-		});
-		return rootObj;
-	}
 	removeChild(child) {
 		if (typeof child == 'string') child = this.nodes[child];
 
 		delete this.nodes[child.name];
+
+		//TODO: 
+		//delete from groups
+		//delete from gnodes
+
+		//child.destroy({ children: true });
 		super.removeChild(child);
-		child.destroy({ children: true });
 	}
 	addChild(child) {
 		super.addChild(child);
