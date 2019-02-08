@@ -126,3 +126,4 @@
     ui.layer_name; //Для слоя экспортированного под именем layer_name
     ui.group_name.layer_name; //Для вложенных слоев
     ui.gnodes.global_name //Для слоев экспортированных с флагом --global
+    ui.gbinds.global_name = "value" //Для интерактивных --global элементов напрямую можно задавать значения
