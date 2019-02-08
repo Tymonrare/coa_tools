@@ -103,6 +103,8 @@ class ProgressNode extends BasicContainer {
 	constructor(node, root) {
 		super(node, root);
 
+		this.progress = 1;
+
 		//FIXME: положение контейнера будет по нулям, что не совсем корректно. Желательно выставлять его
 		//В положение body, а положения дочерних элементов корректировать релативно
 		let maskS = new PIXI.Sprite(PIXI.Texture.WHITE);
@@ -151,9 +153,15 @@ class ProgressNode extends BasicContainer {
 		maskS.position.x += t.size[0] * ax;
 		maskS.position.y += t.size[1] * ay;
 	}
+	updateBinding(progress){
+		this.setProgress(progress);
+	}
+
+	//deprecated
 	setProgress(progress) {
 		let t = this.node.transform;
 		this.maskS.width = t.size[0] * progress;
+		this.progress = progress;
 	}
 }
 

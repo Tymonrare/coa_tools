@@ -21,14 +21,26 @@ export default class extends NodeContainer {
 
 		this.config = config;
 		this.gnodes = {};
+		this.gbinds = {};
 
 		//post-process
 		forEachNodeInTree(config.nodes, (node) => {
 			let child = this.findInstanceForNode(node);
 			if (!child) throw new Error(`Instance for ${node.node_path} wasn't created!`);
 
+			//make global
 			if (child.node.properties.global) {
-				this.gnodes[child.node.name] = child;
+				let name = child.node.name;
+				this.gnodes[name] = child;
+
+				//set binds
+				if (child.updateBinding) {
+					Object.defineProperty(this.gbinds, name, {
+						set: function(val) {
+							child.updateBinding(val);
+						}
+					});
+				}
 			}
 
 			if (child.postTreeInit) child.postTreeInit(this);
