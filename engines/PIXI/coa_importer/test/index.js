@@ -2,7 +2,7 @@
 
 import * as PIXI from 'pixi.js';
 import loader from '@lib/loader.js';
-import ui from '@lib/ui.js';
+import ui from '@lib/ui/index.js';
 
 import '@res/style.css';
 
