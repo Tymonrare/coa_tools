@@ -26,7 +26,11 @@ export default class extends NodeContainer {
 		//post-process
 		forEachNodeInTree(config.nodes, (node) => {
 			let child = this.findInstanceForNode(node);
-			if (!child) throw new Error(`Instance for ${node.node_path} wasn't created!`);
+			if (!child) {
+				if (!node.properties.ignore)
+					console.error(`Instance for ${node.node_path} wasn't created!`);
+				return;
+			}
 
 			//make global
 			if (child.node.properties.global) {

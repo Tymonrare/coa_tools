@@ -23,6 +23,8 @@ export default function(basePath, config) {
 		forEachNodeInTree(config.nodes, (node) => {
 			let path = node.resource_path;
 
+			if (node.properties.ignore) return;
+
 			//if it isn't image
 			if (path.indexOf('.png') < path.length - 4) return;
 
@@ -56,6 +58,7 @@ export default function(basePath, config) {
 			forEachNodeInTree(config.nodes, (node) => {
 				let path = node.resource_path;
 				if (node.type == 'group') return;
+				if (node.properties.ignore) return;
 
 				let texture = resources[path].texture;
 

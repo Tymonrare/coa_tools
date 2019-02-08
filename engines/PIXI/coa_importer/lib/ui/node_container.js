@@ -14,6 +14,8 @@ class NodeContainer extends BasicContainer {
 	}
 	addNode(node) {
 		try {
+			if (node.properties.ignore) return;
+
 			let obj;
 			switch (node.type) {
 				case 'frames':
