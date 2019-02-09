@@ -54,9 +54,9 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 	}
 
 	//test btn
-	wind.nodes.close_btn.on('pointerdown', () => {
+	wind.close_btn.binding = () => {
 		console.log('close window');
-	});
+	};
 
 	{
 		let child = wind.gnodes.test_bind1;
