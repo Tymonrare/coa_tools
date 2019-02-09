@@ -17,6 +17,7 @@ export default class extends NodeContainer {
 			return a.transform.z - b.transform.z;
 		});
 
+		//Creates all objects
 		super(config);
 
 		this.config = config;
@@ -27,12 +28,18 @@ export default class extends NodeContainer {
 		forEachNodeInTree(config.nodes, (node) => {
 			let child = this.findInstanceForNode(node);
 			if (!child) {
-				if (!node.properties.ignore)
+				if (
+					//it wasn't loaded
+					!node.properties.ignore &&
+					//it has 'node' name means that's PROBABLY child of 'container' (NodeList) group,
+					!node.name == 'node'
+				) {
 					console.error(`Instance for ${node.node_path} wasn't created!`);
+				}
 				return;
 			}
 
-			//make global
+			//make globals
 			if (child.node.properties.global) {
 				let name = child.node.name;
 				this.gnodes[name] = child;
@@ -67,12 +74,12 @@ export default class extends NodeContainer {
 
 			obj = child;
 		}
-		return obj;
+		return obj||null;
 	}
 	findInstanceForNode(node) {
 		let obj = this.findInstanceByPath(node.node_path);
 
-		if (node.name != node.node_path.split('.').pop()) obj = obj.nodes[node.name];
+		if (obj && node.name != node.node_path.split('.').pop()) obj = obj.nodes[node.name];
 
 		return obj;
 	}

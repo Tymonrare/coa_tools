@@ -29,6 +29,8 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 		}, 30);
 		binds.test_bind1 = 'text text';
 		binds.test_bind2 = PIXI.Texture.from('res/flat_128.png');
+
+		binds.test_bind6 = [{}, {}]
 	}
 
 	//test btn

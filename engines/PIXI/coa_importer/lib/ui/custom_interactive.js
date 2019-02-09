@@ -45,7 +45,6 @@ class DynamicSpriteNode extends BasicContainer {
 		this.sprite.texture = texture;
 
 		let s = this.node.transform.size;
-		console.log(this.node);
 		if (this.node.properties.style.indexOf('fit') >= 0) {
 			this.sprite.width = s[0];
 			this.sprite.height = s[1];
@@ -139,6 +138,12 @@ class ButtonNode extends SpriteNode {
 			}
 			setState.apply(this, ['idle']);
 		}
+	}
+	updateBinding(handler) {
+		if (this.clickHandler) this.off('pointerdown', this.clickHandler);
+
+		this.clickHandler = handler;
+		this.on('pointerdown', this.clickHandler);
 	}
 	postTreeInit(treeRoot) {
 		if (this.node.properties.target_tab) {

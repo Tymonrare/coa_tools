@@ -34,7 +34,7 @@ export default class extends Container {
 
 		delete this.nodes[child.name];
 
-		//TODO: 
+		//TODO:
 		//delete from groups
 		//delete from gnodes
 
@@ -45,5 +45,8 @@ export default class extends Container {
 		super.addChild(child);
 
 		if (child.name) this.nodes[child.name] = child;
+	}
+	updateBinding() {
+		throw new Error(`${this.constructor.name} doesn't support binds`);
 	}
 }

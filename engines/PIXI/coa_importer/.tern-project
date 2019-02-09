@@ -8,17 +8,11 @@
     "es_modules": {},
     "webpack": {
       "alias": {
-        "@app":  "./src",
-        "@resources":  "./src/resources",
-        "@devcode":  "./src/dev",
-        "@css":  "./src/css",
-        "@tests":  "./src/_test_",
-        "@backend":  "./src/backend",
-        "@requests": "./src/requests",
-        "@gui": "./src/gui"
+        "@lib":  "./lib",
+        "@resources":  "./res",
       },
       "configPath": "./webpack.config.js",
-      "modules": ["node_modules", "src"]
+      "modules": ["node_modules", "lib"]
     }
   }
 }
