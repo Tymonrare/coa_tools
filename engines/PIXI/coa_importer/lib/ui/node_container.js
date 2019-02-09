@@ -78,6 +78,13 @@ class NodeList extends NodeContainer {
 	constructor(node, root) {
 		super(node, root);
 
+		//props
+
+		/**
+		 * @brief with false will be requestAnimationFrame each bind change instead of isntant redraws
+		 */
+		this._instantUpdate = false;
+
 		//init
 		this.refNode = this.children.find((c) => {
 			return c.name == 'node';
@@ -135,6 +142,30 @@ class NodeList extends NodeContainer {
 	updateBinding(array) {
 		//prep
 		this.dataArray = array;
+
+		//array listen for changes
+		let self = this;
+		this._bindingValue = new Proxy(this.dataArray, {
+			set(obj, key, val) {
+				obj[key] = val;
+
+				self.binding = self.dataArray;
+
+				return true;
+			}
+		});
+
+		if (this.updateRequested) return;
+		this.updateRequested = true;
+
+		if (!this._instantUpdate) {
+			requestAnimationFrame(() => this.updateContent());
+		} else {
+			this.updateContent();
+		}
+	}
+	updateContent() {
+		this.updateRequested = false;
 		this.contentContainer.removeChildren();
 
 		if (!this.dataArray.length) return;
@@ -280,18 +311,6 @@ class NodeList extends NodeContainer {
 				dir.y * Math.max(-maxPos.y, Math.min(minY, initialPos.y + delta.y))
 			);
 		}
-
-		//array listen for changes
-		let self = this;
-		this._bindingValue = new Proxy(this.dataArray, {
-			set(obj, key, val) {
-				obj[key] = val;
-
-				self.binding = self.dataArray;
-
-				return true;
-			}
-		});
 	}
 }
 export default NodeContainer;
