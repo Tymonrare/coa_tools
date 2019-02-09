@@ -316,25 +316,29 @@ function propsByName(name) {
 }
 
 function save(export_path, export_name) {
-	//first calc bound of all groups
+	//first calc bound for all groups
 	deepForEach(exportTemplate.nodes, function(node){
 		if(node.type != 'group') return; //only interested in groups
 
 		var maxX = 0, maxY = 0, minX = exportTemplate.scene.size[0], minY = exportTemplate.scene.size[1];
 		deepForEach(node.nodes, function(subnode){
 			var t = subnode.transform;
+			
+			var size = t.size||[0,0]
+			
 			if(t.position[0] < minX)
-				minX = t.position[0];
+				minX = t.position[0] - size[0]*t.pivot_offset[0];
 			if(t.position[1] < minY)
-				minY = t.position[1];
+				minY = t.position[1] - size[1]*t.pivot_offset[1];
 
 			if(!t.size) return;
 
 			if(t.position[0] + t.size[0] > maxX)
-				maxX = t.position[0] + t.size[0];
+				maxX = t.position[0] + t.size[0]*(1-t.pivot_offset[0]);
 			if(t.position[1] + t.size[1] > maxY)
-				maxY = t.position[1] + t.size[1];
+				maxY = t.position[1] + t.size[1]*(1-t.pivot_offset[1]);
 		}, 'nodes');
+		
 		node.transform.size = [maxX - minX, maxY - minY];
 	}, 'nodes');
 
@@ -403,7 +407,7 @@ win.export_json.value = true;
 
 function deepForEach(root, callback, reqProperty){
 	for(var i in root){
-		node = root[i];
+		var node = root[i];
 		callback(node);
 
 		if (node[reqProperty]) deepForEach(node[reqProperty], callback, reqProperty);
