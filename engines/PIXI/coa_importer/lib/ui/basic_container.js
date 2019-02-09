@@ -46,7 +46,16 @@ export default class extends Container {
 
 		if (child.name) this.nodes[child.name] = child;
 	}
+
+	//update in sprite_node too if you changing something
 	updateBinding() {
 		throw new Error(`${this.constructor.name} doesn't support binds`);
+	}
+	get binding() {
+		return this._bindingValue;
+	}
+	set binding(value) {
+		this._bindingValue = value;
+		this.updateBinding(this._bindingValue);
 	}
 }

@@ -3,7 +3,7 @@
 import { Sprite, Text } from 'pixi.js';
 import SpriteNode from './sprite_node.js';
 import BasicContainer from './basic_container.js';
-import { applyNodeProps } from './utils.js';
+import { applyNodeProps, createMaskForNode } from './utils.js';
 
 class TextNode extends BasicContainer {
 	constructor(node, root) {
@@ -45,10 +45,11 @@ class DynamicSpriteNode extends BasicContainer {
 		this.sprite.texture = texture;
 
 		let s = this.node.transform.size;
-		if (this.node.properties.style.indexOf('fit') >= 0) {
+		let style = this.node.properties.style || 'fit';
+		if (style.indexOf('fit') >= 0) {
 			this.sprite.width = s[0];
 			this.sprite.height = s[1];
-		} else if (this.node.properties.style.indexOf('save_ratio') >= 0) {
+		} else if (style.indexOf('save_ratio') >= 0) {
 			let w = texture.orig.width;
 			let h = texture.orig.height;
 
@@ -140,10 +141,10 @@ class ButtonNode extends SpriteNode {
 		}
 	}
 	updateBinding(handler) {
-		if (this.clickHandler) this.off('pointerdown', this.clickHandler);
+		if (this.clickHandler) this.off('pointertap', this.clickHandler);
 
 		this.clickHandler = handler;
-		this.on('pointerdown', this.clickHandler);
+		this.on('pointertap', this.clickHandler);
 	}
 	postTreeInit(treeRoot) {
 		if (this.node.properties.target_tab) {
@@ -173,10 +174,8 @@ class ProgressNode extends BasicContainer {
 
 		//FIXME: положение контейнера будет по нулям, что не совсем корректно. Желательно выставлять его
 		//В положение body, а положения дочерних элементов корректировать релативно
-		let maskS = new PIXI.Sprite(PIXI.Texture.WHITE);
-		this.maskS = maskS;
-
-		this.addChild(maskS);
+		this.maskS = createMaskForNode(node);
+		this.addChild(this.maskS);
 
 		if (node.properties.frames) {
 			let ordered = ['bar', 'body'];
@@ -195,16 +194,13 @@ class ProgressNode extends BasicContainer {
 					);
 
 					if (type == 'bar') {
-						sprite.mask = maskS;
+						sprite.mask = this.maskS;
 					}
 				}
 			}
 		}
 
-		let t = node.transform;
-		maskS.width = t.size[0];
-		maskS.height = t.size[1];
-
+		//mask pos
 		let ax = 0,
 			ay = 0.5;
 		if (node.properties.progress_anchor) {
@@ -212,12 +208,10 @@ class ProgressNode extends BasicContainer {
 			ax = parseFloat(anch[0]);
 			ay = parseFloat(anch[1]);
 		}
-		maskS.anchor.set(ax, ay);
-		maskS.position.x = -t.size[0] * t.pivot_offset[0];
-		maskS.position.y = -t.size[1] * t.pivot_offset[1];
-		//move to new progress anchor
-		maskS.position.x += t.size[0] * ax;
-		maskS.position.y += t.size[1] * ay;
+		let t = node.transform;
+		this.maskS.anchor.set(ax, ay);
+		this.maskS.position.x = -t.size[0] * (t.pivot_offset[0] - ax);
+		this.maskS.position.y = -t.size[1] * (t.pivot_offset[1] - ay);
 	}
 	updateBinding(progress) {
 		this.setProgress(progress);
@@ -226,7 +220,7 @@ class ProgressNode extends BasicContainer {
 	//deprecated
 	setProgress(progress) {
 		let t = this.node.transform;
-		this.maskS.width = t.size[0] * progress;
+		//this.maskS.width = t.size[0] * progress;
 		this.progress = progress;
 	}
 }

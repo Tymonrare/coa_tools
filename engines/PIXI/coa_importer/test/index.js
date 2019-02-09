@@ -25,12 +25,32 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 	{
 		let binds = wind.gbinds;
 		setInterval(function() {
-			binds.charge_progress = Math.abs(Math.sin(new Date().getTime()/5000));
+			binds.charge_progress = Math.abs(Math.sin(new Date().getTime() / 5000));
 		}, 30);
 		binds.test_bind1 = 'text text';
-		binds.test_bind2 = PIXI.Texture.from('res/flat_128.png');
 
-		binds.test_bind6 = [{}, {}]
+		let texture = PIXI.Texture.from('res/flat_128.png');
+		binds.test_bind2 = texture;
+
+		//WARNING:
+		//You can't push in your own array like:
+		//let a = [];
+		//binds.node = a;
+		//a.push(true); //not gonna work
+		binds.test_bind4 = [true, true, true];
+		binds.test_bind4.push(true);
+
+		let bind5arr = [];
+		for (let i = 0; i < 34; i++) {
+			bind5arr.push(true);
+		}
+		binds.test_bind5 = bind5arr;
+
+		let bind6arr = [];
+		for (let i = 0; i < 60; i++) {
+			bind6arr.push({ test_nested1: 'text' + i, test_nested2: texture });
+		}
+		binds.test_bind6 = bind6arr;
 	}
 
 	//test btn

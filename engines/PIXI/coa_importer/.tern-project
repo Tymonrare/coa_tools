@@ -9,7 +9,7 @@
     "webpack": {
       "alias": {
         "@lib":  "./lib",
-        "@resources":  "./res",
+        "@resources":  "./res"
       },
       "configPath": "./webpack.config.js",
       "modules": ["node_modules", "lib"]

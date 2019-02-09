@@ -25,4 +25,16 @@ export default class extends Sprite {
 
 		this.texture = fr.texture;
 	}
+
+	//copy of basic_class.js
+	updateBinding() {
+		throw new Error(`${this.constructor.name} doesn't support binds`);
+	}
+	get binding() {
+		return this._bindingValue;
+	}
+	set binding(value) {
+		this._bindingValue = value;
+		this.updateBinding(this._bindingValue);
+	}
 }

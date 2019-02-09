@@ -48,7 +48,10 @@ export default class extends NodeContainer {
 				if (child.updateBinding) {
 					Object.defineProperty(this.gbinds, name, {
 						set: function(val) {
-							child.updateBinding(val);
+							child.binding = val;
+						},
+						get: function(){
+							return child.binding
 						}
 					});
 				}
@@ -74,7 +77,7 @@ export default class extends NodeContainer {
 
 			obj = child;
 		}
-		return obj||null;
+		return obj || null;
 	}
 	findInstanceForNode(node) {
 		let obj = this.findInstanceByPath(node.node_path);

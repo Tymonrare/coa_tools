@@ -1,4 +1,5 @@
 /** @format */
+import { Sprite } from 'pixi.js';
 
 function applyNodeProps(node, object) {
 	object.visible = !node.properties.hide;
@@ -23,4 +24,17 @@ function applyNodeProps(node, object) {
 	}
 }
 
-export { applyNodeProps };
+function createMaskForNode(node) {
+	let maskS = new PIXI.Sprite(PIXI.Texture.WHITE);
+
+	let t = node.transform;
+	maskS.width = t.size[0];
+	maskS.height = t.size[1];
+	maskS.anchor.set(t.pivot_offset[0], t.pivot_offset[1]);
+	maskS.position.x = t.position[0];
+	maskS.position.y = t.position[1];
+
+	return maskS;
+}
+
+export { applyNodeProps, createMaskForNode };

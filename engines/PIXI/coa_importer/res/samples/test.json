@@ -36,7 +36,7 @@
         "opacity": 1,
         "size": [
           1211,
-          278.5
+          238
         ],
         "z": 0,
         "position": [
@@ -240,8 +240,8 @@
         ],
         "opacity": 1,
         "size": [
-          0,
-          0
+          1264,
+          691
         ],
         "z": 0,
         "position": [
@@ -256,7 +256,7 @@
           "properties": {
             "id": "test_bind6",
             "type": "container",
-            "style": "scroll-v",
+            "style": "scroll-h",
             "group": true,
             "global": true
           },
@@ -273,6 +273,10 @@
               1
             ],
             "opacity": 1,
+            "size": [
+              1263,
+              690
+            ],
             "z": 0,
             "position": [
               0,
@@ -301,6 +305,10 @@
                   1
                 ],
                 "opacity": 1,
+                "size": [
+                  73,
+                  73
+                ],
                 "z": 0,
                 "position": [
                   0,
@@ -369,7 +377,7 @@
                       73,
                       73
                     ],
-                    "z": -1,
+                    "z": 1,
                     "position": [
                       440.5,
                       253.5
@@ -429,7 +437,8 @@
             "id": "test_bind5",
             "type": "container",
             "style": "scroll-v",
-            "group": true
+            "group": true,
+            "global": true
           },
           "node_path": "tab2.test_bind5",
           "resource_path": "test/tab2/test_bind5/",
@@ -444,6 +453,10 @@
               1
             ],
             "opacity": 1,
+            "size": [
+              858,
+              83
+            ],
             "z": 0,
             "position": [
               0,
@@ -533,8 +546,8 @@
           "properties": {
             "id": "test_bind4",
             "type": "container",
-            "style": "scroll-v",
-            "group": true
+            "group": true,
+            "global": true
           },
           "node_path": "tab2.test_bind4",
           "resource_path": "test/tab2/test_bind4/",
@@ -549,6 +562,10 @@
               1
             ],
             "opacity": 1,
+            "size": [
+              335,
+              588
+            ],
             "z": 0,
             "position": [
               0,
