@@ -23,6 +23,19 @@ coa.loader(
 	
 	ui.gbinds.label_text = "Your label"; //Set value of global nodes bind
 	ui.gnodes.label_text.updateBinding("Another label"); //You can access to that prop manually
+	
+	ui.gbinds.close_btn = function(){}; //Buttons callbacks
+	
+	ui.gbinds.list = [{text_area:"text", sprite_area:"srite", btn:function(){}}]; //geterate lists for `list --global type=container`
+	ui.gbinds.list.push({...}); //push, pop, insert itc.
+	ui.gbinds.siplestList = [true, false, 123] //for nodes without binds counts only array length
+	
+	//You can't push in your own array like:
+	//let a = [true, true];
+	//binds.node = a;
+	//a.push(true); //not gonna work
+	//binds.node.push(true) //gonna work
+	
 });
 
 ```
