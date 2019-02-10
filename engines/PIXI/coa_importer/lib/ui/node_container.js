@@ -252,6 +252,10 @@ class NodeList extends NodeContainer {
 				},
 				'children'
 			);
+
+			//4. Commit event
+			if(typeof data.$elementCreated == 'function')
+				data.$elementCreated(newNode)
 		}
 
 		//scroll
