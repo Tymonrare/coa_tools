@@ -300,11 +300,12 @@ class NodeList extends NodeContainer {
 		}
 	}
 	get dataArray(){
-		return this._bindingValue;
+		return this._dataArray;
 	}
 	set dataArray(array){
 			//array listen for changes
 			let self = this;
+			this._dataArray = array;
 			this._bindingValue = new Proxy(this.dataArray, {
 				set(obj, key, val) {
 					obj[key] = val;
