@@ -284,7 +284,7 @@ class NodeList extends NodeContainer {
 				y: (e.data.global.y - pressPos.y) * dir.y
 			};
 
-			let maxPos = calcPosForNode(array.length);
+			let maxPos = calcPosForNode(this.dataArray.length);
 			let minX = 0,
 				minY = 0;
 
