@@ -135,9 +135,6 @@ class NodeList extends NodeContainer {
 
 			this.styles.scroll = scroll;
 		}
-
-		//final entry
-		this.updateBinding([]);
 	}
 	updateBinding(array) {
 		//prep
