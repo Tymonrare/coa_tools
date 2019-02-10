@@ -223,6 +223,7 @@ class NodeList extends NodeContainer {
 			let data = this.dataArray[i];
 			//1. Create new node
 			let newNode = this.addNodeClone(this.refNode.node);
+			newNode._refData = data;
 			//reassign
 			this.removeChild(newNode);
 			this.contentContainer.addChild(newNode);
