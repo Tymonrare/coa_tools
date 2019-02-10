@@ -151,19 +151,6 @@ class NodeList extends NodeContainer {
 			this.updateContent();
 		}
 	}
-	set dataArray(){
-			//array listen for changes
-			let self = this;
-			this._bindingValue = new Proxy(this.dataArray, {
-				set(obj, key, val) {
-					obj[key] = val;
-
-					self.binding = self.dataArray;
-
-					return true;
-				}
-			});
-	}
 	updateContent() {
 		this.updateRequested = false;
 		this.contentContainer.removeChildren();
@@ -311,6 +298,22 @@ class NodeList extends NodeContainer {
 				dir.y * Math.max(-maxPos.y, Math.min(minY, initialPos.y + delta.y))
 			);
 		}
+	}
+	get dataArray(){
+		return this._bindingValue;
+	}
+	set dataArray(array){
+			//array listen for changes
+			let self = this;
+			this._bindingValue = new Proxy(this.dataArray, {
+				set(obj, key, val) {
+					obj[key] = val;
+
+					self.binding = self.dataArray;
+
+					return true;
+				}
+			});
 	}
 }
 export default NodeContainer;
