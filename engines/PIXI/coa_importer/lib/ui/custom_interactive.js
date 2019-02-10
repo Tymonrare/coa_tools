@@ -149,6 +149,7 @@ class ButtonNode extends SpriteNode {
 	postTreeInit(treeRoot) {
 		if (this.node.properties.target_tab) {
 			let c = treeRoot.findInstanceByPath(this.node.properties.target_tab);
+			if(!c) throw new Error(`Can't find target ${this.node.properties.target_tab}`)
 			let gr = this.scene.groups[c.group];
 
 			//tabs hide

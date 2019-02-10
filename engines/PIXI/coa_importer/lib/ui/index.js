@@ -57,7 +57,11 @@ export default class extends NodeContainer {
 				}
 			}
 
-			if (child.postTreeInit) child.postTreeInit(this);
+			try{
+				if (child.postTreeInit) child.postTreeInit(this);
+			} catch (err) {
+				console.error(`Node ${child.node.node_path} post-init error: `, err);
+			}
 		});
 	}
 
