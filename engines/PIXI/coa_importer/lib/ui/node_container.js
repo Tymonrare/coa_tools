@@ -135,22 +135,12 @@ class NodeList extends NodeContainer {
 
 			this.styles.scroll = scroll;
 		}
+
+		this.dataArray = [];
 	}
 	updateBinding(array) {
 		//prep
 		this.dataArray = array;
-
-		//array listen for changes
-		let self = this;
-		this._bindingValue = new Proxy(this.dataArray, {
-			set(obj, key, val) {
-				obj[key] = val;
-
-				self.binding = self.dataArray;
-
-				return true;
-			}
-		});
 
 		if (this.updateRequested) return;
 		this.updateRequested = true;
@@ -160,6 +150,19 @@ class NodeList extends NodeContainer {
 		} else {
 			this.updateContent();
 		}
+	}
+	set dataArray(){
+			//array listen for changes
+			let self = this;
+			this._bindingValue = new Proxy(this.dataArray, {
+				set(obj, key, val) {
+					obj[key] = val;
+
+					self.binding = self.dataArray;
+
+					return true;
+				}
+			});
 	}
 	updateContent() {
 		this.updateRequested = false;
