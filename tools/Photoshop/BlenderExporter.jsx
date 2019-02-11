@@ -81,6 +81,7 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 					file_path: file_path,
 					type: 'group',
 					properties: props,
+					position: [0, -index, 0],
 				});
 				node.nodes = [];
 				nodesList.push(node);
@@ -326,17 +327,21 @@ function save(export_path, export_name) {
 			
 			var size = t.size||[0,0]
 			
-			if(t.position[0] < minX)
-				minX = t.position[0] - size[0]*t.pivot_offset[0];
-			if(t.position[1] < minY)
-				minY = t.position[1] - size[1]*t.pivot_offset[1];
+			var minPX = t.position[0] - size[0]*t.pivot_offset[0];
+			var minPY = t.position[1] - size[1]*t.pivot_offset[1];
+			if(minPX < minX)
+				minX = minPX;
+			if(minPY < minY)
+				minY = minPY;
 
 			if(!t.size) return;
 
-			if(t.position[0] + t.size[0] > maxX)
-				maxX = t.position[0] + t.size[0]*(1-t.pivot_offset[0]);
-			if(t.position[1] + t.size[1] > maxY)
-				maxY = t.position[1] + t.size[1]*(1-t.pivot_offset[1]);
+			var maxPX = t.position[0] + t.size[0]*(1-t.pivot_offset[0]);
+			var msxPY = t.position[1] + t.size[1]*(1-t.pivot_offset[1]);
+			if(maxPX > maxX)
+				maxX = maxPX;
+			if(msxPY > maxY)
+				maxY = msxPY;
 		}, 'nodes');
 		
 		node.transform.size = [maxX - minX, maxY - minY];
