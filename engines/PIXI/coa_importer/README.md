@@ -28,6 +28,7 @@ coa.loader(
 	
 	ui.gbinds.list = [{text_area:"text", sprite_area:"srite", btn:function(){}}]; //geterate lists for `list --global type=container`
 	ui.gbinds.list.push({...}); //push, pop, insert itc.
+	ui.gbinds.list.push({$elementCreated: function(child){}}); //you can handle element creation
 	ui.gbinds.siplestList = [true, false, 123] //for nodes without binds counts only array length
 	
 	//You can't push in your own array like:
