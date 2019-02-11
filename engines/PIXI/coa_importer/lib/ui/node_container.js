@@ -136,6 +136,78 @@ class NodeList extends NodeContainer {
 			this.styles.scroll = scroll;
 		}
 
+		//=== {math} ===
+
+		//elements padding
+		let padding = { x: 0, y: 0 };
+		if (this.refNode.node.properties.padding) {
+			let p = ('' + this.refNode.node.properties.padding).split(',');
+			padding.x = parseInt(p[0]);
+			padding.y = parseInt(p[1] || p[0]);
+		}
+
+		//elements positions
+		let areaSize = this.areaNode.transform.size;
+		this.nodeSize = {
+			x: this.refNode.node.transform.size[0] + padding.x,
+			y: this.refNode.node.transform.size[1] + padding.y
+		};
+
+		this.areaDimensions = {
+			x: Math.max(1, (areaSize[0] / this.nodeSize.x) | 0),
+			y: Math.max(1, (areaSize[1] / this.nodeSize.y) | 0)
+		};
+
+		//scroll buttons
+
+		let self = this;
+		function makeBtn(direction) {
+			let btn = new PIXI.Sprite(PIXI.Texture.WHITE);
+			btn.anchor.set(0.5);
+			btn.scale.set(3);
+			btn.interactive = true;
+			btn.buttonMode = true;
+			btn.direction = direction;
+
+			btn.tint = '0xaaaaaa';
+			btn.alpha = 0.5;
+			btn.rotation = Math.PI/4;
+
+			let t = self.areaNode.transform
+
+			btn.on('pointertap', function(){
+				let x = self.contentContainer.position.x - direction.x * self.nodeSize.x;
+				let y = self.contentContainer.position.y - direction.y * self.nodeSize.y;
+
+				let lastchild = self.contentContainer.children[self.contentContainer.children.length - 1];
+				let max = {
+					x: (-lastchild.position.x + t.size[0] - padding.x) * (direction.x ? 1 : 0),
+					y: (-lastchild.position.y + t.size[1] - padding.y) * (direction.y ? 1 : 0),
+				}
+
+				self.contentContainer.position.set(
+					Math.max(max.x, Math.min(0, x)),
+					Math.max(max.y, Math.min(0, y))
+				)
+			});
+
+			btn.position.set(t.position[0] + t.size[0]*direction.x/2, t.position[1] + t.size[1]*direction.y/2)
+			return btn;
+		}
+
+		this.btnsContainer = new PIXI.Container();
+		this.addChild(this.btnsContainer);
+
+		if(this.styles.scroll == 'h'){
+			this.btnsContainer.addChild(makeBtn({x:-1, y:0}))
+			this.btnsContainer.addChild(makeBtn({x:1, y:0}))
+		}
+		else if(this.styles.scroll == 'v'){
+			this.btnsContainer.addChild(makeBtn({x:0, y:-1}))
+			this.btnsContainer.addChild(makeBtn({x:0, y:1}))
+		}
+		this.btnsContainer.visible = false;
+
 		this.dataArray = [];
 	}
 	updateBinding(array) {
@@ -157,37 +229,24 @@ class NodeList extends NodeContainer {
 
 		if (!this.dataArray.length) return;
 
-		//=== {math} ===
-
-		//elements padding
-		let padding = { x: 0, y: 0 };
-		if (this.refNode.node.properties.padding) {
-			let p = ('' + this.refNode.node.properties.padding).split(',');
-			padding.x = parseInt(p[0]);
-			padding.y = parseInt(p[1] || p[0]);
-		}
-
-		//elements positions
-		let areaSize = this.areaNode.transform.size;
-		let refSize = {
-			x: this.refNode.node.transform.size[0] + padding.x,
-			y: this.refNode.node.transform.size[1] + padding.y
-		};
-
-		let dims = {
-			x: Math.max(1, (areaSize[0] / refSize.x) | 0),
-			y: Math.max(1, (areaSize[1] / refSize.y) | 0)
-		};
+		let dims = this.areaDimensions;
 
 		//scroll init
 		if (this.styles.scroll && dims.x * dims.y < this.dataArray.length) {
-			this.interactive = true;
+			/*this.interactive = true; //I have issues with nested buttons
 			this.on('pointerdown', onPointerDown)
 				.on('pointermove', onPointerMove)
 				.on('pointerup', onPointerUp)
 				.on('pointerupoutside', onPointerUp);
+				*/
+			this.btnsContainer.visible = true;
+
 		} else {
-			this.contentContainer.interactive = false;
+			this.interactive = false;
+			this.off('pointerdown', onPointerDown)
+				.off('pointermove', onPointerMove)
+				.off('pointerup', onPointerUp)
+				.off('pointerupoutside', onPointerUp);
 		}
 
 		//container styles
@@ -207,6 +266,7 @@ class NodeList extends NodeContainer {
 			);
 
 		let cloneDir = dims.x < dims.y ? dims.x : dims.y;
+		let nodeSize = this.nodeSize;
 		function calcPosForNode(index) {
 			let pos1 = (index / cloneDir) | 0;
 			let pos2 = index % cloneDir;
@@ -214,7 +274,7 @@ class NodeList extends NodeContainer {
 			let x = dims.x > dims.y ? pos1 : pos2;
 			let y = dims.x < dims.y ? pos1 : pos2;
 
-			return { x: x * refSize.x, y: y * refSize.y };
+			return { x: x * nodeSize.x, y: y * nodeSize.y };
 		}
 
 		//children
@@ -232,9 +292,6 @@ class NodeList extends NodeContainer {
 			let pos = calcPosForNode(i);
 			newNode.position.x += pos.x;
 			newNode.position.y += pos.y;
-
-			//newNode.position.x += pos1 * refSize[0];
-			//newNode.position.y += pos2 * refSize[1];
 
 			//3. find children OF NEW NODE with prop name and set value for it
 			deepForEach(
@@ -254,8 +311,14 @@ class NodeList extends NodeContainer {
 			);
 
 			//4. Commit event
-			if(typeof data.$elementCreated == 'function')
-				data.$elementCreated(newNode)
+			if(typeof data.$elementCreated == 'function'){
+				try {
+					data.$elementCreated(newNode)
+				}
+				catch (err){
+					console.error('Post init callee error: ', err)
+				}
+			}
 		}
 
 		//scroll
