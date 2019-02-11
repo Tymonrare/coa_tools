@@ -221,7 +221,7 @@ class ProgressNode extends BasicContainer {
 	//deprecated
 	setProgress(progress) {
 		let t = this.node.transform;
-		//this.maskS.width = t.size[0] * progress;
+		this.maskS.width = t.size[0] * progress;
 		this.progress = progress;
 	}
 }

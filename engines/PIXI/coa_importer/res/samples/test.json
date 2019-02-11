@@ -35,8 +35,8 @@
         ],
         "opacity": 1,
         "size": [
-          1211,
-          238
+          1212,
+          614
         ],
         "z": 0,
         "position": [
@@ -74,7 +74,7 @@
             "z": 0,
             "position": [
               735,
-              240
+              616
             ]
           },
           "bounds": [
@@ -113,7 +113,7 @@
             "z": -1,
             "position": [
               937,
-              240
+              616
             ]
           },
           "bounds": [
@@ -152,7 +152,7 @@
             "z": -2,
             "position": [
               1155,
-              191.5
+              567.5
             ]
           },
           "bounds": [
@@ -163,16 +163,17 @@
           ]
         },
         {
-          "name": "charge_progress",
+          "name": "progress3",
           "type": "frames",
           "properties": {
-            "id": "charge_progress",
+            "id": "progress3",
             "type": "progress",
             "frames": true,
-            "global": true
+            "global": true,
+            "progress_anchor": "0.5,0.5"
           },
           "node_path": "tab1",
-          "resource_path": "test/tab1/charge_progress.png",
+          "resource_path": "test/tab1/progress3.png",
           "transform": {
             "pivot_offset": [
               0.5,
@@ -189,6 +190,113 @@
               63
             ],
             "z": -3,
+            "position": [
+              637.5,
+              266.5
+            ]
+          },
+          "frames": [
+            {
+              "id": "bar",
+              "bounds": [
+                0,
+                0,
+                1211,
+                63
+              ]
+            },
+            {
+              "id": "body",
+              "bounds": [
+                0,
+                63,
+                1211,
+                63
+              ]
+            }
+          ]
+        },
+        {
+          "name": "progress2",
+          "type": "frames",
+          "properties": {
+            "id": "progress2",
+            "type": "progress",
+            "frames": true,
+            "global": true,
+            "progress_anchor": "1,0.5"
+          },
+          "node_path": "tab1",
+          "resource_path": "test/tab1/progress2.png",
+          "transform": {
+            "pivot_offset": [
+              0.5,
+              0.5
+            ],
+            "rotation": 0,
+            "scale": [
+              1,
+              1
+            ],
+            "opacity": 1,
+            "size": [
+              1211,
+              63
+            ],
+            "z": -4,
+            "position": [
+              637.5,
+              183.5
+            ]
+          },
+          "frames": [
+            {
+              "id": "body",
+              "bounds": [
+                0,
+                0,
+                1211,
+                63
+              ]
+            },
+            {
+              "id": "bar",
+              "bounds": [
+                0,
+                63,
+                1211,
+                63
+              ]
+            }
+          ]
+        },
+        {
+          "name": "progress1",
+          "type": "frames",
+          "properties": {
+            "id": "progress1",
+            "type": "progress",
+            "frames": true,
+            "global": true
+          },
+          "node_path": "tab1",
+          "resource_path": "test/tab1/progress1.png",
+          "transform": {
+            "pivot_offset": [
+              0.5,
+              0.5
+            ],
+            "rotation": 0,
+            "scale": [
+              1,
+              1
+            ],
+            "opacity": 1,
+            "size": [
+              1211,
+              63
+            ],
+            "z": -5,
             "position": [
               638.5,
               105.5
@@ -243,7 +351,7 @@
           1264,
           691
         ],
-        "z": 0,
+        "z": -1,
         "position": [
           0,
           0
@@ -377,7 +485,7 @@
                       73,
                       73
                     ],
-                    "z": 1,
+                    "z": -1,
                     "position": [
                       440.5,
                       253.5
@@ -454,10 +562,10 @@
             ],
             "opacity": 1,
             "size": [
-              858,
-              83
+              870,
+              99
             ],
-            "z": 0,
+            "z": -1,
             "position": [
               0,
               0
@@ -563,10 +671,10 @@
             ],
             "opacity": 1,
             "size": [
-              335,
-              588
+              355,
+              608
             ],
-            "z": 0,
+            "z": -2,
             "position": [
               0,
               0
