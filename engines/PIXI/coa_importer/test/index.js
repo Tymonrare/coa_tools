@@ -43,12 +43,11 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 		binds.test_bind4 = [true, true, true];
 		binds.test_bind4.push(true);
 
-		let bind5arr = [];
-		for (let i = 0; i < 34; i++) {
-			bind5arr.push(true);
-		}
 		wind.gnodes.test_bind5._instantUpdate = true;
-		binds.test_bind5 = bind5arr;
+		binds.test_bind5 = [true, true, true];
+		//test redraw
+		let arr = Array.from({length:30}, ()=>{return true})
+		binds.test_bind5 = arr
 		//if you want access to new children instantly, set _instantUpdate
 		//;console.log(wind.gnodes.test_bind5.contentContainer.children); //already awaible
 

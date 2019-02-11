@@ -136,6 +136,8 @@ class NodeList extends NodeContainer {
 			this.styles.scroll = scroll;
 		}
 
+		//scroll buttons
+
 		//=== {math} ===
 
 		//elements padding
@@ -146,19 +148,10 @@ class NodeList extends NodeContainer {
 			padding.y = parseInt(p[1] || p[0]);
 		}
 
-		//elements positions
-		let areaSize = this.areaNode.transform.size;
 		this.nodeSize = {
 			x: this.refNode.node.transform.size[0] + padding.x,
 			y: this.refNode.node.transform.size[1] + padding.y
 		};
-
-		this.areaDimensions = {
-			x: Math.max(1, (areaSize[0] / this.nodeSize.x) | 0),
-			y: Math.max(1, (areaSize[1] / this.nodeSize.y) | 0)
-		};
-
-		//scroll buttons
 
 		let self = this;
 		function makeBtn(direction) {
@@ -180,9 +173,11 @@ class NodeList extends NodeContainer {
 				let y = self.contentContainer.position.y - direction.y * self.nodeSize.y;
 
 				let lastchild = self.contentContainer.children[self.contentContainer.children.length - 1];
+				let lastchildSize = lastchild.node.transform.size;
+
 				let max = {
-					x: (-lastchild.position.x + t.size[0] - padding.x) * (direction.x ? 1 : 0),
-					y: (-lastchild.position.y + t.size[1] - padding.y) * (direction.y ? 1 : 0),
+					x: (-lastchild.position.x - padding.x*2 - lastchildSize[0] + t.size[0]) * (direction.x ? 1 : 0),
+					y: (-lastchild.position.y - padding.y*2 - lastchildSize[1] + t.size[1]) * (direction.y ? 1 : 0),
 				}
 
 				self.contentContainer.position.set(
@@ -229,7 +224,27 @@ class NodeList extends NodeContainer {
 
 		if (!this.dataArray.length) return;
 
-		let dims = this.areaDimensions;
+		//=== {math} ===
+
+		//elements padding
+		let padding = { x: 0, y: 0 };
+		if (this.refNode.node.properties.padding) {
+			let p = ('' + this.refNode.node.properties.padding).split(',');
+			padding.x = parseInt(p[0]);
+			padding.y = parseInt(p[1] || p[0]);
+		}
+
+		//elements positions
+		let areaSize = this.areaNode.transform.size;
+		this.nodeSize = {
+			x: this.refNode.node.transform.size[0] + padding.x,
+			y: this.refNode.node.transform.size[1] + padding.y
+		};
+
+		let dims = {
+			x: Math.max(1, (areaSize[0] / this.nodeSize.x) | 0),
+			y: Math.max(1, (areaSize[1] / this.nodeSize.y) | 0)
+		};
 
 		//scroll init
 		if (this.styles.scroll && dims.x * dims.y < this.dataArray.length) {
@@ -242,11 +257,14 @@ class NodeList extends NodeContainer {
 			this.btnsContainer.visible = true;
 
 		} else {
+			this.btnsContainer.visible = false;
 			this.interactive = false;
+			/*
 			this.off('pointerdown', onPointerDown)
 				.off('pointermove', onPointerMove)
 				.off('pointerup', onPointerUp)
 				.off('pointerupoutside', onPointerUp);
+				*/
 		}
 
 		//container styles
