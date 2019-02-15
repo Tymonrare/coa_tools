@@ -27,8 +27,8 @@ export default class extends Sprite {
 	}
 
 	//copy of basic_class.js
-	updateBinding() {
-		throw new Error(`${this.constructor.name} doesn't support binds`);
+	updateBinding(frame) {
+		this.setFrame(frame)
 	}
 	get binding() {
 		return this._bindingValue;
