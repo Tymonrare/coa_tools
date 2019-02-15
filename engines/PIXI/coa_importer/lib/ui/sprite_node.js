@@ -28,7 +28,8 @@ export default class extends Sprite {
 
 	//copy of basic_class.js
 	updateBinding(frame) {
-		this.setFrame(frame)
+		if(this.node.frames)
+			this.setFrame(frame)
 	}
 	get binding() {
 		return this._bindingValue;
