@@ -22,6 +22,9 @@ module.exports = (env, argv) => {
     	libraryTarget:'umd',
 			path: path.resolve(__dirname, 'dist')
 		},
+		optimization: {
+					 minimize: false
+	  },
 		resolve: {
 			extensions: ['.js'],
 			alias: {

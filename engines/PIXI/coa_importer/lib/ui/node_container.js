@@ -104,11 +104,15 @@ class NodeList extends NodeContainer {
 		);
 
 		//add nodes
-		this.contentContainer = new PIXI.Container();
-		this.addChild(this.contentContainer);
+		{
+			this.contentContainer = new PIXI.Container();
+			let index = !!this.area ? 1 : 0;
+			this.addChildAt(this.contentContainer, index);
 
-		this.mask = createMaskForNode(this.areaNode);
-		this.addChild(this.mask);
+			//mask all children
+			this.contentContainer.mask = createMaskForNode(this.areaNode);
+			this.addChild(this.contentContainer.mask);
+		}
 
 		//parse styles
 		this.styles = {
@@ -136,72 +140,9 @@ class NodeList extends NodeContainer {
 			this.styles.scroll = scroll;
 		}
 
-		//scroll buttons
-
-		//=== {math} ===
-
-		//elements padding
-		let padding = { x: 0, y: 0 };
-		if (this.refNode.node.properties.padding) {
-			let p = ('' + this.refNode.node.properties.padding).split(',');
-			padding.x = parseInt(p[0]);
-			padding.y = parseInt(p[1] || p[0]);
-		}
-
-		this.nodeSize = {
-			x: this.refNode.node.transform.size[0] + padding.x,
-			y: this.refNode.node.transform.size[1] + padding.y
-		};
-
-		let self = this;
-		function makeBtn(direction) {
-			let btn = new PIXI.Sprite(PIXI.Texture.WHITE);
-			btn.anchor.set(0.5);
-			btn.scale.set(3);
-			btn.interactive = true;
-			btn.buttonMode = true;
-			btn.direction = direction;
-
-			btn.tint = '0xaaaaaa';
-			btn.alpha = 0.5;
-			btn.rotation = Math.PI/4;
-
-			let t = self.areaNode.transform
-
-			btn.on('pointertap', function(){
-				let x = self.contentContainer.position.x - direction.x * self.nodeSize.x;
-				let y = self.contentContainer.position.y - direction.y * self.nodeSize.y;
-
-				let lastchild = self.contentContainer.children[self.contentContainer.children.length - 1];
-				let lastchildSize = lastchild.node.transform.size;
-
-				let max = {
-					x: (-lastchild.position.x - padding.x*2 - lastchildSize[0] + t.size[0]) * (direction.x ? 1 : 0),
-					y: (-lastchild.position.y - padding.y*2 - lastchildSize[1] + t.size[1]) * (direction.y ? 1 : 0),
-				}
-
-				self.contentContainer.position.set(
-					Math.max(max.x, Math.min(0, x)),
-					Math.max(max.y, Math.min(0, y))
-				)
-			});
-
-			btn.position.set(t.position[0] + t.size[0]*direction.x/2, t.position[1] + t.size[1]*direction.y/2)
-			return btn;
-		}
-
-		this.btnsContainer = new PIXI.Container();
-		this.addChild(this.btnsContainer);
-
-		if(this.styles.scroll == 'h'){
-			this.btnsContainer.addChild(makeBtn({x:-1, y:0}))
-			this.btnsContainer.addChild(makeBtn({x:1, y:0}))
-		}
-		else if(this.styles.scroll == 'v'){
-			this.btnsContainer.addChild(makeBtn({x:0, y:-1}))
-			this.btnsContainer.addChild(makeBtn({x:0, y:1}))
-		}
-		this.btnsContainer.visible = false;
+		this.contentPage = 0;
+		this._calcContainerDims();
+		this._initScrollButtons();
 
 		this.dataArray = [];
 	}
@@ -224,47 +165,15 @@ class NodeList extends NodeContainer {
 
 		if (!this.dataArray.length) return;
 
-		//=== {math} ===
-
-		//elements padding
-		let padding = { x: 0, y: 0 };
-		if (this.refNode.node.properties.padding) {
-			let p = ('' + this.refNode.node.properties.padding).split(',');
-			padding.x = parseInt(p[0]);
-			padding.y = parseInt(p[1] || p[0]);
-		}
-
-		//elements positions
-		let areaSize = this.areaNode.transform.size;
-		this.nodeSize = {
-			x: this.refNode.node.transform.size[0] + padding.x,
-			y: this.refNode.node.transform.size[1] + padding.y
-		};
-
-		let dims = {
-			x: Math.max(1, (areaSize[0] / this.nodeSize.x) | 0),
-			y: Math.max(1, (areaSize[1] / this.nodeSize.y) | 0)
-		};
+		this._calcContainerDims(); //i don't know why i have to recalc it each time ¯\_(ツ)_/¯
+		let dims = { x: this.areaCellsDims.x, y: this.areaCellsDims.y };
 
 		//scroll init
 		if (this.styles.scroll && dims.x * dims.y < this.dataArray.length) {
-			/*this.interactive = true; //I have issues with nested buttons
-			this.on('pointerdown', onPointerDown)
-				.on('pointermove', onPointerMove)
-				.on('pointerup', onPointerUp)
-				.on('pointerupoutside', onPointerUp);
-				*/
 			this.btnsContainer.visible = true;
-
 		} else {
 			this.btnsContainer.visible = false;
 			this.interactive = false;
-			/*
-			this.off('pointerdown', onPointerDown)
-				.off('pointermove', onPointerMove)
-				.off('pointerup', onPointerUp)
-				.off('pointerupoutside', onPointerUp);
-				*/
 		}
 
 		//container styles
@@ -329,78 +238,135 @@ class NodeList extends NodeContainer {
 			);
 
 			//4. Commit event
-			if(typeof data.$elementCreated == 'function'){
+			if (typeof data.$elementCreated == 'function') {
 				try {
-					data.$elementCreated(newNode)
-				}
-				catch (err){
-					console.error('Post init callee error: ', err)
+					data.$elementCreated(newNode);
+				} catch (err) {
+					console.error('Post init callee error: ', err);
 				}
 			}
 		}
-
-		//scroll
-		let pointerdown = false;
-		let pressPos = { x: 0, y: 0 };
-		let dir = {
-			x: this.styles.scroll == 'h' ? 1 : 0,
-			y: this.styles.scroll == 'v' ? 1 : 0
-		};
-		let container = this.contentContainer;
-		let initialPos;
-
-		function onPointerDown(e) {
-			pointerdown = true;
-			pressPos = {
-				x: e.data.global.x,
-				y: e.data.global.y
-			};
-			initialPos = {
-				x: container.position.x,
-				y: container.position.y
-			};
-		}
-		function onPointerUp(e) {
-			pointerdown = false;
-		}
-		function onPointerMove(e) {
-			if (!pointerdown) return;
-			let delta = {
-				x: (e.data.global.x - pressPos.x) * dir.x,
-				y: (e.data.global.y - pressPos.y) * dir.y
-			};
-
-			let maxPos = calcPosForNode(this.dataArray.length);
-			let minX = 0,
-				minY = 0;
-
-			container.position.set(
-				//TODO: Упростить вычисления X, чота я намудрил
-				dir.x *
-					Math.max(
-						-maxPos.x + areaSize[0] - padding.x,
-						Math.min(minX, initialPos.x + delta.x)
-					),
-				dir.y * Math.max(-maxPos.y, Math.min(minY, initialPos.y + delta.y))
-			);
-		}
 	}
-	get dataArray(){
+	get dataArray() {
 		return this._dataArray;
 	}
-	set dataArray(array){
-			//array listen for changes
-			let self = this;
-			this._dataArray = array;
-			this._bindingValue = new Proxy(this.dataArray, {
-				set(obj, key, val) {
-					obj[key] = val;
+	set dataArray(array) {
+		//array listen for changes
+		let self = this;
+		this._dataArray = array;
+		this._bindingValue = new Proxy(this.dataArray, {
+			set(obj, key, val) {
+				obj[key] = val;
 
-					self.binding = self.dataArray;
+				self.binding = self.dataArray;
 
-					return true;
-				}
+				return true;
+			}
+		});
+	}
+	setContentPage(page) {
+		let lastchild = this.contentContainer.children[this.contentContainer.children.length - 1];
+
+		let dirX = this.styles.scroll == 'h';
+		let t = this.areaNode.transform;
+
+		let minPages = 0;
+		let maxPages = Math.floor(lastchild.position[dirX ? 'x' : 'y'] / t.position[!dirX * 1]);
+
+		this.contentPage = Math.min(maxPages, Math.max(minPages, page));
+
+		this.contentContainer.position.set(
+			-this.areaCellsDims.x * this.nodeSize.x * this.contentPage * dirX,
+			-this.areaCellsDims.y * this.nodeSize.y * this.contentPage * !dirX
+		);
+	}
+	_initScrollButtons() {
+		//scroll buttons
+		let self = this;
+		function makeBtn(direction) {
+			var btn = new PIXI.Graphics();
+			// set a fill and line style
+			{
+				btn.beginFill(0x0, 0.3);
+				btn.lineStyle(3, 0x0, 0.5);
+
+				let len = 20;
+				let width = 30;
+				btn.moveTo(len, 0);
+				btn.lineTo(0, -width);
+				btn.lineTo(0, width);
+				btn.lineTo(len, 0);
+
+				btn.endFill();
+			}
+			btn.rotation =
+				Math.PI * (direction.x == -1) + //x (for horisontal scrolls) rotation
+				(Math.PI / 2) * direction.y; //y rotation
+
+			btn.interactive = true;
+			btn.buttonMode = true;
+			btn.direction = direction;
+
+			addClickEvent(btn, direction);
+
+			let t = self.areaNode.transform;
+			btn.position.set(
+				t.position[0] + (t.size[0] * direction.x) / 2,
+				t.position[1] + (t.size[1] * direction.y) / 2
+			);
+			return btn;
+		}
+		function addClickEvent(btn, direction) {
+			btn.on('pointertap', function() {
+				//Only one of directions will be "true" (-1 or 1) so we only care "previos" or "next" button is
+				self.setContentPage(self.contentPage + (direction.x || direction.y));
 			});
+		}
+
+		this.btnsContainer = new PIXI.Container();
+		this.addChild(this.btnsContainer);
+
+		let nextBtn = this.styles.scroll == 'h' ? { x: 1, y: 0 } : { x: 0, y: 1 };
+		let prevBtn = this.styles.scroll == 'h' ? { x: -1, y: 0 } : { x: 0, y: -1 };
+
+		if (this.nodes.btn_next) {
+			console.log(this.nodes.btn_next);
+			addClickEvent(this.nodes.btn_next, nextBtn);
+		} else {
+			this.btnsContainer.addChild(makeBtn(nextBtn));
+		}
+		if (this.nodes.btn_prev) {
+			addClickEvent(this.nodes.btn_prev, prevBtn);
+		} else {
+			this.btnsContainer.addChild(makeBtn(prevBtn));
+		}
+
+		this.btnsContainer.visible = false;
+	}
+	_calcContainerDims() {
+		//elements padding
+		let padding = { x: 0, y: 0 };
+		if (this.refNode.node.properties.padding) {
+			let p = ('' + this.refNode.node.properties.padding).split(',');
+			padding.x = parseInt(p[0]);
+			padding.y = parseInt(p[1] || p[0]);
+		}
+
+		//elements positions
+		let areaSize = this.areaNode.transform.size;
+		let nodeSize = {
+			x: this.refNode.node.transform.size[0] + padding.x,
+			y: this.refNode.node.transform.size[1] + padding.y
+		};
+
+		let dims = {
+			x: Math.max(1, (areaSize[0] / nodeSize.x) | 0),
+			y: Math.max(1, (areaSize[1] / nodeSize.y) | 0)
+		};
+
+		this.elementsPadding = padding;
+		this.nodeSize = nodeSize;
+		this.areaCellsDims = dims;
 	}
 }
 export default NodeContainer;
