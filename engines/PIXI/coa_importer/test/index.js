@@ -35,19 +35,21 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 		let texture = PIXI.Texture.from('res/flat_128.png');
 		binds.test_bind2 = texture;
 
-		//WARNING:
-		//You can't push in your own array like:
-		//let a = [];
-		//binds.node = a;
-		//a.push(true); //not gonna work
-		binds.test_bind4 = [true, true, true];
-		binds.test_bind4.push(true);
+		let handler = {
+			$elementCreated: function(el) {
+				el.tint = Math.random() * 16777215;
+			}
+		};
+		binds.test_bind4 = [handler, handler, handler];
+		binds.test_bind4.push(handler);
 
 		wind.gnodes.test_bind5._instantUpdate = true;
 		binds.test_bind5 = [true, true, true];
 		//test redraw
-		let arr = Array.from({length:30}, ()=>{return true})
-		binds.test_bind5 = arr
+		let arr = Array.from({ length: 30 }, () => {
+			return true;
+		});
+		binds.test_bind5 = arr;
 		//if you want access to new children instantly, set _instantUpdate
 		//;console.log(wind.gnodes.test_bind5.contentContainer.children); //already awaible
 

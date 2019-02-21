@@ -2,6 +2,7 @@
 
 import { Sprite, Text } from 'pixi.js';
 import SpriteNode from './sprite_node.js';
+//import NodeContainer from './node_container.js';
 import BasicContainer from './basic_container.js';
 import { applyNodeProps, createMaskForNode } from './utils.js';
 
@@ -149,7 +150,7 @@ class ButtonNode extends SpriteNode {
 	postTreeInit(treeRoot) {
 		if (this.node.properties.target_tab) {
 			let c = treeRoot.findInstanceByPath(this.node.properties.target_tab);
-			if(!c) throw new Error(`Can't find target ${this.node.properties.target_tab}`)
+			if (!c) throw new Error(`Can't find target ${this.node.properties.target_tab}`);
 			let gr = this.scene.groups[c.group];
 
 			//tabs hide
@@ -226,4 +227,91 @@ class ProgressNode extends BasicContainer {
 	}
 }
 
-export { ButtonNode, ProgressNode, TextNode, DynamicSpriteNode };
+class RadioGroup extends BasicContainer {
+	constructor(node, root) {
+		super(node, root);
+
+		this.styles = {
+			direction: 'h'
+		};
+
+		if (this.node.properties.style) {
+			let styles = this.node.properties.style.split(',');
+
+			//scroll
+			let dir = styles.find((s) => {
+				return s.includes('dir');
+			});
+			if (dir) {
+				dir = dir.split('-')[1]; //'h' or 'v'
+				if (dir != 'h' && dir != 'v') {
+					console.warn(
+						`Style for node ${this.node.node_path} was set as ${
+							this.node.properties.style
+						}. You can use only 'dir-h' and 'dir-v' keywords for scroll`
+					);
+					scroll = null;
+				}
+			}
+
+			this.styles.direction = dir;
+		}
+
+		this.container_ = new PIXI.Container();
+		this.addChild(this.container_);
+		this.setLength(3);
+	}
+	setLength(len) {
+		this.container_.removeChildren();
+
+		//configure
+		let size = this.node.transform.size;
+		let padding = {
+			x: size[0] * 0.5, //maybe it will be configarable
+			y: size[1] * 0.5
+		};
+		let nodeSize = {
+			x: size[0] + padding.x,
+			y: size[1] + padding.y
+		};
+		let dirX = this.styles.direction == 'h';
+		let self = this;
+
+		//create
+		for (let i = 0; i < len; i++) {
+			let s = new SpriteNode(this.node);
+			s.anchor.set(0.5);
+			s.position.set(nodeSize.x * dirX * i, nodeSize.y * !dirX * i);
+			this.container_.addChild(s);
+
+			//make button
+			s.index_ = i;
+			s.interactive = true;
+			s.buttonMode = true;
+			s.on('pointertap', function() {
+				self.setSelected(this.index_);
+				self.emit('checkselect', this.index_);
+			});
+		}
+
+		//center
+		this.container_.position.set(
+			((-nodeSize.x * len) / 2 + padding.x) * dirX,
+			((-nodeSize.y * len) / 2 + padding.y) * !dirX
+		);
+
+		this.setSelected(0);
+	}
+	setSelected(point) {
+		this.currentSelect = point;
+
+		this.container_.children.forEach((ch, i) => {
+			let curr = i == point 
+			ch.interactive = !curr;
+			ch.setFrame(curr ? 'selected' : 'disabled');
+		});
+	}
+}
+
+import NodeList from './node_list.js';
+export { ButtonNode, ProgressNode, TextNode, DynamicSpriteNode, RadioGroup, NodeList };

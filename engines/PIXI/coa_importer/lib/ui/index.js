@@ -1,6 +1,8 @@
 /** @format */
 import { Container, Sprite } from 'pixi.js';
 import { forEachNodeInTree, sortAllNodesInTree } from '@lib/utils.js';
+
+import * as uiCustoms from './custom_interactive.js'; //import it first for proper inherit!
 import NodeContainer from './node_container.js';
 
 /**
