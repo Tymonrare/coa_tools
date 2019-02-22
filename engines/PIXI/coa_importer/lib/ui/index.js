@@ -5,15 +5,21 @@ import { forEachNodeInTree, sortAllNodesInTree } from '@lib/utils.js';
 import * as uiCustoms from './custom_interactive.js'; //import it first for proper inherit!
 import NodeContainer from './node_container.js';
 
+//dev{
+import { debugBoundsDraw } from './dev.js';
+//}
+
 /**
- * @brief
- *
- * @Param config
- *
- * @Returns  container
+ * @brief main ui container and generator
  */
 export default class extends NodeContainer {
-	constructor(config) {
+	/**
+	 * @brief constructor
+	 *
+	 * @Param config preloaded coa config
+	 * @Param properties additional properties
+	 */
+	constructor(config, properties) {
 		//sort nodes by z index
 		sortAllNodesInTree(config.nodes, (a, b) => {
 			return a.transform.z - b.transform.z;
@@ -52,14 +58,14 @@ export default class extends NodeContainer {
 						set: function(val) {
 							child.binding = val;
 						},
-						get: function(){
-							return child.binding
+						get: function() {
+							return child.binding;
 						}
 					});
 				}
 			}
 
-			try{
+			try {
 				if (child.postTreeInit) child.postTreeInit(this);
 			} catch (err) {
 				console.error(`Node ${child.node.node_path} post-init error: `, err);

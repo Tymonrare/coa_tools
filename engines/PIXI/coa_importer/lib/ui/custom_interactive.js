@@ -76,7 +76,8 @@ class ButtonNode extends SpriteNode {
 		let states = {
 			idle: node.texture,
 			hover: null,
-			click: null
+			click: null,
+			disabled: null
 		};
 
 		if (node.frames) {
@@ -97,6 +98,9 @@ class ButtonNode extends SpriteNode {
 			.on('pointerout', onButtonOut)
 			.on('pointerdown', onButtonDown);
 
+		//TODO: make separated animations logic
+		let animate = this.node.properties.animation == 'simple_btn';
+
 		function setState(txt) {
 			if (this.stateTextures && this.stateTextures[txt]) {
 				this.texture = this.stateTextures[txt];
@@ -108,16 +112,19 @@ class ButtonNode extends SpriteNode {
 
 		function onButtonDown() {
 			this.isdown = true;
-			this.scale.set(this.scale.x - 0.2, this.scale.y - 0.2);
+			if (animate) {
+				this.scale.set(this.scale.x - 0.2, this.scale.y - 0.2);
+			}
 			setState.apply(this, ['click']);
 		}
 
 		function onButtonUp() {
-			if (this.isdown) this.scale.set(this.scale.x + 0.2, this.scale.y + 0.2);
+			if (animate) {
+				if (this.isdown) this.scale.set(this.scale.x + 0.2, this.scale.y + 0.2);
+			}
 
 			this.isdown = false;
-			if (this.isOver) {
-				setState.apply(this, ['hover']);
+			if (this.isOver && setState.apply(this, ['hover'])) {
 			} else {
 				setState.apply(this, ['idle']);
 			}
@@ -125,7 +132,9 @@ class ButtonNode extends SpriteNode {
 
 		function onButtonOver() {
 			this.isOver = true;
-			this.scale.set(this.scale.x + 0.1, this.scale.y + 0.1);
+			if (animate) {
+				this.scale.set(this.scale.x + 0.1, this.scale.y + 0.1);
+			}
 			if (this.isdown) {
 				return;
 			}
@@ -134,7 +143,9 @@ class ButtonNode extends SpriteNode {
 
 		function onButtonOut() {
 			this.isOver = false;
-			this.scale.set(this.scale.x - 0.1, this.scale.y - 0.1);
+			if (animate) {
+				this.scale.set(this.scale.x - 0.1, this.scale.y - 0.1);
+			}
 			if (this.isdown) {
 				return;
 			}
@@ -165,6 +176,17 @@ class ButtonNode extends SpriteNode {
 					else gr[i].visible = true;
 				}
 			});
+		}
+	}
+	get interactive() {
+		return this.interactive_;
+	}
+	set interactive(val) {
+		this.interactive_ = val;
+
+		let state = val ? 'idle' : 'disabled';
+		if (this.stateTextures && this.stateTextures[state]) {
+			this.texture = this.stateTextures[state];
 		}
 	}
 }
@@ -306,7 +328,7 @@ class RadioGroup extends BasicContainer {
 		this.currentSelect = point;
 
 		this.container_.children.forEach((ch, i) => {
-			let curr = i == point 
+			let curr = i == point;
 			ch.interactive = !curr;
 			ch.setFrame(curr ? 'selected' : 'disabled');
 		});

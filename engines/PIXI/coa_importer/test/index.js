@@ -22,9 +22,9 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 
 	app.stage.addChild(wind);
 
+	//test binds
 	{
 		let binds = wind.gbinds;
-		console.log(wind.gnodes.progress1);
 		setInterval(function() {
 			binds.progress1 = Math.abs(Math.sin(new Date().getTime() / 5000));
 			binds.progress2 = Math.abs(Math.sin(new Date().getTime() / 5000));
@@ -64,6 +64,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 	wind.close_btn.binding = () => {
 		console.log('close window');
 	};
+	wind.gnodes.test_disabled_btn.interactive = false;
 
 	{
 		let child = wind.gnodes.test_bind1;
