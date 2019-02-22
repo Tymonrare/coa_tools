@@ -96,7 +96,7 @@ class NodeList extends NodeContainer {
 		if (!this.dataArray.length) return;
 
 		this._calcContainerDims(); //i don't know why i have to recalc it each time ¯\_(ツ)_/¯
-		let dims = { x: this.areaCellsDims.x, y: this.areaCellsDims.y };
+		let dims = { x: this.areaGridSize.x, y: this.areaGridSize.y };
 
 		//scroll init
 		if (this.styles.scroll && dims.x * dims.y < this.dataArray.length) {
@@ -216,8 +216,8 @@ class NodeList extends NodeContainer {
 		this.contentPage = Math.min(maxPages, Math.max(minPages, page));
 
 		this.contentContainer.position.set(
-			-this.areaCellsDims.x * this.nodeSize.x * this.contentPage * dirX,
-			-this.areaCellsDims.y * this.nodeSize.y * this.contentPage * !dirX
+			-this.areaGridSize.x * this.nodeSize.x * this.contentPage * dirX,
+			-this.areaGridSize.y * this.nodeSize.y * this.contentPage * !dirX
 		);
 		if (this.nodes.page_select) {
 			this.nodes.page_select.setSelected(this.contentPage);
@@ -308,13 +308,16 @@ class NodeList extends NodeContainer {
 		};
 
 		let dims = {
-			x: Math.max(1, (areaSize[0] / nodeSize.x) | 0),
+			x: this.node.properties.grid_h || Math.max(1, (areaSize[0] / nodeSize.x) | 0),
 			y: Math.max(1, (areaSize[1] / nodeSize.y) | 0)
 		};
 
+		dims.x = this.node.properties.grid_w || dims.x;
+		dims.y = this.node.properties.grid_h || dims.y;
+
 		this.elementsPadding = padding;
 		this.nodeSize = nodeSize;
-		this.areaCellsDims = dims;
+		this.areaGridSize = dims;
 	}
 }
 
