@@ -100,6 +100,7 @@ class ButtonNode extends SpriteNode {
 
 		//TODO: make separated animations logic
 		let animate = this.node.properties.animation == 'simple_btn';
+		let mode = this.node.properties.mode || 'simple';
 
 		function setState(txt) {
 			if (this.stateTextures && this.stateTextures[txt]) {
@@ -115,7 +116,13 @@ class ButtonNode extends SpriteNode {
 			if (animate) {
 				this.scale.set(this.scale.x - 0.2, this.scale.y - 0.2);
 			}
-			setState.apply(this, ['click']);
+			if (mode == 'simple') {
+				setState.apply(this, ['click']);
+			} else if (mode == 'switch') {
+				this.toggled = !this.toggled;
+				setState.apply(this, [this.toggled ? 'click' : 'idle']);
+				this.emit('switchtoggle', this.toggled);
+			}
 		}
 
 		function onButtonUp() {
@@ -125,7 +132,7 @@ class ButtonNode extends SpriteNode {
 
 			this.isdown = false;
 			if (this.isOver && setState.apply(this, ['hover'])) {
-			} else {
+			} else if (mode == 'simple') {
 				setState.apply(this, ['idle']);
 			}
 		}
@@ -149,7 +156,10 @@ class ButtonNode extends SpriteNode {
 			if (this.isdown) {
 				return;
 			}
-			setState.apply(this, ['idle']);
+
+			if (mode == 'simple') {
+				setState.apply(this, ['idle']);
+			}
 		}
 	}
 	updateBinding(handler) {
