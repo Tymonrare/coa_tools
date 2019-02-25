@@ -70,11 +70,10 @@ class NodeList extends NodeContainer {
 			this.styles.scroll = scroll;
 		}
 
-		this.contentPage = 0;
-		this._calcContainerDims();
-		this._initScrollButtons();
-
 		this.dataArray = [];
+
+		this.contentPage = 0;
+		this._initScrollButtons();
 	}
 	updateBinding(array) {
 		//prep
@@ -96,43 +95,23 @@ class NodeList extends NodeContainer {
 		if (!this.dataArray.length) return;
 
 		this._calcContainerDims(); //i don't know why i have to recalc it each time ¯\_(ツ)_/¯
-		let dims = { x: this.areaGridSize.x, y: this.areaGridSize.y };
 
 		//scroll init
-		if (this.styles.scroll && dims.x * dims.y < this.dataArray.length) {
+		if (
+			this.styles.scroll &&
+			this.areaGridSize.x * this.areaGridSize.y < this.dataArray.length
+		) {
 			this.btnsContainer.visible = true;
 		} else {
 			this.btnsContainer.visible = false;
 			this.interactive = false;
 		}
 
-		//container styles
-		if (this.styles.scroll) {
-			//dims is maximum size of container, so with scroll it inf
-			if (this.styles.scroll == 'h') {
-				dims.x = Infinity;
-			} else if (this.styles.scroll == 'v') {
-				dims.y = Infinity;
-			}
-		}
-
-		if (dims.x * dims.y < this.dataArray.length)
+		if (this.maxGridSize.x * this.maxGridSize.y < this.dataArray.length)
 			console.warn(
-				`Container ${this.node.node_path} not scrollable and can fit only ${dims.x *
-					dims.y} elements. You trying to push ${this.dataArray.length}`
+				`Container ${this.node.node_path} not scrollable and can fit only ${this.maxGridSize
+					.x * this.maxGridSize.y} elements. You trying to push ${this.dataArray.length}`
 			);
-
-		let cloneDir = dims.x < dims.y ? dims.x : dims.y;
-		let nodeSize = this.nodeSize;
-		function calcPosForNode(index) {
-			let pos1 = (index / cloneDir) | 0;
-			let pos2 = index % cloneDir;
-
-			let x = dims.x > dims.y ? pos1 : pos2;
-			let y = dims.x < dims.y ? pos1 : pos2;
-
-			return { x: x * nodeSize.x, y: y * nodeSize.y };
-		}
 
 		//children
 		let keysList = Object.keys(this.dataArray[0]);
@@ -146,7 +125,7 @@ class NodeList extends NodeContainer {
 			this.contentContainer.addChild(newNode);
 
 			//2. Set position
-			let pos = calcPosForNode(i);
+			let pos = this._calcPosForNode(i);
 			newNode.position.x += pos.x;
 			newNode.position.y += pos.y;
 
@@ -200,12 +179,14 @@ class NodeList extends NodeContainer {
 		});
 	}
 	get maxPages_() {
-		let lastchild = this.contentContainer.children[this.contentContainer.children.length - 1];
-		if (!lastchild) return 0;
+		let elems = this.dataArray.length;
+		if (!elems) return 0;
+
+		let lastpos = this._calcCellForNode(elems);
 
 		let dirX = this.styles.scroll == 'h';
-		let t = this.areaNode.transform;
-		return Math.floor(lastchild.position[dirX ? 'x' : 'y'] / t.position[!dirX * 1]);
+		let dir = dirX ? 'x' : 'y';
+		return Math.floor(lastpos[dir] / this.areaGridSize[dir]);
 	}
 	setContentPage(page) {
 		let dirX = this.styles.scroll == 'h';
@@ -318,6 +299,38 @@ class NodeList extends NodeContainer {
 		this.elementsPadding = padding;
 		this.nodeSize = nodeSize;
 		this.areaGridSize = dims;
+
+		//container styles
+		this.maxGridSize = { x: dims.x, y: dims.y };
+
+		if (this.styles.scroll) {
+			//dims is maximum size of container, so with scroll it inf
+			if (this.styles.scroll == 'h') {
+				this.maxGridSize.x = Infinity;
+			} else if (this.styles.scroll == 'v') {
+				this.maxGridSize.y = Infinity;
+			}
+		}
+	}
+	/**
+	 * @brief position for node in absolute (grid) points
+	 *
+	 * @Param index
+	 */
+	_calcCellForNode(index) {
+		let dims = this.maxGridSize;
+		let cloneDir = dims.x < dims.y ? dims.x : dims.y;
+		let pos1 = (index / cloneDir) | 0;
+		let pos2 = index % cloneDir;
+
+		let x = dims.x > dims.y ? pos1 : pos2;
+		let y = dims.x < dims.y ? pos1 : pos2;
+
+		return { x, y };
+	}
+	_calcPosForNode(index) {
+		let pos = this._calcCellForNode(index);
+		return { x: pos.x * this.nodeSize.x, y: pos.y * this.nodeSize.y };
 	}
 }
 

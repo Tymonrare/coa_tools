@@ -46,7 +46,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 		wind.gnodes.test_bind5._instantUpdate = true;
 		binds.test_bind5 = [true, true, true];
 		//test redraw
-		let arr = Array.from({ length: 30 }, () => {
+		let arr = Array.from({ length: 10 }, () => {
 			return true;
 		});
 		binds.test_bind5 = arr;
