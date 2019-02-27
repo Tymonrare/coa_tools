@@ -6,7 +6,7 @@ import * as uiCustoms from './custom_interactive.js'; //import it first for prop
 import NodeContainer from './node_container.js';
 
 //dev{
-import { debugBoundsDraw } from './dev.js';
+import { debugBoundsDraw, debugTreePrint } from './dev.js';
 //}
 
 /**
@@ -71,10 +71,21 @@ export default class extends NodeContainer {
 				console.error(`Node ${child.node.node_path} post-init error: `, err);
 			}
 		});
+
+		if (properties.debugTree) {
+			debugTreePrint(config, properties.debugTreeVerbose);
+		}
+		if (properties.debugBounds) {
+			this.debugBoundsDraw_();
+		}
 	}
 
 	setPosition(x, y) {
 		this.position.set(x + this.config.scene.offset[0], y - this.config.scene.offset[1]);
+	}
+
+	debugBoundsDraw_(){
+			debugBoundsDraw(this);
 	}
 
 	findInstanceByPath(path) {

@@ -13,7 +13,7 @@ var app = new PIXI.Application(width, height, { backgroundColor: 0x1099bb });
 document.body.appendChild(app.view);
 
 loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
-	let wind = new ui(conf);
+	let wind = new ui(conf, { debugTree: true, debugBounds: true });
 	wind.setPosition(width / 2, height / 2);
 
 	let ws = conf.scene.size[0] / width;
@@ -76,5 +76,9 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 		}
 	}
 
-	console.log(wind);
+	//all containers redraws only on next frame
+	requestAnimationFrame(() => {
+		//redraw bounds after nodes recreated
+		wind.debugBoundsDraw_();
+	});
 });
