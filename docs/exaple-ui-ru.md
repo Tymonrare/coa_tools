@@ -99,7 +99,7 @@ btn.on('switchtoggle', funtion(toggle){
 Аналог https://www.w3schools.com/html/tryit.asp?filename=tryhtml_form_radio
 
 ```
-- (folder) radio --frames
+- (folder) radio type=radio_group --frames
 --- (layer) disabled
 --- (layer) selected
 ```
