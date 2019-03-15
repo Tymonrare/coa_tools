@@ -19,7 +19,7 @@ export default class extends NodeContainer {
 	 * @Param config preloaded coa config
 	 * @Param properties additional properties
 	 */
-	constructor(config, properties) {
+	constructor(config, properties = {}) {
 		//sort nodes by z index
 		sortAllNodesInTree(config.nodes, (a, b) => {
 			return a.transform.z - b.transform.z;
