@@ -34,7 +34,19 @@ export default class extends NodeContainer {
 
 		//post-process
 		forEachNodeInTree(config.nodes, (node) => {
-			let child = this.findInstanceForNode(node);
+
+			let child;
+			try{
+				child = this.findInstanceForNode(node);
+			}
+			catch (err){
+				//it's PROBABLY child group in 'node' 'container' so it ok to not exist for that moment
+				if(node.node_path.includes('node')){
+					return;
+				}
+
+				console.error(err);
+			}
 			if (!child) {
 				if (
 					//it wasn't loaded

@@ -323,10 +323,15 @@ function save(export_path, export_name) {
 
 		var maxX = 0, maxY = 0, minX = exportTemplate.scene.size[0], minY = exportTemplate.scene.size[1];
 		deepForEach(node.nodes, function(subnode){
+
+			//because group always in zero will get wrong sizes
+			if(subnode.properties.group)
+				return;
+
 			var t = subnode.transform;
-			
+
 			var size = t.size||[0,0]
-			
+
 			var minPX = t.position[0] - size[0]*t.pivot_offset[0];
 			var minPY = t.position[1] - size[1]*t.pivot_offset[1];
 			if(minPX < minX)
@@ -343,7 +348,7 @@ function save(export_path, export_name) {
 			if(msxPY > maxY)
 				maxY = msxPY;
 		}, 'nodes');
-		
+
 		node.transform.size = [maxX - minX, maxY - minY];
 	}, 'nodes');
 

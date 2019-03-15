@@ -79,6 +79,6 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 	//all containers redraws only on next frame
 	requestAnimationFrame(() => {
 		//redraw bounds after nodes recreated
-		wind.debugBoundsDraw_();
+		//wind.debugBoundsDraw_();
 	});
 });

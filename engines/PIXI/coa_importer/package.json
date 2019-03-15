@@ -33,6 +33,7 @@
     "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {
+    "copy-webpack-plugin": "^5.0.1",
     "pixi.js": "^4.8.5"
   },
   "bugs": {
