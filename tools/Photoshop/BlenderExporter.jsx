@@ -97,7 +97,7 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 			var bounds_width = bounds[2] - bounds[0];
 			var bounds_height = bounds[3] - bounds[1];
 
-			var margin = props.margin||0;
+			var margin = props.margin||5;
 
 			//=== { Make document } ===\\
 
