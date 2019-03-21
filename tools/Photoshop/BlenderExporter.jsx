@@ -350,9 +350,18 @@ function save(export_path, export_name) {
 		}, 'nodes');
 
 		node.transform.size = [maxX - minX, maxY - minY];
+		
+		//all groups set in 0 by default
+		//set pos to top-left childs pos
+		node.transform.position[0] += minX;
+		node.transform.position[1] += minY;
+		//now shift back all childs
+		deepForEach(node.nodes, function(subnode){
+			subnode.transform.position[0] -= minX;
+			subnode.transform.position[1] -= minY;
+		});
 	}, 'nodes');
 
-	//than shift offset to 0.5 everywhere
 	exportTemplate.scene.size = [document.width.as("px"), document.height.as("px")]
 	if (win.center_sprites.value)
 		exportTemplate.scene.offset = [exportTemplate.scene.size[0] *  -.5, exportTemplate.scene.size[1] * .5];

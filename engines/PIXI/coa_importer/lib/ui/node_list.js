@@ -19,19 +19,13 @@ class NodeList extends NodeContainer {
 		this.refNode = this.children.find((c) => {
 			return c.name == 'node';
 		});
-		console.assert(
-			this.refNode,
-			`Container ${this.node.node_path} hasn't child with name 'node'`
-		);
+		console.assert(this.refNode, `Container ${this.node.node_path} hasn't child with name 'node'`);
 		this.removeChild(this.refNode);
 
 		this.areaNode = this.node.nodes.find((n) => {
 			return n.name == 'area';
 		});
-		console.assert(
-			this.areaNode,
-			`Container ${this.node.node_path} hasn't child with name 'area'`
-		);
+		console.assert(this.areaNode, `Container ${this.node.node_path} hasn't child with name 'area'`);
 
 		//add nodes
 		{
@@ -92,15 +86,18 @@ class NodeList extends NodeContainer {
 		this.updateRequested = false;
 		this.contentContainer.removeChildren();
 
-		if (!this.dataArray.length) return;
+		if (!this.dataArray.length) {
+			if (this.nodes.page_select) {
+				this.nodes.page_select.setLength(0);
+			}
+			this.setContentPage(0);
+			return;
+		}
 
 		this._calcContainerDims(); //i don't know why i have to recalc it each time ¯\_(ツ)_/¯
 
 		//scroll init
-		if (
-			this.styles.scroll &&
-			this.areaGridSize.x * this.areaGridSize.y < this.dataArray.length
-		) {
+		if (this.styles.scroll && this.areaGridSize.x * this.areaGridSize.y < this.dataArray.length) {
 			this.btnsContainer.visible = true;
 		} else {
 			this.btnsContainer.visible = false;
@@ -109,8 +106,8 @@ class NodeList extends NodeContainer {
 
 		if (this.maxGridSize.x * this.maxGridSize.y < this.dataArray.length)
 			console.warn(
-				`Container ${this.node.node_path} not scrollable and can fit only ${this.maxGridSize
-					.x * this.maxGridSize.y} elements. You trying to push ${this.dataArray.length}`
+				`Container ${this.node.node_path} not scrollable and can fit only ${this.maxGridSize.x *
+					this.maxGridSize.y} elements. You trying to push ${this.dataArray.length}`
 			);
 
 		//children
@@ -160,6 +157,9 @@ class NodeList extends NodeContainer {
 		if (this.nodes.page_select) {
 			this.nodes.page_select.setLength(this.maxPages_ + 1);
 		}
+
+		//update visual
+		this.setContentPage(0);
 	}
 	get dataArray() {
 		return this._dataArray;
@@ -200,8 +200,16 @@ class NodeList extends NodeContainer {
 			-this.areaGridSize.x * this.nodeSize.x * this.contentPage * dirX,
 			-this.areaGridSize.y * this.nodeSize.y * this.contentPage * !dirX
 		);
+
+		//selecters
 		if (this.nodes.page_select) {
 			this.nodes.page_select.setSelected(this.contentPage);
+		}
+		if (this.btn_next_) {
+			this.btn_next_.interactive = page < maxPages;
+		}
+		if (this.btn_prev_) {
+			this.btn_prev_.interactive = page > 0;
 		}
 	}
 	_initScrollButtons() {
@@ -245,6 +253,7 @@ class NodeList extends NodeContainer {
 				//Only one of directions will be "true" (-1 or 1) so we only care "previos" or "next" button is
 				self.setContentPage(self.contentPage + (direction.x || direction.y));
 			});
+			btn.interactive = false; //disabled by default
 		}
 
 		this.btnsContainer = new PIXI.Container();
@@ -254,14 +263,18 @@ class NodeList extends NodeContainer {
 		let prevBtn = this.styles.scroll == 'h' ? { x: -1, y: 0 } : { x: 0, y: -1 };
 
 		if (this.nodes.btn_next) {
+			this.btn_next_ = this.nodes.btn_next;
 			addClickEvent(this.nodes.btn_next, nextBtn);
 		} else {
-			this.btnsContainer.addChild(makeBtn(nextBtn));
+			this.btn_next_ = makeBtn(nextBtn);
+			this.btnsContainer.addChild(this.btn_next_);
 		}
 		if (this.nodes.btn_prev) {
+			this.btn_prev_ = this.nodes.btn_prev;
 			addClickEvent(this.nodes.btn_prev, prevBtn);
 		} else {
-			this.btnsContainer.addChild(makeBtn(prevBtn));
+			this.btn_prev_ = makeBtn(prevBtn);
+			this.btnsContainer.addChild(this.btn_prev_);
 		}
 
 		this.btnsContainer.visible = false;
