@@ -90,7 +90,12 @@ class NodeList extends NodeContainer {
 			if (this.nodes.page_select) {
 				this.nodes.page_select.setLength(0);
 			}
-			this.setContentPage(0);
+			if (this.btn_next_) {
+				this.btn_next_.interactive = false;
+			}
+			if (this.btn_prev_) {
+				this.btn_prev_.interactive = false;
+			}
 			return;
 		}
 
