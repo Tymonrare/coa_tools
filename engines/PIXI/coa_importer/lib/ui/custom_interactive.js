@@ -92,7 +92,8 @@ class ButtonNode extends SpriteNode {
 		btn.buttonMode = true;
 		btn.interactive = true;
 
-		btn.on('pointerup', onButtonUp)
+		btn
+			.on('pointerup', onButtonUp)
 			.on('pointerupoutside', onButtonUp)
 			.on('pointerover', onButtonOver)
 			.on('pointerout', onButtonOut)
@@ -212,24 +213,15 @@ class ProgressNode extends BasicContainer {
 		this.addChild(this.maskS);
 
 		if (node.properties.frames) {
-			let ordered = ['bar', 'body'];
-			for (var i in ordered) {
-				let type = ordered[i];
-				let fr = node.frames.find((f) => {
-					return f.id == type;
-				});
-				if (fr) {
-					let sprite = new Sprite(fr.texture);
-					this.addChild(sprite);
-					this.nodes[fr.id] = sprite;
-					sprite.anchor.set(
-						node.transform.pivot_offset[0],
-						node.transform.pivot_offset[1]
-					);
+			for (let i in node.frames) {
+				let fr = node.frames[i];
+				let sprite = new Sprite(fr.texture);
+				this.addChild(sprite);
+				this.nodes[fr.id] = sprite;
+				sprite.anchor.set(node.transform.pivot_offset[0], node.transform.pivot_offset[1]);
 
-					if (type == 'bar') {
-						sprite.mask = this.maskS;
-					}
+				if (fr.id == 'bar') {
+					sprite.mask = this.maskS;
 				}
 			}
 		}
