@@ -13,7 +13,13 @@ var app = new PIXI.Application(width, height, { backgroundColor: 0x1099bb });
 document.body.appendChild(app.view);
 
 loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
-	let wind = new ui(conf, { debugTree: true, debugBounds: true });
+	let fontTest = {
+		test_style1: {
+			fontSize: 30,
+			fill: '#ff0000'
+		}
+	};
+	let wind = new ui(conf, { debugTree: true, debugBounds: true, fonts: fontTest });
 	wind.setPosition(width / 2, height / 2);
 
 	let ws = conf.scene.size[0] / width;
@@ -59,6 +65,9 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 		}
 		binds.test_bind6 = bind6arr;
 	}
+
+	//text button label
+	wind.nodes.tab1_btn.label = 'Tab 1';
 
 	//test btn
 	wind.close_btn.binding = () => {

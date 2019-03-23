@@ -13,8 +13,12 @@ import {
 } from './custom_interactive.js';
 
 class NodeContainer extends BasicContainer {
-	constructor(node, root) {
+	constructor(node, root, properties) {
 		super(node, root);
+
+		if (properties) {
+			this.properties = properties;
+		}
 
 		node.nodes.forEach((n) => this.addNode(n));
 	}
@@ -57,8 +61,7 @@ class NodeContainer extends BasicContainer {
 					}
 			}
 
-			if (this.nodes[obj.name])
-				throw new Error(`Node with name ${obj.name} already exists!`, this);
+			if (this.nodes[obj.name]) throw new Error(`Node with name ${obj.name} already exists!`, this);
 
 			this.addChild(obj);
 			applyNodeProps(node, obj);

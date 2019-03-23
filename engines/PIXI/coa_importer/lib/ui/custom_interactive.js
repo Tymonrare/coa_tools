@@ -10,22 +10,40 @@ class TextNode extends BasicContainer {
 	constructor(node, root) {
 		super(node, root);
 
-		var defProps = new PIXI.TextStyle({
+		//style
+		let defProps = {
 			fontFamily: 'Arial',
 			fontSize: 27,
 			fontStyle: 'bold',
 			fontWeight: 'normal',
-			fill: ['#ffffff'], // gradient
+			fill: '#ffffff',
 			stroke: '#000000',
 			strokeThickness: 3,
 			align: 'center'
-		});
-
-		//for (let key in props) defProps[key] = props[key];
+		};
+		{
+			let props = this.scene.properties;
+			if (props && props.fonts && props.fonts[node.properties.font]) {
+				defProps = props.fonts[node.properties.font];
+			}
+		}
 		let style = new PIXI.TextStyle(defProps);
 
 		let txt = new Text(node.name, style);
-		txt.anchor.set(0.5);
+
+		//anchor
+		{
+			let props = this.scene.properties;
+			let x = 0.5;
+			let y = 0.5;
+			if (props.pivot) {
+				let arr = props.pivot.split(',');
+				x = arr[0];
+				y = arr[1] || arr[0];
+			}
+			txt.anchor.set(x, y);
+		}
+
 		this.addChild(txt);
 		this.text = txt;
 	}
@@ -199,6 +217,21 @@ class ButtonNode extends SpriteNode {
 		if (this.stateTextures && this.stateTextures[state]) {
 			this.texture = this.stateTextures[state];
 		}
+	}
+	/**
+	 * @brief adds text into button
+	 *
+	 * @Param {String} text for button
+	 */
+	set label(text) {
+		if (!this.label_) {
+			this.label_ = new TextNode(
+				{ name: this.node.name + '_label', properties: { font: this.node.properties.font } },
+				this.scene
+			);
+			this.addChild(this.label_);
+		}
+		this.label_.text = text;
 	}
 }
 class ProgressNode extends BasicContainer {

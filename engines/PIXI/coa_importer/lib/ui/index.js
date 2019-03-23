@@ -26,22 +26,21 @@ export default class extends NodeContainer {
 		});
 
 		//Creates all objects
-		super(config);
+		super(config, null, properties);
 
 		this.config = config;
+
 		this.gnodes = {};
 		this.gbinds = {};
 
 		//post-process
 		forEachNodeInTree(config.nodes, (node) => {
-
 			let child;
-			try{
+			try {
 				child = this.findInstanceForNode(node);
-			}
-			catch (err){
+			} catch (err) {
 				//it's PROBABLY child group in 'node' 'container' so it ok to not exist for that moment
-				if(node.node_path.includes('node')){
+				if (node.node_path.includes('node')) {
 					return;
 				}
 
@@ -96,8 +95,8 @@ export default class extends NodeContainer {
 		this.position.set(x + this.config.scene.offset[0], y - this.config.scene.offset[1]);
 	}
 
-	debugBoundsDraw_(){
-			debugBoundsDraw(this);
+	debugBoundsDraw_() {
+		debugBoundsDraw(this);
 	}
 
 	findInstanceByPath(path) {
