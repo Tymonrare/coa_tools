@@ -19,7 +19,13 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 			fill: '#ff0000'
 		}
 	};
-	let wind = new ui(conf, { debugTree: true, debugBounds: true, fonts: fontTest });
+	let testIcon = PIXI.Texture.from('res/develop.png');
+	let wind = new ui(conf, {
+		debugTree: true,
+		debugBounds: true,
+		fonts: fontTest,
+		customTextSymbols: { testIcon }
+	});
 	wind.setPosition(width / 2, height / 2);
 
 	let ws = conf.scene.size[0] / width;
@@ -36,7 +42,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 			binds.progress2 = Math.abs(Math.sin(new Date().getTime() / 5000));
 			binds.progress3 = Math.abs(Math.sin(new Date().getTime() / 5000));
 		}, 30);
-		binds.test_bind1 = 'text text';
+		binds.test_bind1 = 'text <{testIcon}> <{EMPTY}>';
 
 		let texture = PIXI.Texture.from('res/flat_128.png');
 		binds.test_bind2 = texture;

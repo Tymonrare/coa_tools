@@ -10,6 +10,28 @@ import { debugBoundsDraw, debugTreePrint } from './dev.js';
 //}
 
 /**
+ * @brief default params for root class
+ */
+const defaultInitProperties = {
+	/**
+	 * @brief draws windows node tree in console
+	 */
+	debugTree: false,
+	/**
+	 * @brief draw bounds for all nodes
+	 */
+	debugBounds: false,
+	/**
+	* @brief {?Object<?Object>} list of styles for text. @see PIXI.TextStyle
+	*/
+	fonts: {},
+	/**
+	 * @brief {?Object<?PIXI.Texture>} list of PIXI.Texture for {@code CoaText}
+	 */
+	customTextSymbols: {}
+};
+
+/**
  * @brief main ui container and generator
  */
 export default class extends NodeContainer {
@@ -17,9 +39,9 @@ export default class extends NodeContainer {
 	 * @brief constructor
 	 *
 	 * @Param config preloaded coa config
-	 * @Param properties additional properties
+	 * @Param {defaultInitProperties} properties additional properties
 	 */
-	constructor(config, properties = {}) {
+	constructor(config, properties = defaultInitProperties) {
 		//sort nodes by z index
 		sortAllNodesInTree(config.nodes, (a, b) => {
 			return a.transform.z - b.transform.z;

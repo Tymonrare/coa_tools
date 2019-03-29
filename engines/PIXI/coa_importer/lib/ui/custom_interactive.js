@@ -2,6 +2,7 @@
 
 import { Sprite, Text } from 'pixi.js';
 import SpriteNode from './sprite_node.js';
+import CoaText from './classes/coa_text.js';
 //import NodeContainer from './node_container.js';
 import BasicContainer from './basic_container.js';
 import { applyNodeProps, createMaskForNode } from './utils.js';
@@ -21,15 +22,14 @@ class TextNode extends BasicContainer {
 			strokeThickness: 3,
 			align: 'center'
 		};
-		{
-			let props = this.scene.properties;
-			if (props && props.fonts && props.fonts[node.properties.font]) {
-				defProps = props.fonts[node.properties.font];
-			}
+
+		let props = this.scene.properties;
+		if (props && props.fonts && props.fonts[node.properties.font]) {
+			defProps = props.fonts[node.properties.font];
 		}
 		let style = new PIXI.TextStyle(defProps);
 
-		let txt = new Text(node.name, style);
+		let txt = new CoaText(node.name, style, props.customTextSymbols);
 
 		//anchor
 		{
