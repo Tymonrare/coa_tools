@@ -26,6 +26,7 @@ class NodeList extends NodeContainer {
 			return n.name == 'area';
 		});
 		console.assert(this.areaNode, `Container ${this.node.node_path} hasn't child with name 'area'`);
+		this.areaSize = this.areaNode.transform.size;
 
 		//add nodes
 		{
@@ -40,7 +41,8 @@ class NodeList extends NodeContainer {
 
 		//parse styles
 		this.styles = {
-			scroll: null
+			scroll: null,
+			page: null
 		};
 		if (this.node.properties.style) {
 			let styles = this.node.properties.style.split(',');
@@ -61,7 +63,33 @@ class NodeList extends NodeContainer {
 				}
 			}
 
-			this.styles.scroll = scroll;
+			this.styles.scroll = scroll || null;
+
+			//page
+			styles.forEach((s) => {
+				if (!s.includes('page')) return;
+
+				this.styles.page = this.styles.page || {};
+
+				//style may be `page-h` or `page-h-3` where number is page size
+				let style = s.split('-');
+
+				if (style[1] != 'h' && style[1] != 'v') {
+					console.warn(
+						`Style for node ${this.node.node_path} was set as ${
+							this.node.properties.style
+						}. You can use only 'page-h' and 'page-v' keywords for page`
+					);
+					return;
+				}
+
+				if (typeof style[2] == 'number') {
+					this.styles.page[style[1]] = style[2];
+				} else {
+					this.styles.page[style[1]] = true;
+				}
+			});
+			console.log(this.styles);
 		}
 
 		this.dataArray = [];
@@ -109,7 +137,7 @@ class NodeList extends NodeContainer {
 			this.interactive = false;
 		}
 
-		if (this.maxGridSize.x * this.maxGridSize.y < this.dataArray.length)
+		if (this.maxGridSize.x * this.maxGridSize.y < this.dataArray.length && !this.styles.page)
 			console.warn(
 				`Container ${this.node.node_path} not scrollable and can fit only ${this.maxGridSize.x *
 					this.maxGridSize.y} elements. You trying to push ${this.dataArray.length}`
@@ -300,15 +328,14 @@ class NodeList extends NodeContainer {
 		}
 
 		//elements positions
-		let areaSize = this.areaNode.transform.size;
 		let nodeSize = {
 			x: this.refNode.node.transform.size[0] + padding.x,
 			y: this.refNode.node.transform.size[1] + padding.y
 		};
 
 		let dims = {
-			x: this.node.properties.grid_h || Math.max(1, (areaSize[0] / nodeSize.x) | 0),
-			y: Math.max(1, (areaSize[1] / nodeSize.y) | 0)
+			x: Math.max(1, (this.areaSize[0] / nodeSize.x) | 0),
+			y: Math.max(1, (this.areaSize[1] / nodeSize.y) | 0)
 		};
 
 		dims.x = this.node.properties.grid_w || dims.x;
@@ -348,7 +375,32 @@ class NodeList extends NodeContainer {
 	}
 	_calcPosForNode(index) {
 		let pos = this._calcCellForNode(index);
-		return { x: pos.x * this.nodeSize.x, y: pos.y * this.nodeSize.y };
+
+		//default values
+		let x = pos.x * this.nodeSize.x;
+		let y = pos.y * this.nodeSize.y;
+
+		//page strategy
+		if (this.styles.page) {
+			if (this.styles.page.h) {
+				let pageSize = this.styles.page.h === true ? this.dataArray.length : this.styles.page.h;
+				x =
+					this.areaSize[0] / 2 - //base pivot (center)
+					this.refNode.node.transform.position[0] - //base element pivot (now it centred)
+					((this.areaSize[0] / pageSize) * (pageSize - 1)) / 2 + //-half of total area
+					(this.areaSize[0] / pageSize) * index; //element index shift
+			}
+			if (this.styles.page.v) {
+				let pageSize = this.styles.page.v === true ? this.dataArray.length : this.styles.page.v;
+				y =
+					this.areaSize[1] / 2 - //base pivot (center)
+					this.refNode.node.transform.position[1] - //base element pivot (now it centred)
+					((this.areaSize[1] / pageSize) * (pageSize - 1)) / 2 + //-half of total area
+					(this.areaSize[1] / pageSize) * index; //element index shift
+			}
+		}
+
+		return { x, y };
 	}
 }
 

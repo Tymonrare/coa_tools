@@ -52,7 +52,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 				el.tint = Math.random() * 16777215;
 			}
 		};
-		binds.test_bind4 = [handler, handler, handler];
+		binds.test_bind4 = [handler, handler];
 		binds.test_bind4.push(handler);
 
 		wind.gnodes.test_bind5._instantUpdate = true;
@@ -70,6 +70,16 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 			bind6arr.push({ test_nested1: 'text' + i, test_nested2: texture });
 		}
 		binds.test_bind6 = bind6arr;
+
+		binds.test_bind7 = [true, true, true];
+		binds.test_bind8 = Array.from({ length: 1 }, () => {
+			return true;
+		});
+		setInterval(function() {
+			binds.test_bind8 = Array.from({ length: Math.round(Math.random() * 5) + 1 }, () => {
+				return true;
+			});
+		}, 1000);
 	}
 
 	//text button label
