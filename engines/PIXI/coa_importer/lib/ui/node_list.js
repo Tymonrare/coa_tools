@@ -89,7 +89,6 @@ class NodeList extends NodeContainer {
 					this.styles.page[style[1]] = true;
 				}
 			});
-			console.log(this.styles);
 		}
 
 		this.dataArray = [];
