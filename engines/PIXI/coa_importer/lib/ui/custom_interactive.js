@@ -45,10 +45,16 @@ class TextNode extends BasicContainer {
 		}
 
 		this.addChild(txt);
-		this.text = txt;
+		this.coaText_ = txt;
 	}
 	updateBinding(text) {
-		this.text.text = text;
+		this.text = text;
+	}
+	set text(text){
+		this.coaText_.text = text;
+	}
+	get text(){
+		return this.coaText_.text;
 	}
 }
 
