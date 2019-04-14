@@ -27,6 +27,11 @@ class NodeList extends NodeContainer {
 		});
 		console.assert(this.areaNode, `Container ${this.node.node_path} hasn't child with name 'area'`);
 		this.areaSize = this.areaNode.transform.size;
+		this.areaOffset = {
+			x: this.areaNode.transform.position[0] - this.areaNode.transform.pivot_offset[0] * this.areaNode.transform.size[0],
+			y: this.areaNode.transform.position[1] - this.areaNode.transform.pivot_offset[1] * this.areaNode.transform.size[1]
+		}
+
 
 		//add nodes
 		{
@@ -130,7 +135,6 @@ class NodeList extends NodeContainer {
 
 		this._calcContainerDims(); //i don't know why i have to recalc it each time ¯\_(ツ)_/¯
 
-		console.log(this.styles, this.areaGridSize);
 		//scroll init
 		if (this.styles.scroll && this.areaGridSize.x * this.areaGridSize.y < this.dataArray.length) {
 			this.btnsContainer.visible = true;
@@ -232,8 +236,8 @@ class NodeList extends NodeContainer {
 		this.contentPage = Math.min(maxPages, Math.max(minPages, page));
 
 		this.contentContainer.position.set(
-			-this.areaGridSize.x * this.nodeSize.x * this.contentPage * dirX,
-			-this.areaGridSize.y * this.nodeSize.y * this.contentPage * !dirX
+			this.areaOffset.x - this.areaGridSize.x * this.nodeSize.x * this.contentPage * dirX,
+			this.areaOffset.y - this.areaGridSize.y * this.nodeSize.y * this.contentPage * !dirX
 		);
 
 		//selecters
@@ -393,7 +397,6 @@ class NodeList extends NodeContainer {
 		//page strategy
 		if (this.styles.page.h) {
 			let pageSize = this.styles.page.h === true ? this.dataArray.length : this.styles.page.h;
-			console.log(pageSize);
 			x =
 				this.areaSize[0] / 2 - //base pivot (center)
 				this.refNode.node.transform.position[0] - //base element position (margin)
