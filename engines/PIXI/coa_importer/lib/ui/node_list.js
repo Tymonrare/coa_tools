@@ -27,11 +27,6 @@ class NodeList extends NodeContainer {
 		});
 		console.assert(this.areaNode, `Container ${this.node.node_path} hasn't child with name 'area'`);
 		this.areaSize = this.areaNode.transform.size;
-		this.areaOffset = {
-			x: this.areaNode.transform.position[0] - this.areaNode.transform.pivot_offset[0] * this.areaNode.transform.size[0],
-			y: this.areaNode.transform.position[1] - this.areaNode.transform.pivot_offset[1] * this.areaNode.transform.size[1]
-		}
-
 
 		//add nodes
 		{
@@ -89,7 +84,7 @@ class NodeList extends NodeContainer {
 					return;
 				}
 
-				let val = parseInt(style[2])
+				let val = parseInt(style[2]);
 				if (val) {
 					this.styles.page[style[1]] = val;
 				} else {
@@ -143,7 +138,10 @@ class NodeList extends NodeContainer {
 			this.interactive = false;
 		}
 
-		if (this.maxGridSize.x * this.maxGridSize.y < this.dataArray.length && !(this.styles.page.h || this.styles.page.v))
+		if (
+			this.maxGridSize.x * this.maxGridSize.y < this.dataArray.length &&
+			!(this.styles.page.h || this.styles.page.v)
+		)
 			console.warn(
 				`Container ${this.node.node_path} not scrollable and can fit only ${this.maxGridSize.x *
 					this.maxGridSize.y} elements. You trying to push ${this.dataArray.length}`
@@ -236,8 +234,8 @@ class NodeList extends NodeContainer {
 		this.contentPage = Math.min(maxPages, Math.max(minPages, page));
 
 		this.contentContainer.position.set(
-			this.areaOffset.x - this.areaGridSize.x * this.nodeSize.x * this.contentPage * dirX,
-			this.areaOffset.y - this.areaGridSize.y * this.nodeSize.y * this.contentPage * !dirX
+			this.areaGridSize.x * this.nodeSize.x * this.contentPage * dirX,
+			this.areaGridSize.y * this.nodeSize.y * this.contentPage * !dirX
 		);
 
 		//selecters
@@ -340,11 +338,11 @@ class NodeList extends NodeContainer {
 			y: this.refNode.node.transform.size[1] + padding.y
 		};
 		//page values
-		if(this.styles.page.h){
-			nodeSize.x = this.areaSize[0]/this.styles.page.h;
+		if (this.styles.page.h) {
+			nodeSize.x = this.areaSize[0] / this.styles.page.h;
 		}
-		if(this.styles.page.v){
-			nodeSize.y = this.areaSize[1]/this.styles.page.v;
+		if (this.styles.page.v) {
+			nodeSize.y = this.areaSize[1] / this.styles.page.v;
 		}
 
 		let dims = {
@@ -397,16 +395,24 @@ class NodeList extends NodeContainer {
 		//page strategy
 		if (this.styles.page.h) {
 			let pageSize = this.styles.page.h === true ? this.dataArray.length : this.styles.page.h;
+			let startPivot =
+				this.areaNode.transform.position[0] -
+				this.areaNode.transform.pivot_offset[0] * this.areaNode.transform.size[0];
 			x =
+				startPivot +
 				this.areaSize[0] / 2 - //base pivot (center)
 				this.refNode.node.transform.position[0] - //base element position (margin)
-				((0.5 - this.refNode.node.transform.pivot_offset[0]) * this.refNode.node.transform.size[0]) - //element pivot for group nodes (now it centred)
+				(0.5 - this.refNode.node.transform.pivot_offset[0]) * this.refNode.node.transform.size[0] - //element pivot for group nodes (now it centred)
 				((this.areaSize[0] / pageSize) * (pageSize - 1)) / 2 + //-half of total area
 				(this.areaSize[0] / pageSize) * index; //element index shift
 		}
 		if (this.styles.page.v) {
 			let pageSize = this.styles.page.v === true ? this.dataArray.length : this.styles.page.v;
+			let startPivot =
+				this.areaNode.transform.position[1] -
+				this.areaNode.transform.pivot_offset[1] * this.areaNode.transform.size[1];
 			y =
+				startPivot +
 				this.areaSize[1] / 2 - //base pivot (center)
 				this.refNode.node.transform.position[1] - //base element pivot (now it centred)
 				((this.areaSize[1] / pageSize) * (pageSize - 1)) / 2 + //-half of total area
