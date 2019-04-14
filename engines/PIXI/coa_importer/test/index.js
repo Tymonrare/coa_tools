@@ -73,15 +73,9 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 
 		binds.test_bind7 = [true, true, true];
 		
-		binds.test_bind8 = binds.test_bind9 = Array.from({ length: 1 }, () => {
+		binds.test_bind8 = binds.test_bind9 = Array.from({ length: 10 }, () => {
 			return true;
-		}); 
-		setInterval(function() {
-			return;
-			binds.test_bind8 = Array.from({ length: Math.round(Math.random() * 5) + 1 }, () => {
-				return true;
-			});
-		}, 1000);
+		});
 	}
 
 	//text button label
