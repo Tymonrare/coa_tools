@@ -234,8 +234,8 @@ class NodeList extends NodeContainer {
 		this.contentPage = Math.min(maxPages, Math.max(minPages, page));
 
 		this.contentContainer.position.set(
-			this.areaGridSize.x * this.nodeSize.x * this.contentPage * dirX,
-			this.areaGridSize.y * this.nodeSize.y * this.contentPage * !dirX
+			-this.areaGridSize.x * this.nodeSize.x * this.contentPage * dirX,
+			-this.areaGridSize.y * this.nodeSize.y * this.contentPage * !dirX
 		);
 
 		//selecters
