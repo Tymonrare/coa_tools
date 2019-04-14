@@ -385,7 +385,8 @@ class NodeList extends NodeContainer {
 				let pageSize = this.styles.page.h === true ? this.dataArray.length : this.styles.page.h;
 				x =
 					this.areaSize[0] / 2 - //base pivot (center)
-					this.refNode.node.transform.position[0] - //base element pivot (now it centred)
+					this.refNode.node.transform.position[0] - //base element position (margin)
+					((0.5 - this.refNode.node.transform.pivot_offset[0]) * this.refNode.node.transform.size[0]) - //element pivot for group nodes (now it centred)
 					((this.areaSize[0] / pageSize) * (pageSize - 1)) / 2 + //-half of total area
 					(this.areaSize[0] / pageSize) * index; //element index shift
 			}
