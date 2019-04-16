@@ -23,7 +23,7 @@ class TextNode extends BasicContainer {
 			align: 'center'
 		};
 
-		let props = node.properties;
+		let props = this.scene.properties;
 		if (props && props.fonts && props.fonts[node.properties.font]) {
 			defProps = props.fonts[node.properties.font];
 		}
