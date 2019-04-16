@@ -250,7 +250,12 @@ class ButtonNode extends SpriteNode {
 		this.label = text;
 	}
 	get text(){
-		return this.label_.text;
+		if(this.label_){
+			return this.label_.text;
+		}
+		else{
+			return "";
+		}
 	}
 }
 class ProgressNode extends BasicContainer {
