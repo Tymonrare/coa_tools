@@ -104,8 +104,8 @@ class DynamicSpriteNode extends BasicContainer {
 			style.indexOf('top') ||
 			style.indexOf('bottom')
 		) {
-			let px = node.transform.pivot_offset[0],
-				py = node.transform.pivot_offset[1];
+			let px = this.node.transform.pivot_offset[0],
+				py = this.node.transform.pivot_offset[1];
 			if (style.indexOf('left')) {
 				px = 0;
 			} else if (style.indexOf('right')) {
@@ -118,8 +118,8 @@ class DynamicSpriteNode extends BasicContainer {
 				px = 1;
 			}
 
-			let x = s[0] * px - node.transform.pivot_offset[0] * s[0];
-			let y = s[1] * py - node.transform.pivot_offset[1] * s[1];
+			let x = s[0] * px - this.node.transform.pivot_offset[0] * s[0];
+			let y = s[1] * py - this.node.transform.pivot_offset[1] * s[1];
 
 			this.sprite.anchor.set(px, py);
 			this.sprite.position.set(x, y);
