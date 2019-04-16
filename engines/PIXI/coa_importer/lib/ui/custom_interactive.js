@@ -98,6 +98,7 @@ class DynamicSpriteNode extends BasicContainer {
 			this.sprite.height = h * scale;
 		}
 
+/*
 		if (
 			style.indexOf('left') ||
 			style.indexOf('right') ||
@@ -124,6 +125,7 @@ class DynamicSpriteNode extends BasicContainer {
 			this.sprite.anchor.set(px, py);
 			this.sprite.position.set(x, y);
 		}
+		*/
 	}
 }
 
