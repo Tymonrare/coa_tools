@@ -23,17 +23,20 @@ class TextNode extends BasicContainer {
 			align: 'center'
 		};
 
-		let props = this.scene.properties;
+		let props = node.properties;
 		if (props && props.fonts && props.fonts[node.properties.font]) {
 			defProps = props.fonts[node.properties.font];
 		}
+
+		defProps.wordWrapWidth = defProps.wordWrapWidth || node.transform.size[0];
+
 		let style = new PIXI.TextStyle(defProps);
 
 		let txt = new CoaText(node.name, style, props.customTextSymbols);
 
 		//anchor
 		{
-			let props = this.scene.properties;
+			let props = node.properties;
 			let x = 0.5;
 			let y = 0.5;
 			if (props.pivot) {
@@ -50,10 +53,10 @@ class TextNode extends BasicContainer {
 	updateBinding(text) {
 		this.text = text;
 	}
-	set text(text){
+	set text(text) {
 		this.coaText_.text = text;
 	}
-	get text(){
+	get text() {
 		return this.coaText_.text;
 	}
 }
@@ -232,7 +235,11 @@ class ButtonNode extends SpriteNode {
 	set label(text) {
 		if (!this.label_) {
 			this.label_ = new TextNode(
-				{ name: this.node.name + '_label', properties: { font: this.node.properties.font } },
+				{
+					name: this.node.name + '_label',
+					properties: this.node.properties,
+					transform: this.node.transform
+				},
 				this.scene
 			);
 			this.addChild(this.label_);
