@@ -74,16 +74,16 @@ class DynamicSpriteNode extends BasicContainer {
 
 		let s = this.node.transform.size;
 		let style = this.node.properties.style || 'fit';
-		if (style.indexOf('fit') >= 0) {
-			if (style.indexOf('fit_h')) {
+		if (style.includes('fit')) {
+			if (style.includes('fit_h')) {
 				this.sprite.width = s[0];
-			} else if (style.indexOf('fit_v')) {
+			} else if (style.includes('fit_v')) {
 				this.sprite.height = s[1];
 			} else {
 				this.sprite.width = s[0];
 				this.sprite.height = s[1];
 			}
-		} else if (style.indexOf('save_ratio') >= 0) {
+		} else if (style.includes('save_ratio')) {
 			let w = texture.orig.width;
 			let h = texture.orig.height;
 
@@ -98,24 +98,23 @@ class DynamicSpriteNode extends BasicContainer {
 			this.sprite.height = h * scale;
 		}
 
-/*
 		if (
-			style.indexOf('left') ||
-			style.indexOf('right') ||
-			style.indexOf('top') ||
-			style.indexOf('bottom')
+			style.includes('left') ||
+			style.includes('right') ||
+			style.includes('top') ||
+			style.includes('bottom')
 		) {
 			let px = this.node.transform.pivot_offset[0],
 				py = this.node.transform.pivot_offset[1];
-			if (style.indexOf('left')) {
+			if (style.includes('left')) {
 				px = 0;
-			} else if (style.indexOf('right')) {
+			} else if (style.includes('right')) {
 				px = 1;
 			}
 
-			if (style.indexOf('top')) {
+			if (style.includes('top')) {
 				py = 0;
-			} else if (style.indexOf('bottom')) {
+			} else if (style.includes('bottom')) {
 				py = 1;
 			}
 
@@ -125,7 +124,6 @@ class DynamicSpriteNode extends BasicContainer {
 			this.sprite.anchor.set(px, py);
 			this.sprite.position.set(x, y);
 		}
-		*/
 	}
 }
 
