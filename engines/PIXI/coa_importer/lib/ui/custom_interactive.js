@@ -246,6 +246,12 @@ class ButtonNode extends SpriteNode {
 		}
 		this.label_.text = text;
 	}
+	set text(text){
+		this.label = text;
+	}
+	get text(){
+		return this.label_.text;
+	}
 }
 class ProgressNode extends BasicContainer {
 	constructor(node, root) {
