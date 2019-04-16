@@ -113,9 +113,9 @@ class DynamicSpriteNode extends BasicContainer {
 			}
 
 			if (style.indexOf('top')) {
-				px = 0;
+				py = 0;
 			} else if (style.indexOf('bottom')) {
-				px = 1;
+				py = 1;
 			}
 
 			let x = s[0] * px - this.node.transform.pivot_offset[0] * s[0];
