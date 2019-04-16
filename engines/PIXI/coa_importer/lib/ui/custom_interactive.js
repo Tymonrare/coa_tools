@@ -90,6 +90,29 @@ class DynamicSpriteNode extends BasicContainer {
 
 			this.sprite.width = w * scale;
 			this.sprite.height = h * scale;
+
+			let px = node.transform.pivot_offset[0], py = node.transform.pivot_offset[1];
+
+			if(style.indexOf('left')){
+				px = 0;
+			}
+			else if(style.indexOf('right')){
+				px = 1;
+			}
+
+			if(style.indexOf('top')){
+				px = 0;
+			}
+			else if(style.indexOf('bottom')){
+				px = 1;
+			}
+
+			let x = s[0]*px - node.transform.pivot_offset[0]*s[0];
+			let y = s[1]*py - node.transform.pivot_offset[1]*s[1];
+
+			this.sprite.anchor.set(px, py);
+			this.sprite.position.set(x, y);
+
 		}
 	}
 }
