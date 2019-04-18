@@ -25,7 +25,7 @@ coa.loader(
 		ui.group_name.layer_name; //Access to nested groups
 
 		ui.button.on('pointerdown', ()=>{console.log('click')}); //buttons works with all pixi events
-		ui.progress.bind = 0.5; //Set progress bar to half
+		ui.progress.binding = 0.5; //Set progress bar to half
 
 		ui.gnodes.label_text; //Access to nodes with flag --global
 
