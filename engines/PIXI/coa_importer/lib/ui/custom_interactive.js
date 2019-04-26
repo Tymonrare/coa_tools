@@ -11,6 +11,8 @@ class TextNode extends BasicContainer {
 	constructor(node, root) {
 		super(node, root);
 
+		const defaultLineJoin = 'bevel';
+
 		//style
 		let defProps = {
 			fontFamily: 'Arial',
@@ -20,12 +22,16 @@ class TextNode extends BasicContainer {
 			fill: '#ffffff',
 			stroke: '#000000',
 			strokeThickness: 3,
-			align: 'center'
+			align: 'center',
+			lineJoin: defaultLineJoin
 		};
 
 		let props = this.scene.properties;
 		if (props && props.fonts && props.fonts[node.properties.font]) {
 			defProps = props.fonts[node.properties.font];
+			if (!defProps.lineJoin) {
+				lineJoin: defaultLineJoin;
+			}
 		}
 
 		defProps.wordWrapWidth = defProps.wordWrapWidth || node.transform.size[0];
@@ -37,14 +43,20 @@ class TextNode extends BasicContainer {
 		//anchor
 		{
 			let props = node.properties;
-			let x = 0.5;
-			let y = 0.5;
+			let px = 0.5;
+			let py = 0.5;
 			if (props.pivot) {
 				let arr = props.pivot.split(',');
-				x = arr[0];
-				y = arr[1] || arr[0];
+				px = arr[0];
+				py = arr[1] || arr[0];
 			}
-			txt.anchor.set(x, y);
+
+			let s = this.node.transform.size;
+			let x = s[0] * px - this.node.transform.pivot_offset[0] * s[0];
+			let y = s[1] * py - this.node.transform.pivot_offset[1] * s[1];
+
+			txt.anchor.set(px, py);
+			txt.position.set(x, y);
 		}
 
 		this.addChild(txt);
@@ -73,7 +85,7 @@ class DynamicSpriteNode extends BasicContainer {
 		this.sprite.texture = texture;
 
 		let s = this.node.transform.size;
-		let style = this.node.properties.style || 'fit';
+		let style = this.node.properties.style || 'save_ratio';
 		if (style.includes('fit')) {
 			if (style.includes('fit_h')) {
 				this.sprite.width = s[0];
@@ -87,12 +99,15 @@ class DynamicSpriteNode extends BasicContainer {
 			let w = texture.orig.width;
 			let h = texture.orig.height;
 
-			let dw = w / s[0];
-			let dh = h / s[1];
+			let dw = s[0] / w;
+			let dh = s[1] / h;
 
 			let scale;
-			if (dh < dw) scale = dh;
-			else scale = dw;
+			if (dh < dw) {
+				scale = dh;
+			} else {
+				scale = dw;
+			}
 
 			this.sprite.width = w * scale;
 			this.sprite.height = h * scale;
