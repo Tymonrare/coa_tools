@@ -274,6 +274,9 @@ class ButtonNode extends SpriteNode {
 		if (this.stateTextures && this.stateTextures[state]) {
 			this.texture = this.stateTextures[state];
 		}
+		if(this.label_){
+			this.label_.alpha = val ? 1 : 0.5;
+		}
 	}
 	/**
 	 * @brief adds text into button
