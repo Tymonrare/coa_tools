@@ -294,6 +294,7 @@ class ButtonNode extends SpriteNode {
 				this.scene
 			);
 			this.addChild(this.label_);
+			this.label_.alpha = this.interactive ? 1 : 0.5;
 		}
 		this.label_.text = text;
 	}
