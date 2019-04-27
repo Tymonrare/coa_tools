@@ -28,7 +28,7 @@ class TextNode extends BasicContainer {
 
 		let props = this.scene.properties;
 		if (props && props.fonts && props.fonts[node.properties.font]) {
-			defProps = props.fonts[node.properties.font];
+			defProps = Object.assign({}, props.fonts[node.properties.font]);
 			if (!defProps.lineJoin) {
 				lineJoin: defaultLineJoin;
 			}
