@@ -148,8 +148,8 @@ class NodeList extends NodeContainer {
 			);
 
 		//children
-		let keysList = Object.keys(this.dataArray[0]);
 		for (let i = 0; i < this.dataArray.length; i++) {
+			let keysList = Object.keys(this.dataArray[i]);
 			let data = this.dataArray[i];
 			//1. Create new node
 			let newNode = this.addNodeClone(this.refNode.node);
