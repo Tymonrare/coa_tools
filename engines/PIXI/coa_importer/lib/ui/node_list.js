@@ -243,7 +243,7 @@ class NodeList extends NodeContainer {
 			this.nodes.page_select.setSelected(this.contentPage);
 		}
 		if (this.btn_next_) {
-			this.btn_next_.interactive = page < maxPages;
+			this.btn_next_.interactive = page < maxPages - 1;
 		}
 		if (this.btn_prev_) {
 			this.btn_prev_.interactive = page > 0;
