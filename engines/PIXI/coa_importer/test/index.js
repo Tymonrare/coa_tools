@@ -22,6 +22,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 	let testIcon = PIXI.Texture.from('res/develop.png');
 	let wind = new ui(conf, {
 		debugTree: true,
+		debugTreeVerbose: true,
 		debugBounds: true,
 		fonts: fontTest,
 		customTextSymbols: { testIcon }

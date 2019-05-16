@@ -3,6 +3,7 @@
 import { Sprite, Text } from 'pixi.js';
 import SpriteNode from './sprite_node.js';
 import CoaText from './classes/coa_text.js';
+import NodeContainer from './node_container.js';
 //import NodeContainer from './node_container.js';
 import BasicContainer from './basic_container.js';
 import { applyNodeProps, createMaskForNode } from './utils.js';
@@ -274,7 +275,7 @@ class ButtonNode extends SpriteNode {
 		if (this.stateTextures && this.stateTextures[state]) {
 			this.texture = this.stateTextures[state];
 		}
-		if(this.label_){
+		if (this.label_) {
 			this.label_.alpha = val ? 1 : 0.5;
 		}
 	}
@@ -356,6 +357,71 @@ class ProgressNode extends BasicContainer {
 		let t = this.node.transform;
 		this.maskS.width = t.size[0] * progress;
 		this.progress = progress;
+	}
+}
+
+class ScrollBar extends NodeContainer {
+	constructor(node, root) {
+		super(node, root);
+		console.assert(this.btn, "can't init ScrollBar without btn child node");
+		console.assert(this.body, "can't init ScrollBar without body child node");
+
+		//mask pos
+		this.areaSize = new PIXI.Point(
+			this.body.node.transform.size[0],
+			this.body.node.transform.size[1]
+		);
+		this.horisontal = this.areaSize.x > this.areaSize.y;
+
+		let ax = this.horisontal ? 0 : 0.5,
+			ay = !this.horisontal ? 0 : 0.5;
+		if (node.properties.scroll_anchor) {
+			let anch = node.properties.scroll_anchor.split(',');
+			ax = parseFloat(anch[0]);
+			ay = parseFloat(anch[1]);
+		}
+
+		let selfSize = this.node.transform.size;
+		this.on('mousemove', (ev) => {
+			let pos = ev.data.getLocalPosition(this);
+
+			//pos of pointer
+			let posx = Math.max(
+				0,
+				Math.min(selfSize[0], pos.x * this.horisontal + (selfSize[0] / 2) * !this.horisontal)
+			);
+			let posy = Math.max(
+				0,
+				Math.min(selfSize[1], pos.y * !this.horisontal + (selfSize[1] / 2) * this.horisontal)
+			);
+			this.btn.position.set(posx, posy);
+
+			//progress of scroll
+			let progress = Math.abs(
+				this.horisontal
+					? (posx - selfSize[0] * ax) / selfSize[0]
+					: (posy - selfSize[1] * ay) / selfSize[1]
+			);
+			if (this.callbackBind) {
+				this.callbackBind(progress);
+			}
+			if (this.nodes.body.node.properties.type == 'progress') {
+				this.nodes.body.binding = progress;
+			}
+		});
+		this.btn
+			.on('pointerdown', () => {
+				this.interactive = true;
+			})
+			.on('pointerupoutside', () => {
+				this.interactive = false;
+			})
+			.on('pointerup', () => {
+				this.interactive = false;
+			});
+	}
+	updateBinding(handler) {
+		this.callbackBind = handler;
 	}
 }
 
@@ -446,4 +512,4 @@ class RadioGroup extends BasicContainer {
 }
 
 import NodeList from './node_list.js';
-export { ButtonNode, ProgressNode, TextNode, DynamicSpriteNode, RadioGroup, NodeList };
+export { ButtonNode, ProgressNode, TextNode, DynamicSpriteNode, RadioGroup, NodeList, ScrollBar };

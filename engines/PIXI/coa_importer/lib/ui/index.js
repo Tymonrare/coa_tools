@@ -18,12 +18,16 @@ const defaultInitProperties = {
 	 */
 	debugTree: false,
 	/**
+	 * verbose print node tree
+	 */
+	debugTreeVerbose: false,
+	/**
 	 * @brief draw bounds for all nodes
 	 */
 	debugBounds: false,
 	/**
-	* @brief {?Object<?Object>} list of styles for text. @see PIXI.TextStyle
-	*/
+	 * @brief {?Object<?Object>} list of styles for text. @see PIXI.TextStyle
+	 */
 	fonts: {},
 	/**
 	 * @brief {?Object<?PIXI.Texture>} list of PIXI.Texture for {@code CoaText}
@@ -86,15 +90,19 @@ export default class extends NodeContainer {
 				this.gnodes[name] = child;
 
 				//set binds
-				if (child.updateBinding) {
-					Object.defineProperty(this.gbinds, name, {
-						set: function(val) {
-							child.binding = val;
-						},
-						get: function() {
-							return child.binding;
-						}
-					});
+				try {
+					if (child.updateBinding) {
+						Object.defineProperty(this.gbinds, name, {
+							set: function(val) {
+								child.binding = val;
+							},
+							get: function() {
+								return child.binding;
+							}
+						});
+					}
+				} catch (err) {
+					console.error('error with global bind for node ' + name, err);
 				}
 			}
 

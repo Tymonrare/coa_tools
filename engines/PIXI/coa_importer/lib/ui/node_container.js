@@ -9,7 +9,8 @@ import {
 	TextNode,
 	DynamicSpriteNode,
 	RadioGroup,
-	NodeList
+	NodeList,
+	ScrollBar
 } from './custom_interactive.js';
 
 class NodeContainer extends BasicContainer {
@@ -54,6 +55,9 @@ class NodeContainer extends BasicContainer {
 					switch (node.properties.type) {
 						case 'container':
 							obj = new NodeList(node, this.scene);
+							break;
+						case 'scroll_bar':
+							obj = new ScrollBar(node, this.scene);
 							break;
 						default:
 							obj = new NodeContainer(node, this.scene);
