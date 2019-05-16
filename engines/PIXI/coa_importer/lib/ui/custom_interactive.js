@@ -336,8 +336,10 @@ class ProgressNode extends BasicContainer {
 		}
 
 		//mask pos
-		let ax = 0,
-			ay = 0.5;
+		this.areaSize = new PIXI.Point(this.node.transform.size[0], this.node.transform.size[1]);
+		this.horisontal = this.areaSize.x > this.areaSize.y;
+		let ax = this.horisontal ? 0 : 0.5,
+			ay = !this.horisontal ? 0 : 0.5;
 		if (node.properties.progress_anchor) {
 			let anch = node.properties.progress_anchor.split(',');
 			ax = parseFloat(anch[0]);
@@ -355,7 +357,11 @@ class ProgressNode extends BasicContainer {
 	//deprecated
 	setProgress(progress) {
 		let t = this.node.transform;
-		this.maskS.width = t.size[0] * progress;
+		if (this.horisontal) {
+			this.maskS.width = t.size[0] * progress;
+		} else {
+			this.maskS.height = t.size[1] * progress;
+		}
 		this.progress = progress;
 	}
 }
@@ -381,6 +387,8 @@ class ScrollBar extends NodeContainer {
 			ay = parseFloat(anch[1]);
 		}
 
+		this.updateStatus_(0.5);
+
 		let selfSize = this.node.transform.size;
 		this.on('mousemove', (ev) => {
 			let pos = ev.data.getLocalPosition(this);
@@ -402,12 +410,7 @@ class ScrollBar extends NodeContainer {
 					? (posx - selfSize[0] * ax) / selfSize[0]
 					: (posy - selfSize[1] * ay) / selfSize[1]
 			);
-			if (this.callbackBind) {
-				this.callbackBind(progress);
-			}
-			if (this.nodes.body.node.properties.type == 'progress') {
-				this.nodes.body.binding = progress;
-			}
+			this.updateStatus_(progress);
 		});
 		this.btn
 			.on('pointerdown', () => {
@@ -422,6 +425,14 @@ class ScrollBar extends NodeContainer {
 	}
 	updateBinding(handler) {
 		this.callbackBind = handler;
+	}
+	updateStatus_(progress) {
+		if (this.callbackBind) {
+			this.callbackBind(progress);
+		}
+		if (this.nodes.body.node.properties.type == 'progress') {
+			this.nodes.body.binding = progress;
+		}
 	}
 }
 
