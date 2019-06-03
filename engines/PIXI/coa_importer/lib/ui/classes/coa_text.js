@@ -126,8 +126,10 @@ export default class CoaText extends Text {
 
 		let reg = /<{(\w+)}>/g;
 		let match;
-		while ((match = reg.exec(text)) !== null) {
+		let oldText = text;
+		while ((match = reg.exec(oldText)) !== null) {
 			let symbol = this.symbols_[match[1]];
+			console.log(match);
 			if (!symbol) continue;
 
 			const iconWidth = (lineHeight / symbol.baseTexture.height) * symbol.baseTexture.width;
@@ -136,14 +138,15 @@ export default class CoaText extends Text {
 			//1. Saving info about what icons where placed (whis its number)
 			//2. Replacing original reference with text exacts width with icon
 			//3. Making some weird symbols sequence to avoid possible misstyping
-			let newText = `|{${this.textIconsOrder_.length}`;
+			let newSymbol = `|{${this.textIconsOrder_.length}`;
 
-			const newTextWidth = this.context.measureText(newText).width + letterSpacing * newText.length;
+			const newTextWidth =
+				this.context.measureText(newSymbol).width + letterSpacing * newSymbol.length;
 			//additional symbols to make required length
 			const fillsCount = Math.round(Math.max(0, (iconWidth - newTextWidth) / spaceWidth));
-			newText += ' '.repeat(fillsCount) + '|';
+			newSymbol += ' '.repeat(fillsCount) + '|';
 
-			text = text.replace(match[0], newText);
+			text = text.replace(match[0], newSymbol);
 			this.textIconsOrder_.push(symbol);
 		}
 
