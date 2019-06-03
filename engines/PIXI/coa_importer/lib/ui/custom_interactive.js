@@ -77,9 +77,8 @@ class TextNode extends BasicContainer {
 	fitTextInBounds_() {
 		//fit in bounds
 		if (!this.textStyle_.wordWrap) {
-			let bounds = this.coaText_.getBounds();
-			let textw = bounds.width;
-			let texth = bounds.height;
+			let textw = this.coaText_.width;
+			let texth = this.coaText_.height;
 
 			let s = this.node.transform.size;
 
