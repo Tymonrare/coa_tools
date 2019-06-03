@@ -38,6 +38,7 @@ class TextNode extends BasicContainer {
 		defProps.wordWrapWidth = defProps.wordWrapWidth || node.transform.size[0];
 
 		let style = new PIXI.TextStyle(defProps);
+		this.textStyle_ = style;
 
 		let txt = new CoaText(node.name, style, props.customTextSymbols);
 
@@ -60,9 +61,23 @@ class TextNode extends BasicContainer {
 			txt.position.set(x, y);
 		}
 
+		this.addChild(txt);
+		this.coaText_ = txt;
+	}
+	updateBinding(text) {
+		this.text = text;
+	}
+	set text(text) {
+		this.coaText_.text = text;
+		this.fitTextInBounds_();
+	}
+	get text() {
+		return this.coaText_.text;
+	}
+	fitTextInBounds_() {
 		//fit in bounds
-		if (!defProps.wordWrap) {
-			let bounds = txt.getBounds();
+		if (!this.textStyle_.wordWrap) {
+			let bounds = this.coaText_.getBounds();
 			let textw = bounds.width;
 			let texth = bounds.height;
 
@@ -78,20 +93,8 @@ class TextNode extends BasicContainer {
 				scale = dw;
 			}
 
-			txt.scale.set(scale);
+			this.coaText_.scale.set(scale);
 		}
-
-		this.addChild(txt);
-		this.coaText_ = txt;
-	}
-	updateBinding(text) {
-		this.text = text;
-	}
-	set text(text) {
-		this.coaText_.text = text;
-	}
-	get text() {
-		return this.coaText_.text;
 	}
 }
 

@@ -36,7 +36,7 @@ export default class CoaText extends Text {
 		const spaceWidth = this.context.measureText(' ').width + letterSpacing;
 
 		const measured = TextMetrics.measureText(
-			this._text || ' ',
+			text || ' ',
 			this._style,
 			this._style.wordWrap,
 			this.canvas
@@ -46,7 +46,8 @@ export default class CoaText extends Text {
 
 		let reg = /\|{(\d+)\s*\|/g;
 		let match;
-		while ((match = reg.exec(this._text)) !== null) {
+		let oldText = text;
+		while ((match = reg.exec(oldText)) !== null) {
 			let symbol = this.textIconsOrder_[match[1]];
 
 			//replace template with transparent spaces
