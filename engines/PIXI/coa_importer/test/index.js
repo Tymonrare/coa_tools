@@ -43,6 +43,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 			binds.progress2 = Math.abs(Math.sin(new Date().getTime() / 5000));
 			binds.progress3 = Math.abs(Math.sin(new Date().getTime() / 5000));
 		}, 30);
+
 		binds.test_bind1 = 'text <{testIcon}> <{testIcon}> <{EMPTY}>';
 
 		let texture = PIXI.Texture.from('res/flat_128.png');
@@ -73,7 +74,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 		binds.test_bind6 = bind6arr;
 
 		binds.test_bind7 = [true, true, true];
-		
+
 		binds.test_bind8 = binds.test_bind9 = Array.from({ length: 10 }, () => {
 			return true;
 		});
@@ -94,7 +95,7 @@ loader('/res/samples/', require('@res/samples/test.json')).then((conf) => {
 		let node = child.node;
 		for (let i = 1; i < 3; i++) {
 			let obj = child.parent.addNodeClone(node);
-			obj.position.y += 100 * i;
+			obj.position.y += 20 * i;
 		}
 	}
 

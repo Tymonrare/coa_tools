@@ -60,6 +60,27 @@ class TextNode extends BasicContainer {
 			txt.position.set(x, y);
 		}
 
+		//fit in bounds
+		if (!defProps.wordWrap) {
+			let bounds = txt.getBounds();
+			let textw = bounds.width;
+			let texth = bounds.height;
+
+			let s = this.node.transform.size;
+
+			let dw = s[0] / textw;
+			let dh = s[1] / texth;
+
+			let scale = 1;
+			if (dh < dw && dh < 1) {
+				scale = dh;
+			} else if (dw < 1) {
+				scale = dw;
+			}
+
+			txt.scale.set(scale);
+		}
+
 		this.addChild(txt);
 		this.coaText_ = txt;
 	}

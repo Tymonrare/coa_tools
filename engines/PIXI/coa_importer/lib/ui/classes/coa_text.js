@@ -129,7 +129,6 @@ export default class CoaText extends Text {
 		let oldText = text;
 		while ((match = reg.exec(oldText)) !== null) {
 			let symbol = this.symbols_[match[1]];
-			console.log(match);
 			if (!symbol) continue;
 
 			const iconWidth = (lineHeight / symbol.baseTexture.height) * symbol.baseTexture.width;
