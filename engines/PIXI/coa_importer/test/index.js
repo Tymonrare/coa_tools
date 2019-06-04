@@ -55,7 +55,7 @@ function enterScene() {
 				binds.progress3 = Math.abs(Math.sin(new Date().getTime() / 5000));
 			}, 30);
 
-			binds.test_bind1 = 'text <{testIcon}> <{testIcon}> <{EMPTY}>';
+			binds.test_bind1 = 'text <{testIcon}> <{testIcon}> <{EMPTY}> text';
 
 			let texture = PIXI.Texture.from('res/flat_128.png');
 			binds.test_bind2 = texture;
