@@ -74,6 +74,12 @@ export default class CoaText extends Text {
 				);
 			}
 
+			for (let subtext of symbol.texts) {
+				let width = this.context.measureText(subtext).width;
+				let subx = x + posOfTemplate + oldTextWidth / 2 - width / 2;
+				super.drawLetterSpacing(subtext, subx, y, isStroke);
+			}
+
 			text = text.replace(match[0], ' '.repeat(spacesCount));
 		}
 
@@ -97,7 +103,9 @@ export default class CoaText extends Text {
 
 		this.dirty = true;
 
-		if (!text.match(/<{\w+}>/)) {
+		//find groups like <{abc}[321]{abc}>
+		let reg = /<([^>]+)/g;
+		if (!text.match(reg)) {
 			this.textRaw_ = this._text = text;
 			return;
 		}
@@ -127,8 +135,6 @@ export default class CoaText extends Text {
 		);
 		const lineHeight = measured.lineHeight;
 
-		//find groups like <{abc}[321]{abc}>
-		let reg = /<([^>]+)/g;
 		let match;
 		let oldText = text;
 
@@ -137,9 +143,11 @@ export default class CoaText extends Text {
 			let symbolListString = match[1];
 			let totalSymbolWidth = 0;
 			let symbolData = { icons: [], texts: [] };
+			console.log(symbolListString);
 
 			//two types of brackets - '[' and '{' and group text inside it
-			let propReg = /[{\[](\w+)[^}\]]/g;
+			let propReg = /[{\[]([^}\]]+)/g;
+			//let propReg = /(?:(?:{)|(?:\[))(\w+)(?:(?:})|(?:\]))/g;
 			let propMatch;
 
 			while ((propMatch = propReg.exec(symbolListString)) !== null) {
@@ -148,6 +156,11 @@ export default class CoaText extends Text {
 
 				switch (type) {
 					case '[': //simple text
+						let w = this.context.measureText(prop).width / 2 + spaceWidth * 2;
+						if (totalSymbolWidth < w) {
+							totalSymbolWidth = w;
+						}
+						symbolData.texts.push(prop);
 						break;
 					case '{': //icon
 						//for symbol
@@ -163,27 +176,26 @@ export default class CoaText extends Text {
 					default:
 						console.warn(`keyword ${propMatch[0]} in string ${oldText} unsupported}`);
 				}
+			}
 
-				//So we do here three things:
-				//1. Saving info about what icons where placed (whis its number)
-				//2. Replacing original reference with text exacts width with icon
-				//3. Making some weird symbols sequence to avoid possible misstyping
-				if (symbolData.icons.length || symbolData.texts.length) {
-					let newSymbol = `|{${this.textIconsOrder_.length}`;
-					const newTextWidth =
-						this.context.measureText(newSymbol).width + letterSpacing * newSymbol.length;
+			//So we do here three things:
+			//1. Saving info about what icons where placed (whis its number)
+			//2. Replacing original reference with text exacts width with icon
+			//3. Making some weird symbols sequence to avoid possible misstyping
+			if (symbolData.icons.length || symbolData.texts.length) {
+				let newSymbol = `|{${this.textIconsOrder_.length}`;
+				const newTextWidth =
+					this.context.measureText(newSymbol).width + letterSpacing * newSymbol.length;
 
-					//additional symbols to make required length
-					const fillsCount = Math.round(
-						Math.max(0, (totalSymbolWidth - newTextWidth) / spaceWidth)
-					);
-					newSymbol += ' '.repeat(fillsCount) + '|';
+				//additional symbols to make required length
+				console.log(totalSymbolWidth);
+				const fillsCount = Math.round(Math.max(0, (totalSymbolWidth - newTextWidth) / spaceWidth));
+				newSymbol += ' '.repeat(fillsCount) + '|';
 
-					//closing bracket isn't matched
-					text = text.replace(match[0] + '>', newSymbol);
+				//closing bracket isn't matched
+				text = text.replace(match[0] + '>', newSymbol);
 
-					this.textIconsOrder_.push(symbolData);
-				}
+				this.textIconsOrder_.push(symbolData);
 			}
 		}
 

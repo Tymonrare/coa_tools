@@ -55,7 +55,7 @@ function enterScene() {
 				binds.progress3 = Math.abs(Math.sin(new Date().getTime() / 5000));
 			}, 30);
 
-			binds.test_bind1 = 'text <{testIcon}> <{testIcon}> <{EMPTY}> text';
+			binds.test_bind1 = 'text <{testIcon}[*]> text';
 
 			let texture = PIXI.Texture.from('res/flat_128.png');
 			binds.test_bind2 = texture;
@@ -107,6 +107,7 @@ function enterScene() {
 			for (let i = 1; i < 3; i++) {
 				let obj = child.parent.addNodeClone(node);
 				obj.position.y += 20 * i;
+				obj.binding = 'text <{testIcon}[test-test]> text';
 			}
 		}
 

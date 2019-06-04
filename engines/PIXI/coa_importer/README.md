@@ -48,3 +48,25 @@ coa.loader(
 });
 
 ```
+
+# Text pattenrs
+
+You can draw custom sprites inside text_area and btn text
+
+```javascript
+	PIXI.loader.add('devIcon', 'res/develop.png').load(callback); //preload pixi texture first
+
+	//some abstract coa window
+	let wind = new ui(conf, {
+		customTextSymbols: { testIcon: PIXI.Texture.from('res/develop.png') }
+	});
+
+	//pass <{symbolName}> into text to print that sprite
+	window.gbinds.your_text_area = 'some text and inserted icon: <{testIcon}>'
+
+	//will print 11 inside symbol
+	window.gbinds.your_text_area1 = 'some text and inserted icon with text: <{testIcon}[11]>'
+
+	//you can combine it whatever you like
+	window.gbinds.your_text_area1 = 'some text and inserted icon with text: <{testIcon}[text]{anotherIcon}> <[text under icon]{anotherIcon1}>'
+```
