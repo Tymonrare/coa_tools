@@ -8,6 +8,12 @@ import NodeContainer from './node_container.js';
 import BasicContainer from './basic_container.js';
 import { applyNodeProps, createMaskForNode } from './utils.js';
 
+/**
+ * class for load and draw text nodes
+ *
+ * Этот класс также используется как label в ButtonNode. Сюда в качестве node.transform передается урезанная его версия (Трансформа).
+ * Если пытаешься использовать новые поля из this.node.transform - убедись что из ButtonNode передается нужные значения
+ */
 class TextNode extends BasicContainer {
 	constructor(node, root) {
 		super(node, root);
@@ -312,11 +318,16 @@ class ButtonNode extends SpriteNode {
 	 */
 	set label(text) {
 		if (!this.label_) {
+			let tr = this.node.transform;
 			this.label_ = new TextNode(
 				{
 					name: this.node.name + '_label',
 					properties: this.node.properties,
-					transform: this.node.transform
+					//label uses only size and pivot offset
+					transform: {
+						size: [tr.size[0] * 0.8, tr.size[1] * 0.8], //scale down size a bit for proper fit in button
+						pivot_offset: tr.pivot_offset
+					}
 				},
 				this.scene
 			);

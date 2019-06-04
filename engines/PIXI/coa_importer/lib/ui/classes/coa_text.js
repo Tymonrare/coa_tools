@@ -143,7 +143,6 @@ export default class CoaText extends Text {
 			let symbolListString = match[1];
 			let totalSymbolWidth = 0;
 			let symbolData = { icons: [], texts: [] };
-			console.log(symbolListString);
 
 			//two types of brackets - '[' and '{' and group text inside it
 			let propReg = /[{\[]([^}\]]+)/g;
@@ -188,7 +187,6 @@ export default class CoaText extends Text {
 					this.context.measureText(newSymbol).width + letterSpacing * newSymbol.length;
 
 				//additional symbols to make required length
-				console.log(totalSymbolWidth);
 				const fillsCount = Math.round(Math.max(0, (totalSymbolWidth - newTextWidth) / spaceWidth));
 				newSymbol += ' '.repeat(fillsCount) + '|';
 
