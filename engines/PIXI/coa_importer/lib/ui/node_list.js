@@ -192,7 +192,7 @@ class NodeList extends NodeContainer {
 
 		//update selector
 		if (this.nodes.page_select) {
-			this.nodes.page_select.setLength(this.maxPages_ + 1);
+			this.nodes.page_select.setLength(this.maxPages_);
 		}
 
 		//update visual
@@ -223,7 +223,7 @@ class NodeList extends NodeContainer {
 
 		let dirX = this.styles.scroll == 'h';
 		let dir = dirX ? 'x' : 'y';
-		return Math.floor(lastpos[dir] / this.areaGridSize[dir]);
+		return Math.ceil(lastpos[dir] / this.areaGridSize[dir]);
 	}
 	setContentPage(page) {
 		let dirX = this.styles.scroll == 'h';
