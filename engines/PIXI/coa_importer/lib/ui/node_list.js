@@ -127,7 +127,6 @@ class NodeList extends NodeContainer {
 		this._calcContainerDims(); //i don't know why i have to recalc it each time ¯\_(ツ)_/¯
 
 		//scroll init
-		console.log(this.areaGridSize.x, this.areaGridSize.y, this.dataArray.length);
 		if (this.styles.scroll && this.areaGridSize.x * this.areaGridSize.y < this.dataArray.length) {
 			this.setScrollButtonsVisible_(true);
 		} else {
@@ -311,7 +310,7 @@ class NodeList extends NodeContainer {
 			this.btnsContainer.addChild(this.btn_prev_);
 		}
 
-		this.btnsContainer.visible = false;
+		this.setScrollButtonsVisible_(false);
 		if (this.nodes.page_select) {
 			this.nodes.page_select.setLength(this.maxPages_);
 			this.nodes.page_select.on('checkselect', (index) => {
