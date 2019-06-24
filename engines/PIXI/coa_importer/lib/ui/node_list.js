@@ -58,9 +58,7 @@ class NodeList extends NodeContainer {
 				scroll = scroll.split('-')[1]; //'h' or 'v'
 				if (scroll != 'h' && scroll != 'v') {
 					console.warn(
-						`Style for node ${this.node.node_path} was set as ${
-							this.node.properties.style
-						}. You can use only 'scroll-h' and 'scroll-v' keywords for scroll`
+						`Style for node ${this.node.node_path} was set as ${this.node.properties.style}. You can use only 'scroll-h' and 'scroll-v' keywords for scroll`
 					);
 					scroll = null;
 				}
@@ -77,9 +75,7 @@ class NodeList extends NodeContainer {
 
 				if (style[1] != 'h' && style[1] != 'v') {
 					console.warn(
-						`Style for node ${this.node.node_path} was set as ${
-							this.node.properties.style
-						}. You can use only 'page-h' and 'page-v' keywords for page`
+						`Style for node ${this.node.node_path} was set as ${this.node.properties.style}. You can use only 'page-h' and 'page-v' keywords for page`
 					);
 					return;
 				}
@@ -131,10 +127,11 @@ class NodeList extends NodeContainer {
 		this._calcContainerDims(); //i don't know why i have to recalc it each time ¯\_(ツ)_/¯
 
 		//scroll init
+		console.log(this.areaGridSize.x, this.areaGridSize.y, this.dataArray.length);
 		if (this.styles.scroll && this.areaGridSize.x * this.areaGridSize.y < this.dataArray.length) {
-			this.btnsContainer.visible = true;
+			this.setScrollButtonsVisible_(true);
 		} else {
-			this.btnsContainer.visible = false;
+			this.setScrollButtonsVisible_(false);
 			this.interactive = false;
 		}
 
@@ -320,6 +317,17 @@ class NodeList extends NodeContainer {
 			this.nodes.page_select.on('checkselect', (index) => {
 				this.setContentPage(index);
 			});
+		}
+	}
+	setScrollButtonsVisible_(visible) {
+		if (this.btn_next_) {
+			this.btn_next_.visible = visible;
+		}
+		if (this.btn_prev_) {
+			this.btn_prev_.visible = visible;
+		}
+		if (this.btnsContainer) {
+			this.btnsContainer.visible = visible;
 		}
 	}
 	_calcContainerDims() {

@@ -79,7 +79,7 @@ function enterScene() {
 			//;console.log(wind.gnodes.test_bind5.contentContainer.children); //already awaible
 
 			let bind6arr = [];
-			for (let i = 0; i < 60; i++) {
+			for (let i = 0; i < 11; i++) {
 				bind6arr.push({ test_nested1: 'text' + i, test_nested2: texture });
 			}
 			binds.test_bind6 = bind6arr;

@@ -208,7 +208,10 @@ class ButtonNode extends SpriteNode {
 			.on('pointerdown', onButtonDown);
 
 		//TODO: make separated animations logic
-		let animate = this.node.properties.animation == 'simple_btn';
+		//let animate = this.node.properties.animation == 'simple_btn';
+		//All buttons animated
+		let animate = true;
+
 		let mode = this.node.properties.mode || 'simple';
 
 		function setState(txt) {
@@ -492,9 +495,7 @@ class RadioGroup extends BasicContainer {
 				dir = dir.split('-')[1]; //'h' or 'v'
 				if (dir != 'h' && dir != 'v') {
 					console.warn(
-						`Style for node ${this.node.node_path} was set as ${
-							this.node.properties.style
-						}. You can use only 'dir-h' and 'dir-v' keywords for scroll`
+						`Style for node ${this.node.node_path} was set as ${this.node.properties.style}. You can use only 'dir-h' and 'dir-v' keywords for scroll`
 					);
 					scroll = null;
 				}
