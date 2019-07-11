@@ -426,6 +426,7 @@ class ScrollBar extends NodeContainer {
 			ax = parseFloat(anch[0]);
 			ay = parseFloat(anch[1]);
 		}
+    this.scrollAnchor = {x:ax, y:ay};
 
 		this.updateStatus_(0.5);
 
@@ -466,13 +467,15 @@ class ScrollBar extends NodeContainer {
 	updateBinding(handler) {
 		this.callbackBind = handler;
 	}
-	updateStatus_(progress) {
-		if (this.callbackBind) {
+	updateStatus_(progress, triggerBind = true) {
+		if (this.callbackBind && triggerBind) {
 			this.callbackBind(progress);
 		}
 		if (this.nodes.body.node.properties.type == 'progress') {
 			this.nodes.body.binding = progress;
 		}
+
+    this.btn.position[this.horisontal ? 'x' : 'y'] = this.node.transform.size[this.horisontal ? 0 : 1] * Math.abs(progress - this.scrollAnchor[this.horisontal ? 'x' : 'y']);
 	}
 }
 
