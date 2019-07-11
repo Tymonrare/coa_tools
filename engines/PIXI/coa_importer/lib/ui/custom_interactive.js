@@ -428,7 +428,7 @@ class ScrollBar extends NodeContainer {
 		}
     this.scrollAnchor = {x:ax, y:ay};
 
-		this.updateStatus_(0.5);
+		this.updateStatus(0.5);
 
 		let selfSize = this.node.transform.size;
 		this.on('mousemove', (ev) => {
@@ -451,7 +451,7 @@ class ScrollBar extends NodeContainer {
 					? (posx - selfSize[0] * ax) / selfSize[0]
 					: (posy - selfSize[1] * ay) / selfSize[1]
 			);
-			this.updateStatus_(progress);
+			this.updateStatus(progress);
 		});
 		this.btn
 			.on('pointerdown', () => {
@@ -467,7 +467,7 @@ class ScrollBar extends NodeContainer {
 	updateBinding(handler) {
 		this.callbackBind = handler;
 	}
-	updateStatus_(progress, triggerBind = true) {
+	updateStatus(progress, triggerBind = true) {
 		if (this.callbackBind && triggerBind) {
 			this.callbackBind(progress);
 		}

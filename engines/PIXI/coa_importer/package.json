@@ -1,6 +1,6 @@
 {
   "name": "coat-pixi",
-  "version": "0.2.63",
+  "version": "0.2.64",
   "description": "coa_tools importer for pixi",
   "main": "dist/index.js",
   "directories": {
