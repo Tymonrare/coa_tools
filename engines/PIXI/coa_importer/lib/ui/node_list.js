@@ -107,6 +107,9 @@ class NodeList extends NodeContainer {
 			this.updateContent();
 		}
 	}
+	setInstantUpdate(isntant){
+		this._instantUpdate = isntant;
+	}
 	updateContent() {
 		this.updateRequested = false;
 		this.contentContainer.removeChildren();
