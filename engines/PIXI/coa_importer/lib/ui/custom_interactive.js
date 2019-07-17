@@ -21,7 +21,8 @@ class TextNode extends BasicContainer {
 		const defaultLineJoin = 'bevel';
 
 		//style
-		let defProps = {
+    let props = this.scene.properties;
+		let defProps = props.fonts.default || {
 			fontFamily: 'Arial',
 			fontSize: 27,
 			fontStyle: 'bold',
@@ -33,7 +34,6 @@ class TextNode extends BasicContainer {
 			lineJoin: defaultLineJoin
 		};
 
-		let props = this.scene.properties;
 		if (props && props.fonts && props.fonts[node.properties.font]) {
 			defProps = Object.assign({}, props.fonts[node.properties.font]);
 			if (!defProps.lineJoin) {
