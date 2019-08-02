@@ -107,7 +107,7 @@ class NodeList extends NodeContainer {
 			this.updateContent();
 		}
 	}
-	setInstantUpdate(isntant){
+	setInstantUpdate(isntant) {
 		this._instantUpdate = isntant;
 	}
 	updateContent() {
@@ -405,28 +405,28 @@ class NodeList extends NodeContainer {
 		//page strategy
 		if (this.styles.page.h) {
 			let pageSize = this.styles.page.h === true ? this.dataArray.length : this.styles.page.h;
+			let areaSize = this.areaSize[0] - this.refNode.node.transform.size[0];
 			let startPivot =
-				this.areaNode.transform.position[0] -
-				this.areaNode.transform.pivot_offset[0] * this.areaNode.transform.size[0];
+				this.areaNode.transform.position[0] - this.areaNode.transform.pivot_offset[0] * areaSize;
 			x =
 				startPivot +
-				this.areaSize[0] / 2 - //base pivot (center)
+				areaSize / 2 - //base pivot (center)
 				this.refNode.node.transform.position[0] - //base element position (margin)
 				(0.5 - this.refNode.node.transform.pivot_offset[0]) * this.refNode.node.transform.size[0] - //element pivot for group nodes (now it centred)
-				((this.areaSize[0] / pageSize) * (pageSize - 1)) / 2 + //-half of total area
-				(this.areaSize[0] / pageSize) * index; //element index shift
+				((areaSize / pageSize) * (pageSize - 1)) / 2 + //-half of total area
+				(areaSize / pageSize) * index; //element index shift
 		}
 		if (this.styles.page.v) {
 			let pageSize = this.styles.page.v === true ? this.dataArray.length : this.styles.page.v;
+			let areaSize = this.areaSize[1] - this.refNode.node.transform.size[1];
 			let startPivot =
-				this.areaNode.transform.position[1] -
-				this.areaNode.transform.pivot_offset[1] * this.areaNode.transform.size[1];
+				this.areaNode.transform.position[1] - this.areaNode.transform.pivot_offset[1] * areaSize;
 			y =
 				startPivot +
-				this.areaSize[1] / 2 - //base pivot (center)
+				areaSize / 2 - //base pivot (center)
 				this.refNode.node.transform.position[1] - //base element pivot (now it centred)
-				((this.areaSize[1] / pageSize) * (pageSize - 1)) / 2 + //-half of total area
-				(this.areaSize[1] / pageSize) * index; //element index shift
+				((areaSize / pageSize) * (pageSize - 1)) / 2 + //-half of total area
+				(areaSize / pageSize) * index; //element index shift
 		}
 
 		return { x, y };

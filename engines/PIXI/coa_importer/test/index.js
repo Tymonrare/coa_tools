@@ -86,7 +86,7 @@ function enterScene() {
 
 			binds.test_bind7 = [true, true, true];
 
-			binds.test_bind8 = binds.test_bind9 = Array.from({ length: 10 }, () => {
+			binds.test_bind8 = binds.test_bind9 = Array.from({ length: 30 }, () => {
 				return true;
 			});
 		}
