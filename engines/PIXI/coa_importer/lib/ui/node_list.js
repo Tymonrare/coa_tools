@@ -405,7 +405,7 @@ class NodeList extends NodeContainer {
 		//page strategy
 		if (this.styles.page.h) {
 			let pageSize = this.styles.page.h === true ? this.dataArray.length : this.styles.page.h;
-			let areaSize = this.areaSize[0] - this.refNode.node.transform.size[0];
+			let areaSize = this.areaSize[0];// - this.refNode.node.transform.size[0];
 			let startPivot =
 				this.areaNode.transform.position[0] - this.areaNode.transform.pivot_offset[0] * areaSize;
 			x =
@@ -418,7 +418,7 @@ class NodeList extends NodeContainer {
 		}
 		if (this.styles.page.v) {
 			let pageSize = this.styles.page.v === true ? this.dataArray.length : this.styles.page.v;
-			let areaSize = this.areaSize[1] - this.refNode.node.transform.size[1];
+			let areaSize = this.areaSize[1];// - this.refNode.node.transform.size[1];
 			let startPivot =
 				this.areaNode.transform.position[1] - this.areaNode.transform.pivot_offset[1] * areaSize;
 			y =
