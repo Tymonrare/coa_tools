@@ -35,8 +35,7 @@ class NodeList extends NodeContainer {
 			this.addChildAt(this.contentContainer, index);
 
 			//mask all children
-			this.contentContainer.mask = createMaskForNode(this.areaNode);
-			this.addChild(this.contentContainer.mask);
+			this.enableContentMask(true);
 		}
 
 		//parse styles
@@ -110,7 +109,7 @@ class NodeList extends NodeContainer {
 	setInstantUpdate(isntant) {
 		this._instantUpdate = isntant;
 	}
-	setContentMask(enabled){
+	enableContentMask(enabled){
 		if(enabled && !this.contentContainer.mask){
 			this.contentContainer.mask = createMaskForNode(this.areaNode);
 			this.addChild(this.contentContainer.mask);
