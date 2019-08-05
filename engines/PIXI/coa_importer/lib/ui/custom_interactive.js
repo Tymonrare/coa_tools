@@ -375,10 +375,19 @@ class ProgressNode extends BasicContainer {
 		this.addChild(this.maskS);
 
 		if (node.properties.frames) {
+      let order = ['body', 'bar'];
+
 			for (let i in node.frames) {
 				let fr = node.frames[i];
 				let sprite = new Sprite(fr.texture);
-				this.addChild(sprite);
+
+        if(fr.id == 'body'){
+				   this.addChildAt(sprite, 0);
+        }
+        else {
+          this.addChild(sprite);
+        }
+
 				this.nodes[fr.id] = sprite;
 				sprite.anchor.set(node.transform.pivot_offset[0], node.transform.pivot_offset[1]);
 
