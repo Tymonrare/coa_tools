@@ -283,19 +283,32 @@ class ButtonNode extends SpriteNode {
 	postTreeInit(treeRoot) {
 		if (this.node.properties.target_tab) {
 			let c = treeRoot.findInstanceByPath(this.node.properties.target_tab);
-			if (!c) throw new Error(`Can't find target ${this.node.properties.target_tab}`);
+      if (!c) throw new Error(`Can't find target ${this.node.properties.target_tab}`);
+			if (!c.group) throw new Error(`Target ${this.node.properties.target_tab} hasnt group!`);
+
+      c._relatedButton = this;
+      this.interactive = false;
+
 			let gr = this.scene.groups[c.group];
 
 			//tabs hide
 			let keys = Object.keys(gr);
 			for (let i = 1; i < keys.length; i++) {
-				gr[keys[i]].visible = false;
+        gr[keys[i]].visible = false;
+        if(gr[keys[i]]._relatedButton){
+				      gr[keys[i]]._relatedButton.interactive = true;
+        }
 			}
 
 			this.on('pointerdown', () => {
 				for (var i in gr) {
-					if (c != gr[i]) gr[i].visible = false;
-					else gr[i].visible = true;
+          let el = gr[i];
+					if (c != el) el.visible = false;
+					else el.visible = true;
+
+          if(el._relatedButton){
+            el._relatedButton.interactive = !el.visible;
+          }
 				}
 			});
 		}
