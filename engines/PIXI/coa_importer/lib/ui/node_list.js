@@ -114,7 +114,7 @@ class NodeList extends NodeContainer {
 			this.contentContainer.mask = createMaskForNode(this.areaNode);
 			this.addChild(this.contentContainer.mask);
 		}
-		else{
+		else if(this.contentContainer.mask){
 			this.contentContainer.mask = null;
 			this.removeChild(this.contentContainer.mask);
 		}
