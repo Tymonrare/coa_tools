@@ -110,6 +110,16 @@ class NodeList extends NodeContainer {
 	setInstantUpdate(isntant) {
 		this._instantUpdate = isntant;
 	}
+	setContentMask(enabled){
+		if(enabled && !this.contentContainer.mask){
+			this.contentContainer.mask = createMaskForNode(this.areaNode);
+			this.addChild(this.contentContainer.mask);
+		}
+		else{
+			this.contentContainer.mask = null;
+			this.removeChild(this.contentContainer.mask);
+		}
+	}
 	updateContent() {
 		this.updateRequested = false;
 		this.contentContainer.removeChildren();
