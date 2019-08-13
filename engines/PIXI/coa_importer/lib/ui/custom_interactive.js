@@ -303,11 +303,13 @@ class ButtonNode extends SpriteNode {
 			}
 
       const updateInteractive = function(el){
+        requestAnimationFrame(()=>{
           if (el._relatedButton) {
 						el._relatedButton.interactive = !el.visible;
 					}
+        });
       }
-			this.on('pointerdown', () => {
+			this.on('pointertap', () => {
 				for (var i in gr) {
 					let el = gr[i];
 
@@ -316,7 +318,7 @@ class ButtonNode extends SpriteNode {
 					else el.visible = true;
 
           //deactivate buttons
-					//updateInteractive(el);
+					updateInteractive(el);
 				}
 			});
 		}
