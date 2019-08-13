@@ -97,7 +97,7 @@ function main(export_path, export_name, crop_to_dialog_bounds, crop_layers, expo
 			var bounds_width = bounds[2] - bounds[0];
 			var bounds_height = bounds[3] - bounds[1];
 
-			var margin = props.margin||5;
+			var margin = props.margin === undefined ? 1 : props.margin;
 
 			//=== { Make document } ===\\
 
@@ -350,7 +350,7 @@ function save(export_path, export_name) {
 		}, 'nodes');
 
 		node.transform.size = [maxX - minX, maxY - minY];
-		
+
 		//all groups set in 0 by default
 		//set pos to top-left childs pos
 		node.transform.position[0] += minX;

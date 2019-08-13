@@ -21,7 +21,7 @@ class TextNode extends BasicContainer {
 		const defaultLineJoin = 'bevel';
 
 		//style
-    let props = this.scene.properties;
+		let props = this.scene.properties;
 		let defProps = props.fonts.default || {
 			fontFamily: 'Arial',
 			fontSize: 27,
@@ -118,22 +118,24 @@ class DynamicSpriteNode extends BasicContainer {
 		this.sprite.texture = texture;
 
 		let s = this.node.transform.size;
+		let width = s[0];
+		let height = s[1];
 		let style = this.node.properties.style || 'save_ratio';
 		if (style.includes('fit')) {
 			if (style.includes('fit_h')) {
-				this.sprite.width = s[0];
+				this.sprite.width = width;
 			} else if (style.includes('fit_v')) {
-				this.sprite.height = s[1];
+				this.sprite.height = height;
 			} else {
-				this.sprite.width = s[0];
-				this.sprite.height = s[1];
+				this.sprite.width = width;
+				this.sprite.height = height;
 			}
 		} else if (style.includes('save_ratio')) {
 			let w = texture.orig.width;
 			let h = texture.orig.height;
 
-			let dw = s[0] / w;
-			let dh = s[1] / h;
+			let dw = width / w;
+			let dh = height / h;
 
 			let scale;
 			if (dh < dw) {
@@ -166,8 +168,8 @@ class DynamicSpriteNode extends BasicContainer {
 				py = 1;
 			}
 
-			let x = s[0] * px - this.node.transform.pivot_offset[0] * s[0];
-			let y = s[1] * py - this.node.transform.pivot_offset[1] * s[1];
+			let x = width * px - this.node.transform.pivot_offset[0] * width;
+			let y = height * py - this.node.transform.pivot_offset[1] * height;
 
 			this.sprite.anchor.set(px, py);
 			this.sprite.position.set(x, y);
@@ -226,7 +228,7 @@ class ButtonNode extends SpriteNode {
 		function onButtonDown() {
 			this.isdown = true;
 			if (animate) {
-				this.scale.set(this.scale.x - 0.2, this.scale.y - 0.2);
+				this.scale.set(this.scale.x - 0.1, this.scale.y - 0.1);
 			}
 			if (mode == 'simple') {
 				setState.apply(this, ['click']);
@@ -239,7 +241,7 @@ class ButtonNode extends SpriteNode {
 
 		function onButtonUp() {
 			if (animate) {
-				if (this.isdown) this.scale.set(this.scale.x + 0.2, this.scale.y + 0.2);
+				if (this.isdown) this.scale.set(this.scale.x + 0.1, this.scale.y + 0.1);
 			}
 
 			this.isdown = false;
@@ -252,7 +254,7 @@ class ButtonNode extends SpriteNode {
 		function onButtonOver() {
 			this.isOver = true;
 			if (animate) {
-				this.scale.set(this.scale.x + 0.1, this.scale.y + 0.1);
+				this.scale.set(this.scale.x + 0.05, this.scale.y + 0.05);
 			}
 			if (this.isdown) {
 				return;
@@ -263,7 +265,7 @@ class ButtonNode extends SpriteNode {
 		function onButtonOut() {
 			this.isOver = false;
 			if (animate) {
-				this.scale.set(this.scale.x - 0.1, this.scale.y - 0.1);
+				this.scale.set(this.scale.x - 0.05, this.scale.y - 0.05);
 			}
 			if (this.isdown) {
 				return;
@@ -283,32 +285,40 @@ class ButtonNode extends SpriteNode {
 	postTreeInit(treeRoot) {
 		if (this.node.properties.target_tab) {
 			let c = treeRoot.findInstanceByPath(this.node.properties.target_tab);
-      if (!c) throw new Error(`Can't find target ${this.node.properties.target_tab}`);
+			if (!c) throw new Error(`Can't find target ${this.node.properties.target_tab}`);
 			if (!c.group) throw new Error(`Target ${this.node.properties.target_tab} hasnt group!`);
 
-      c._relatedButton = this;
-      this.interactive = false;
+			c._relatedButton = this;
+			this.interactive = false;
 
 			let gr = this.scene.groups[c.group];
 
 			//tabs hide
 			let keys = Object.keys(gr);
 			for (let i = 1; i < keys.length; i++) {
-        gr[keys[i]].visible = false;
-        if(gr[keys[i]]._relatedButton){
-				      gr[keys[i]]._relatedButton.interactive = true;
-        }
+				gr[keys[i]].visible = false;
+				if (gr[keys[i]]._relatedButton) {
+					gr[keys[i]]._relatedButton.interactive = true;
+				}
 			}
 
+      const updateInteractive = function(el){
+        requestAnimationFrame(()=>{
+          if (el._relatedButton) {
+						el._relatedButton.interactive = !el.visible;
+					}
+        })
+      }
 			this.on('pointerdown', () => {
 				for (var i in gr) {
-          let el = gr[i];
+					let el = gr[i];
+
+          //hide all tabs
 					if (c != el) el.visible = false;
 					else el.visible = true;
 
-          if(el._relatedButton){
-            el._relatedButton.interactive = !el.visible;
-          }
+          //deactivate buttons
+					updateInteractive(el);
 				}
 			});
 		}
@@ -375,18 +385,17 @@ class ProgressNode extends BasicContainer {
 		this.addChild(this.maskS);
 
 		if (node.properties.frames) {
-      let order = ['body', 'bar'];
+			let order = ['body', 'bar'];
 
 			for (let i in node.frames) {
 				let fr = node.frames[i];
 				let sprite = new Sprite(fr.texture);
 
-        if(fr.id == 'body'){
-				   this.addChildAt(sprite, 0);
-        }
-        else {
-          this.addChild(sprite);
-        }
+				if (fr.id == 'body') {
+					this.addChildAt(sprite, 0);
+				} else {
+					this.addChild(sprite);
+				}
 
 				this.nodes[fr.id] = sprite;
 				sprite.anchor.set(node.transform.pivot_offset[0], node.transform.pivot_offset[1]);
@@ -448,7 +457,7 @@ class ScrollBar extends NodeContainer {
 			ax = parseFloat(anch[0]);
 			ay = parseFloat(anch[1]);
 		}
-    this.scrollAnchor = {x:ax, y:ay};
+		this.scrollAnchor = { x: ax, y: ay };
 
 		this.updateStatus(0.5);
 
@@ -497,7 +506,9 @@ class ScrollBar extends NodeContainer {
 			this.nodes.body.binding = progress;
 		}
 
-    this.btn.position[this.horisontal ? 'x' : 'y'] = this.node.transform.size[this.horisontal ? 0 : 1] * Math.abs(progress - this.scrollAnchor[this.horisontal ? 'x' : 'y']);
+		this.btn.position[this.horisontal ? 'x' : 'y'] =
+			this.node.transform.size[this.horisontal ? 0 : 1] *
+			Math.abs(progress - this.scrollAnchor[this.horisontal ? 'x' : 'y']);
 	}
 }
 

@@ -19,7 +19,10 @@ main();
 //functions:
 
 function main() {
-	PIXI.loader.add('devIcon', 'res/develop.png').load(enterScene);
+	PIXI.loader
+		.add('devIcon', 'res/develop.png')
+		.add('flat_texture', 'res/flat_128.png')
+		.load(enterScene);
 }
 
 function enterScene() {
@@ -57,8 +60,9 @@ function enterScene() {
 
 			binds.test_bind1 = 'text <{testIcon}[*]> text';
 
-			let texture = PIXI.Texture.from('res/flat_128.png');
+			let texture = PIXI.Texture.from('flat_texture');
 			binds.test_bind2 = texture;
+			binds.test_bind3 = texture;
 
 			let handler = {
 				$elementCreated: function(el) {
